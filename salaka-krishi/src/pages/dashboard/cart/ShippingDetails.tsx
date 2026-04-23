@@ -363,14 +363,14 @@ export default function ShippingDetails({
                             <Switch.Control _checked={{ bg: "primary.300" }} />
                         </Switch.Root>
                     )}
-                    <Tooltip.Root disabled={!isCartEmpty} positioning={{ placement: "top" }}>
-                        <Tooltip.Trigger asChild>
-                            <Box alignSelf={"end"} mt={4}>
+                    <Flex justifyContent={{ base: "center", sm: "flex-end" }} width="full" mt={4}>
+                        <Tooltip.Root disabled={!isCartEmpty} positioning={{ placement: "top" }}>
+                            <Tooltip.Trigger asChild>
                                 <Button
                                     type="submit"
                                     fontSize={"lg"}
                                     fontWeight={400}
-                                    px={8}
+                                    px={12}
                                     py={5}
                                     disabled={orderMutation.isPending || isCartEmpty}
                                     _hover={{
@@ -378,20 +378,20 @@ export default function ShippingDetails({
                                     }}
                                     opacity={isCartEmpty ? 0.6 : 1}
                                     cursor={isCartEmpty ? "not-allowed" : "pointer"}
-                                    width="full"
+                                    width={{ base: "full", sm: "auto" }}
                                 >
                                     {orderMutation.isPending ? <Spinner size="sm" /> : (isReadOnly ? "Pay to Order" : "Continue")}
                                 </Button>
-                            </Box>
-                        </Tooltip.Trigger>
-                        <Portal>
-                            <Tooltip.Positioner>
-                                <Tooltip.Content bg="primary.300" color="white" px={4} py={2} borderRadius="md" fontSize="sm">
-                                    Your cart is empty
-                                </Tooltip.Content>
-                            </Tooltip.Positioner>
-                        </Portal>
-                    </Tooltip.Root>
+                            </Tooltip.Trigger>
+                            <Portal>
+                                <Tooltip.Positioner>
+                                    <Tooltip.Content bg="primary.300" color="white" px={4} py={2} borderRadius="md" fontSize="sm">
+                                        Your cart is empty
+                                    </Tooltip.Content>
+                                </Tooltip.Positioner>
+                            </Portal>
+                        </Tooltip.Root>
+                    </Flex>
                 </form>
                 {!isReadOnly && (
                     <>
