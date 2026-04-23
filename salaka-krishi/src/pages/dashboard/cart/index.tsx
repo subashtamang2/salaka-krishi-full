@@ -126,7 +126,7 @@ export default function CartView() {
                                                 justifyContent={"space-between"}
                                                 alignItems={"center"}
                                                 fontSize={"md"}
-                                                borderTopWidth={1}
+                                                borderTopWidth={isTotal ? 1 : 0}
                                                 borderTopColor={"primary.100/50"}
                                                 py={3} >
                                                 <Text
