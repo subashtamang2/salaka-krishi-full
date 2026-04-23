@@ -1,0 +1,89 @@
+.custom-dot-list li button {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: white;
+    opacity: 0.8;
+    transition: all 0.3s ease;
+    border: none;
+    padding: 0;
+    margin: 0 4px;
+}
+
+.custom-dot-list li.react-multi-carousel-dot--active button {
+    background-color: green;
+    opacity: 1;
+}
+
+
+
+.offer-carousel-dots li button {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: green;
+    opacity: 0.4;
+    transition: all 0.3s ease;
+    border: none;
+    padding: 0;
+    margin: 0 4px;
+}
+
+.offer-carousel-dots li.react-multi-carousel-dot--active button {
+    background-color: green;
+    opacity: 1;
+}
+
+
+.offer-carousel-item {
+    padding: 0 18px;
+}
+
+
+
+/* Video */
+video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+}
+
+.react-multi-carousel-dot-list {
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+    padding-bottom: 10px;
+}
+
+.large-icon {
+    padding: 0;
+    width: 0px;
+    height: 40px;
+
+}
+
+.large-icon svg {
+    width: 30px;
+    height: 30px;
+    color: #A1A1A1;
+
+}
+
+.small-icon svg {
+    width: 25px;
+    height: 25px;
+    color: #FFFF;
+}
+
+.auth-back-btn svg {
+    width: 28px;
+    height: 28px;
+}
+
+@media (min-width: 768px) {
+    .auth-back-btn svg {
+        width: 32px;
+        height: 32px;
+    }
+}

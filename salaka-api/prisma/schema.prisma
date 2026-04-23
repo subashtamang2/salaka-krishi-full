@@ -1,0 +1,573 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+  moduleFormat = "cjs"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+    id              String  @id @default(uuid())
+    email           String
+    firstName       String
+    lastName       String?
+    password        String?
+    profileUrl      String?
+    isGoogleLogin   Boolean @default(false)
+    isFacebookLogin Boolean @default(false)
+    role            ROLE    @default(User)
+    status    USER_STATUS @default(Active)
+    createdAt DateTime    @default(now())
+    updatedAt DateTime    @updatedAt
+
+    //admin relation
+    blogs          Blog[]
+    categories     Category[]
+    products       Product[]
+    coupons        CouponCode[] @relation("CouponCreatedBy")
+    updatedCoupons CouponCode[] @relation("CouponUpdatedBy")
+
+   siteInfoCreated    SiteInfo[]      @relation("SiteInfoCreatedBy")
+    updatedSiteInfo    SiteInfo[]      @relation("SiteInfoUpdatedBy")
+
+   // banner relation (for Black Friday / promotional banners)
+    banners        Banner[]
+
+    // one to one relations
+    ShippingDetails ShippingDetails?
+    Wishlists       Wishlist?
+    Cart            Cart?
+    faqs            FAQ[]
+    clientReviews   ClientReview[]
+    overallReviews      OverallReview[]
+    //                one to many relations
+    comments        Comment[]
+    Reviews         Reviews[]
+
+    // many to many relations
+    couponCodes        UseCouponCode[]
+    staticPagesCreated StaticPage[]    @relation("StaticPageCreatedBy")
+    staticPagesUpdated StaticPage[]    @relation("StaticPageUpdatedBy")
+
+    // Order relations
+    orders             Order[]
+}
+
+
+
+
+model SiteInfo {
+    id  String @id @default(uuid())
+    key String @unique @default("SITE_INFO")
+
+    name             String
+    logoUrl          String
+    keywords         String[]
+    description      String
+    email            String
+    phone            String
+    address          String?
+    socialMediaLinks Json?
+
+    createdBy String
+    user      User   @relation("SiteInfoCreatedBy", fields: [createdBy], references: [id])
+
+    updatedById String?
+    updatedBy   User?   @relation("SiteInfoUpdatedBy", fields: [updatedById], references: [id])
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+
+
+enum USER_STATUS {
+    Active
+    Inactive
+    Suspended
+    Revoke
+    Unverified
+}
+
+enum FAQ_CATEGORY {
+    Shipping
+    Order
+    Returns
+    Products
+}
+
+
+
+model Banner {
+  id          String   @id @default(uuid())
+  title       String?
+  subtitle    String?
+  description String?
+  slug String @unique @default("")
+  tag         BANNER_TAG?
+  imageUrl    String?
+  product     Product   @relation(fields: [productId], references: [id])
+  productId   String
+  buttonLink  String?
+  startDate   DateTime?
+  endDate     DateTime?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  addedBy     String
+  user        User @relation(fields: [addedBy], references: [id], onDelete: Cascade)
+}
+enum BANNER_TAG {
+  BlackFriday
+  BestSelling
+  LimitedStock
+  NewArrival
+}
+
+
+
+model FAQ {
+    id          String       @id @default(uuid())
+    question    String
+    slug        String       @unique
+    answer      String
+    category    FAQ_CATEGORY @default(Shipping)
+    createdAt   DateTime     @default(now())
+    updatedAt   DateTime     @updatedAt
+    createdById String
+    createdBy   User         @relation(fields: [createdById], references: [id], onDelete: Cascade)
+
+}
+
+
+
+
+
+model ClientReview {
+    id           String   @id @default(uuid())
+    name         String
+    review       String
+    position     String?
+    imageUrl     String?
+    createdAt    DateTime @default(now())
+    updatedAt    DateTime @updatedAt
+    createedById String
+    createedBy   User     @relation(fields: [createedById], references: [id], onDelete: Cascade)
+}
+
+model OverallReview {
+    id           String   @id @default(uuid())
+    name         String
+    email        String
+    rating       Float    @default(0)
+    review       String
+    imageUrl     String?
+    createdAt    DateTime @default(now())
+    updatedAt    DateTime @updatedAt
+    createedById String
+    createedBy   User     @relation(fields: [createedById], references: [id], onDelete: Cascade)
+}
+
+
+
+
+
+
+
+
+model ShippingDetails {
+    id      String @id @default(uuid())
+    userId  String @unique
+    user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+    address String
+    phone   String
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model Wishlist {
+    id     String @id @default(uuid())
+    userId String @unique
+    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    products WishlistProducts[]
+
+    createdAt DateTime @default(now())
+}
+
+model WishlistProducts {
+    id String @id @default(uuid())
+
+    productId String
+    product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+    wishlistId String
+    wishlist   Wishlist @relation(fields: [wishlistId], references: [id], onDelete: Cascade)
+
+    createdAt DateTime @default(now())
+
+    @@unique([wishlistId, productId]) // Ensure a product can be in a wishlist only once
+}
+
+model Cart {
+    id     String @id @default(uuid())
+    userId String @unique
+    User   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    createdAt DateTime      @default(now())
+    products  CartProduct[]
+}
+
+model CartProduct {
+    id        String   @id @default(uuid())
+    cartId    String
+    productId String
+    quantity  Int      @default(1)
+    createdAt DateTime @default(now())
+
+    cart    Cart    @relation(fields: [cartId], references: [id], onDelete: Cascade)
+    product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+    @@unique([cartId, productId]) // Ensure a product can be in a cart only once
+}
+
+model Product {
+    id                 String         @id @default(uuid())
+    name               String
+    slug               String         @unique
+    description        String
+    price              Float
+    imageUrls          String[]
+    rating             Float?         @default(0)
+    availability       AVAILABILITY   @default(InStock)
+    //                 flags
+    isLimitedStock          Boolean?       @default(false)
+    isFeatured         Boolean?       @default(false)
+    isBlackFriday      Boolean?       @default(false)
+    // stock and sale tracking
+    stock              Int            @default(0)
+    sold               Int            @default(0)
+    status             PRODUCT_STATUS @default(Active)
+    // Discount related fields
+    discountPercentage Int?           @default(0)
+    discountStartDate  DateTime?
+    discountEndDate    DateTime?
+    // Tags and keywords
+    tags               String[]
+
+    estimatedDeliveryMinDays Int @default(2)
+    estimatedDeliveryMaxDays Int @default(3)
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    wishlist WishlistProducts[]
+    cart     CartProduct[]
+    reviews  Reviews[]
+
+    // one to one relations
+    categoryId String
+    addedBy    String
+    category   Category @relation(fields: [categoryId], references: [id])
+    user       User     @relation(fields: [addedBy], references: [id])
+    banners Banner[]
+    orderItems OrderItem[]
+}
+
+model Reviews {
+    id        String   @id @default(uuid())
+    rating    Float    @default(0)
+    comment   String?
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    userId String
+    User   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    productId String
+    Product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+    // @@unique([userId, productId]) // Ensure a user can review a product only once
+}
+
+model HeroBanner {
+  id          String   @id @default(uuid())
+  tagLine     String?
+  title       String
+  imageUrl    String
+  order       Int      @default(0)
+  isActive    Boolean  @default(true)
+
+  // category relation
+  categoryId  String
+  category    Category @relation(fields: [categoryId], references: [id])
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+
+
+enum AVAILABILITY {
+    OutOfStock
+    InStock
+    PreOrder
+}
+enum PRODUCT_STATUS {
+    Active
+    Inactive
+}
+
+model Category {
+    id        String          @id @default(uuid())
+    name      String
+    slug      String          @unique
+    imageUrl  String?
+    status    CATEGORY_STATUS @default(Active)
+    createdAt DateTime        @default(now())
+    updatedAt DateTime        @updatedAt
+
+    products Product[]
+    heroBanners HeroBanner[]
+    userId String
+    user   User   @relation(fields: [userId], references: [id])
+    blogs    Blog[]
+}
+
+enum CATEGORY_STATUS {
+    Active
+    Inactive
+}
+
+model CouponCode {
+    id                String      @id @default(uuid())
+    code              String      @unique
+    discount          Float
+    type              COUPON_TYPE @default(Percentage)
+    startDate         DateTime
+    expiryDate        DateTime?
+    minPurchaseAmount Float?      @default(0)
+    maxDiscountAmount Float?      @default(0)
+    usageCount        Int         @default(0)
+    maxUsageLimit     Int?        @default(5)
+
+    userId    String
+    createdBy User   @relation("CouponCreatedBy", fields: [userId], references: [id])
+
+    updatedById String?
+    updatedBy   User?   @relation("CouponUpdatedBy", fields: [updatedById], references: [id])
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    Users UseCouponCode[]
+}
+
+enum COUPON_TYPE {
+    Percentage
+    FixedAmount
+}
+
+model UseCouponCode {
+    id           String   @id @default(uuid())
+    userId       String
+    couponCodeId String
+    createdAt    DateTime @default(now())
+
+    User       User       @relation(fields: [userId], references: [id])
+    couponCode CouponCode @relation(fields: [couponCodeId], references: [id])
+
+    @@unique([userId, couponCodeId]) // Ensure a user can use a coupon code only once
+}
+
+model Blog {
+    id          String   @id @default(uuid())
+    title       String
+    slug        String   @unique
+    shortDesc   String?
+    content     String
+    imageUrl    String?
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+    isPublished Boolean  @default(false)
+    comment  Comment[]
+    authorId String?
+    author   User?     @relation(fields: [authorId], references: [id])
+
+    keywords String[]
+
+    categoryId String?
+    category   Category? @relation(fields: [categoryId], references: [id])
+}
+
+model Comment {
+    id        String   @id @default(uuid())
+    name      String?
+    email     String?
+    comment   String
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    userId String?
+    user   User?   @relation(fields: [userId], references: [id])
+
+    blogId String
+    blog   Blog   @relation(fields: [blogId], references: [id], onDelete: Cascade)
+}
+enum ROLE {
+    User
+    Admin
+    SuperAdmin
+}
+model Contact {
+    id        String   @id @default(uuid())
+    name      String
+    email     String
+    address   String?
+    phone     String?
+    subject   String
+    message   String
+    status    STATUS?  @default(Pending)
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+enum STATUS {
+    Pending
+    InProgress
+    Completed
+    Cancelled
+    Resolved
+}
+model Newsletter {
+    id        String           @id @default(uuid())
+    email     String           @unique
+    status    NewsletterStatus @default(Subscribed)
+    createdAt DateTime         @default(now())
+    updatedAt DateTime         @updatedAt
+}
+
+enum NewsletterStatus {
+    Subscribed
+    Unsubscribed
+}
+model StaticPage {
+    id          String          @id @default(uuid())
+    key         STATIC_PAGE_KEY @unique @default(TermsAndConditions)
+    content     String
+    createdAt   DateTime        @default(now())
+    updatedAt   DateTime        @updatedAt
+    createdBy   String
+    user        User            @relation("StaticPageCreatedBy", fields: [createdBy], references: [id])
+    updatedById String?
+    updatedBy   User?           @relation("StaticPageUpdatedBy", fields: [updatedById], references: [id])
+}
+
+enum STATIC_PAGE_KEY {
+    TermsAndConditions
+    PrivacyPolicy
+}
+model Gallery {
+  id          String   @id @default(uuid())
+  imageUrl    String
+  title       String?        // optional
+  altText     String?        // optional, SEO
+  isPublished Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Order {
+    id              String      @id @default(uuid())
+    orderNumber     String      @unique // e.g., ORD-2026-001
+
+    // Customer Info
+    userId          String
+    user            User        @relation(fields: [userId], references: [id])
+
+    // Shipping Info
+    fullName        String
+    address         String
+    phoneNumber     String
+
+    // Financials
+    subTotal        Float
+    discount        Float       @default(0)
+    total           Float
+
+    // Payment & Status
+    paymentMethod   String      @default("CashOnDelivery")
+    paymentStatus   PAYMENT_STATUS @default(Pending)
+    orderStatus     ORDER_STATUS   @default(Pending)
+
+    appliedCoupon   String?     // Store coupon code to apply usage after payment success
+    
+    isRefundPending   Boolean?    @default(false)
+    isArchived        Boolean     @default(false)
+    cashCollected     Boolean     @default(false)
+
+    // Items
+    items           OrderItem[]
+    cancellations   OrderCancellation[]
+
+    createdAt       DateTime    @default(now())
+    updatedAt       DateTime    @updatedAt
+
+    @@index([orderStatus])
+    @@index([paymentStatus])
+    @@index([paymentMethod])
+    @@index([createdAt])
+    @@index([orderStatus, paymentStatus])
+}
+
+model OrderItem {
+    id          String   @id @default(uuid())
+    orderId     String
+    order       Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+    productId   String
+    product     Product  @relation(fields: [productId], references: [id])
+
+    name        String   // Snapshot of name at time of order
+    price       Float    // Snapshot of price at time of order
+    quantity    Int
+
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+}
+
+enum PAYMENT_STATUS {
+    Pending
+    Paid
+    Failed
+    Refunded
+}
+
+enum ORDER_STATUS {
+    Pending
+    Processing
+    Shipped
+    Delivered
+    Cancelled
+    Returned
+}
+
+model OrderCancellation {
+    id          String   @id @default(uuid())
+    orderId     String
+    order       Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+    
+    reason      String
+    cancelledBy String   // "user", "admin", "system"
+    note        String?
+    
+    createdAt   DateTime @default(now())
+}
