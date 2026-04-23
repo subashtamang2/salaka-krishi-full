@@ -90,6 +90,7 @@ export default function OrderCart({ product }: CartProps) {
 
     return (
         <Flex
+
             px={3}
             py={4}
             gap={4}
@@ -99,14 +100,10 @@ export default function OrderCart({ product }: CartProps) {
             _last={{ borderBottomWidth: 0 }}
         >
             <Flex
-                width="80px"
-                height="80px"
-                borderRadius={"14px"}
-                borderWidth={1}
+                width="150px"
+                height="150px"
                 overflow={"hidden"}
-                borderColor={"background.300"}
-                flexShrink={0}
-            >
+                flexShrink={0}>
                 <Image
                     src={getImageSrc(currentProduct?.imageUrls?.[0])}
                     alt={currentProduct?.name}
@@ -116,11 +113,20 @@ export default function OrderCart({ product }: CartProps) {
                     objectPosition={"center"} />
             </Flex>
 
-            <Flex flexDir="column" gap={1} flex={1}>
-                <Text fontWeight="600" fontSize="md" color="primary.400" lineClamp={1}>
+            <Flex
+                flexDir="column"
+                gap={1}
+                flex={1}>
+                <Text
+                    fontWeight="600"
+                    fontSize="md"
+                    color="primary.300"
+                    lineClamp={1}>
                     {currentProduct?.name}
                 </Text>
-                <Flex justifyContent="space-between" alignItems="center">
+                <Flex
+                    justifyContent="space-between"
+                    alignItems="center">
                     <Grid
                         borderWidth={1}
                         borderColor={"primary.300"}
@@ -168,7 +174,7 @@ export default function OrderCart({ product }: CartProps) {
                             onClick={() => handleQuantityChange(value + 1)}>+</Button>
 
                     </Grid>
-                    <Text fontWeight="600" fontSize="sm" color="primary.100">
+                    <Text fontWeight="600" fontSize="sm" color="primary.300">
                         {formatPrice(displayPrice)}
                     </Text>
                 </Flex>
