@@ -1,0 +1,23 @@
+import Grid from '@mui/material/Grid2';
+import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
+import AuthWrapper from 'views/authentication/components/AuthWrapper';
+import AuthLogin from 'views/authentication/components/AuthLogin';
+
+
+export default function Login() {
+    return (
+        <AuthWrapper>
+            <Grid container spacing={3}>
+                <Grid size={12}>
+                    <Stack direction="row" sx={{ justifyContent: 'space-between', alignItems: 'baseline', mb: { xs: -0.5, sm: 0.5 } }}>
+                        <Typography variant="h3" textAlign={"center"}>Salaka Krishi CMS</Typography>
+                    </Stack>
+                </Grid>
+                <Grid size={12}>
+                    <AuthLogin />
+                </Grid>
+            </Grid>
+        </AuthWrapper>
+    );
+}

@@ -1,0 +1,24 @@
+{
+    "prisma-smart-formatter.typescript.defaultFormatter": "hb432.prettier-eslint-typescript",
+    "prisma-smart-formatter.typescriptreact.defaultFormatter": "vscode.typescript-language-features",
+    "workbench.colorCustomizations": {
+        "activityBar.activeBackground": "#5d52d3",
+        "activityBar.background": "#5d52d3",
+        "activityBar.foreground": "#e7e7e7",
+        "activityBar.inactiveForeground": "#e7e7e799",
+        "activityBarBadge.background": "#66201a",
+        "activityBarBadge.foreground": "#e7e7e7",
+        "commandCenter.border": "#e7e7e799",
+        "sash.hoverBorder": "#5d52d3",
+        "statusBar.background": "#3d31c1",
+        "statusBar.foreground": "#e7e7e7",
+        "statusBarItem.hoverBackground": "#5d52d3",
+        "statusBarItem.remoteBackground": "#3d31c1",
+        "statusBarItem.remoteForeground": "#e7e7e7",
+        "titleBar.activeBackground": "#3d31c1",
+        "titleBar.activeForeground": "#e7e7e7",
+        "titleBar.inactiveBackground": "#3d31c199",
+        "titleBar.inactiveForeground": "#e7e7e799"
+    },
+    "peacock.color": "#3d31c1"
+}

@@ -1,0 +1,62 @@
+services:
+  # Database
+  db:
+    image: postgres:15-alpine
+    container_name: salaka-db
+    restart: always
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: salaka_api
+    ports:
+      - "5434:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+  # Backend API
+  backend:
+    build:
+      context: ./salaka-api
+      dockerfile: Dockerfile
+    container_name: salaka-backend
+    restart: always
+    environment:
+      - DATABASE_URL=postgresql://admin:admin@db:5432/salaka_api
+      - APP_PORT=8000
+      - JWT_SECRET=SalakaApiSecretKey!@$%&ksdhjflkashdf
+    ports:
+      - "8001:8000"
+    depends_on:
+      - db
+
+  # Frontend (Customer)
+  frontend:
+    build:
+      context: ./salaka-krishi
+      dockerfile: Dockerfile
+      args:
+        - VITE_BACKEND_ENDPOINT=http://localhost:8001
+        - VITE_IMAGE_BASE_URL=http://localhost:8001/uploads
+    container_name: salaka-frontend
+    restart: always
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
+
+  # Dashboard (Admin)
+  dashboard:
+    build:
+      context: ./salaka-krishi-dashboard
+      dockerfile: Dockerfile
+    container_name: salaka-dashboard
+    restart: always
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8001/api
+    ports:
+      - "3001:3000"
+    depends_on:
+      - backend
+
+volumes:
+  db_data:

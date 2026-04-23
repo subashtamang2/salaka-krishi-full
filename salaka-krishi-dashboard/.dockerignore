@@ -1,0 +1,10 @@
+node_modules
+.next
+dist
+.git
+.npm
+.pnpm-store
+*.log
+.env
+.env.local
+.env.*.local

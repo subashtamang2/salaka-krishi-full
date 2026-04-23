@@ -1,0 +1,9 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap');
+
+.css-13ddxbb>*+* {
+    margin: 0 !important;
+}
+
+input[type='number']::-webkit-inner-spin-button {
+    margin-left: 5px;
+}
