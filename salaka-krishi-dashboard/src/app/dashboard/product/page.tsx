@@ -140,7 +140,7 @@ export default function ProductsPage() {
     const totalCount = responseData?.totalCount ?? products.length ?? 0;
     const categories = categoriesRes?.data || categoriesRes || [];
 
-    const baseUrl = process.env.NEXT_PUBLIC_IMAGE_BASE_URL || process.env.NEXT_PUBLIC_BACKEND_URL;
+    const baseUrl = process.env.NEXT_PUBLIC_IMAGE_BASE_URL || `${process.env.NEXT_PUBLIC_BACKEND_URL}/uploads`;
 
     return (
         <>
@@ -245,7 +245,7 @@ export default function ProductsPage() {
                                 const imgSrc = product.imageUrls?.[0]
                                     ? product.imageUrls[0].startsWith("http")
                                         ? product.imageUrls[0]
-                                        : `${baseUrl}/uploads/${product.imageUrls[0]}`
+                                        : `${baseUrl}/${product.imageUrls[0]}`
                                     : undefined;
 
                                 return (

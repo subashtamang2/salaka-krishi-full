@@ -71,7 +71,7 @@ function CodDeliveryConfirmModal({ open, onYes, onNo, onCancel, loading }: CodCo
     return (
         <Dialog open={open} onClose={onCancel} maxWidth="xs" fullWidth>
             <DialogTitle sx={{ fontWeight: 700, pb: 1 }}>
-                💰 Confirm Payment Collection
+                Confirm Payment Collection
             </DialogTitle>
             <DialogContent sx={{ pt: 0 }}>
                 <DialogContentText sx={{ fontSize: "0.95rem", color: "text.primary" }}>
@@ -193,11 +193,11 @@ function StatusDropdown({ orderId, currentStatus, paymentStatus, paymentMethod }
 
     if (isCancelled) {
         return (
-            <Chip 
-                label="🔴 Cancelled" 
-                color="error" 
-                size="small" 
-                sx={{ borderRadius: "6px", fontWeight: 700, minWidth: 140 }} 
+            <Chip
+                label="Cancelled"
+                color="error"
+                size="small"
+                sx={{ borderRadius: "6px", fontWeight: 700, minWidth: 140 }}
             />
         );
     }
@@ -240,7 +240,7 @@ function StatusDropdown({ orderId, currentStatus, paymentStatus, paymentMethod }
 }
 
 
-// --------------- Confirmation Dialog ---------------
+
 interface ConfirmDialogProps {
     open: boolean;
     type: string;
@@ -273,7 +273,7 @@ function ConfirmActionDialog({ open, type, onClose, onConfirm, title, descriptio
             <DialogTitle sx={{ fontWeight: 700 }}>{title}</DialogTitle>
             <DialogContent>
                 <DialogContentText>{description}</DialogContentText>
-                
+
                 {type === "cancel" && (
                     <Box mt={3} display="flex" flexDirection="column" gap={2}>
                         <FormControl fullWidth size="small">
@@ -419,10 +419,20 @@ export default function OrdersPage() {
 
     return (
         <>
-            <ToastContainer position="top-right" autoClose={3000} />
+            <ToastContainer
+                position="top-right"
+                autoClose={3000} />
             <Box mb={3}>
-                <Typography variant="h4" fontWeight={700}>Order Management</Typography>
-                <Typography variant="body2" color="text.secondary">Monitor and process all customer orders.</Typography>
+                <Typography
+                    variant="h4"
+                    fontWeight={700}>
+                    Order Management
+                </Typography>
+                <Typography
+                    variant="body2"
+                    color="text.secondary">
+                    Monitor and process all customer orders.
+                </Typography>
             </Box>
 
             {/* Filter Bar */}
@@ -503,114 +513,122 @@ export default function OrdersPage() {
                             {orders.map((order: any) => {
                                 const canArchive = order.orderStatus === "Delivered" || order.orderStatus === "Cancelled";
                                 return (
-                                <TableRow
-                                    hover
-                                    key={order.id}
-                                    sx={{ "&:hover": { bgcolor: alpha(theme.palette.primary.main, 0.02) + " !important" }, transition: "background-color 0.2s" }}
-                                >
-                                    <TableCell>
-                                        <Link
-                                            component="button"
-                                            variant="body2"
-                                            fontWeight={700}
-                                            color="primary"
-                                            onClick={() => router.push(`/dashboard/orders/${order.id}`)}
-                                            sx={{ textDecoration: "none", "&:hover": { textDecoration: "underline" } }}
-                                        >
-                                            #{order.orderNumber}
-                                        </Link>
-                                    </TableCell>
-                                    <TableCell>
-                                        <Typography variant="body2" fontWeight={600}>{order.fullName}</Typography>
-                                        <Typography variant="caption" color="text.secondary">{order.phoneNumber}</Typography>
-                                    </TableCell>
-                                    <TableCell align="center">
-                                        <Chip label={`${order.items?.length || 0} items`} size="small" variant="combined" color="primary" sx={{ fontWeight: 600, fontSize: "0.75rem" }} />
-                                    </TableCell>
-                                    <TableCell align="right">
-                                        <Typography variant="body2" fontWeight={700}>Rs. {order.total?.toLocaleString()}</Typography>
-                                    </TableCell>
-                                    <TableCell>
-                                        <Stack spacing={0.3}>
+                                    <TableRow
+                                        hover
+                                        key={order.id}
+                                        sx={{ "&:hover": { bgcolor: alpha(theme.palette.primary.main, 0.02) + " !important" }, transition: "background-color 0.2s" }}
+                                    >
+                                        <TableCell>
+                                            <Link
+                                                component="button"
+                                                variant="body2"
+                                                fontWeight={700}
+                                                color="primary"
+                                                onClick={() => router.push(`/dashboard/orders/${order.id}`)}
+                                                sx={{ textDecoration: "none", "&:hover": { textDecoration: "underline" } }}
+                                            >
+                                                #{order.orderNumber}
+                                            </Link>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Typography variant="body2" fontWeight={600}>{order.fullName}</Typography>
+                                            <Typography variant="caption" color="text.secondary">{order.phoneNumber}</Typography>
+                                        </TableCell>
+                                        <TableCell align="center">
+                                            <Chip label={`${order.items?.length || 0} items`} size="small" variant="combined" color="primary" sx={{ fontWeight: 600, fontSize: "0.75rem" }} />
+                                        </TableCell>
+                                        <TableCell align="right">
+                                            <Typography variant="body2" fontWeight={700}>Rs. {order.total?.toLocaleString()}</Typography>
+                                        </TableCell>
+                                        <TableCell>
                                             <Typography variant="body2" fontWeight={600}>
-                                                {isCOD(order.paymentMethod) ? "COD" : order.paymentMethod}
+                                                {isCOD(order.paymentMethod) ? "Cash on Delivery" : order.paymentMethod}
                                             </Typography>
-                                            <Typography variant="caption" color="text.secondary" sx={{ fontSize: "0.7rem" }}>
-                                                {isCOD(order.paymentMethod) ? "Cash on Delivery" : "Online Payment"}
-                                            </Typography>
-                                        </Stack>
-                                    </TableCell>
-                                    <TableCell align="center">
-                                        <Chip
-                                            label={order.paymentStatus}
-                                            size="small"
-                                            color={getPaymentStatusColor(order.paymentStatus) as any}
-                                            variant="light"
-                                            sx={{ borderRadius: "6px", fontWeight: 700, minWidth: 75 }}
-                                        />
-                                    </TableCell>
-                                    <TableCell align="center">
-                                        <Stack direction="row" spacing={1} alignItems="center" justifyContent="center">
-                                            <StatusDropdown
-                                                orderId={order.id}
-                                                currentStatus={order.orderStatus}
-                                                paymentStatus={order.paymentStatus}
-                                                paymentMethod={order.paymentMethod}
+                                        </TableCell>
+                                        <TableCell align="center">
+                                            <Chip
+                                                label={order.paymentStatus}
+                                                size="small"
+                                                color={getPaymentStatusColor(order.paymentStatus) as any}
+                                                variant="light"
+                                                sx={{ borderRadius: "6px", fontWeight: 700, minWidth: 75 }}
                                             />
-                                            {(order.orderStatus === "Cancelled" || order.orderStatus === "Delivered") && (
-                                                <Tooltip title="Reopen Order">
-                                                    <IconButton
-                                                        size="small"
-                                                        color="success"
-                                                        onClick={() => handleAction("reopen", order)}
-                                                        sx={{ bgcolor: alpha(theme.palette.success.main, 0.1) }}
-                                                    >
-                                                        <Refresh2 size={16} />
-                                                    </IconButton>
+                                        </TableCell>
+                                        <TableCell align="center">
+                                            <Stack direction="row" spacing={1} alignItems="center" justifyContent="center">
+                                                <StatusDropdown
+                                                    orderId={order.id}
+                                                    currentStatus={order.orderStatus}
+                                                    paymentStatus={order.paymentStatus}
+                                                    paymentMethod={order.paymentMethod}
+                                                />
+                                                {(order.orderStatus === "Cancelled" || order.orderStatus === "Delivered") && order.paymentStatus !== "Failed" && (
+                                                    <Tooltip title="Reopen Order">
+                                                        <IconButton
+                                                            size="small"
+                                                            color="success"
+                                                            onClick={() => handleAction("reopen", order)}
+                                                            sx={{ bgcolor: alpha(theme.palette.success.main, 0.1) }}
+                                                        >
+                                                            <Refresh2 size={16} />
+                                                        </IconButton>
+                                                    </Tooltip>
+                                                )}
+                                            </Stack>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Typography variant="caption" color="text.secondary" sx={{ display: "block", whiteSpace: "nowrap" }}>
+                                                {format(new Date(order.createdAt), "MMM dd, yyyy")}
+                                            </Typography>
+                                            <Typography variant="caption" color="text.secondary" sx={{ opacity: 0.7 }}>
+                                                {format(new Date(order.createdAt), "hh:mm a")}
+                                            </Typography>
+                                        </TableCell>
+                                        <TableCell align="center">
+                                            <Stack
+                                                direction="row"
+                                                spacing={0.5}
+                                                justifyContent="center">
+                                                {order.orderStatus !== "Cancelled" && order.orderStatus !== "Delivered" && (
+                                                    <Tooltip title="Cancel Order">
+                                                        <Button
+                                                            color="error"
+                                                            size="small"
+                                                            variant="text"
+                                                            sx={{
+                                                                px: 1,
+                                                                minWidth: "auto",
+                                                                fontSize: "0.75rem",
+                                                                fontWeight: 700
+                                                            }}
+                                                            onClick={() => handleAction("cancel", order)}
+                                                        >
+                                                            Cancel
+                                                        </Button>
+                                                    </Tooltip>
+                                                )}
+                                                <Tooltip title={canArchive ? "Archive" : "Only completed or cancelled orders can be archived"}>
+                                                    <span>
+                                                        <Button
+                                                            color="warning"
+                                                            size="small"
+                                                            variant="text"
+                                                            sx={{
+                                                                px: 1,
+                                                                minWidth: "auto",
+                                                                fontSize: "0.75rem",
+                                                                fontWeight: 700
+                                                            }}
+                                                            onClick={() => handleAction("archive", order)}
+                                                            disabled={!canArchive}
+                                                        >
+                                                            Archive
+                                                        </Button>
+                                                    </span>
                                                 </Tooltip>
-                                            )}
-                                        </Stack>
-                                    </TableCell>
-                                    <TableCell>
-                                        <Typography variant="caption" color="text.secondary" sx={{ display: "block", whiteSpace: "nowrap" }}>
-                                            {format(new Date(order.createdAt), "MMM dd, yyyy")}
-                                        </Typography>
-                                        <Typography variant="caption" color="text.secondary" sx={{ opacity: 0.7 }}>
-                                            {format(new Date(order.createdAt), "hh:mm a")}
-                                        </Typography>
-                                    </TableCell>
-                                    <TableCell align="center">
-                                        <Stack direction="row" spacing={0.5} justifyContent="center">
-                                            {order.orderStatus !== "Cancelled" && order.orderStatus !== "Delivered" && (
-                                                <Tooltip title="Cancel Order">
-                                                    <Button 
-                                                        color="error" 
-                                                        size="small" 
-                                                        variant="text" 
-                                                        sx={{ px: 1, minWidth: "auto", fontSize: "0.75rem", fontWeight: 700 }} 
-                                                        onClick={() => handleAction("cancel", order)}
-                                                    >
-                                                        Cancel
-                                                    </Button>
-                                                </Tooltip>
-                                            )}
-                                            <Tooltip title={canArchive ? "Archive" : "Only completed or cancelled orders can be archived"}>
-                                                <span>
-                                                    <Button 
-                                                        color="warning" 
-                                                        size="small" 
-                                                        variant="text" 
-                                                        sx={{ px: 1, minWidth: "auto", fontSize: "0.75rem", fontWeight: 700 }} 
-                                                        onClick={() => handleAction("archive", order)}
-                                                        disabled={!canArchive}
-                                                    >
-                                                        Archive
-                                                    </Button>
-                                                </span>
-                                            </Tooltip>
-                                        </Stack>
-                                    </TableCell>
-                                </TableRow>
+                                            </Stack>
+                                        </TableCell>
+                                    </TableRow>
                                 );
                             })}
                         </TableBody>

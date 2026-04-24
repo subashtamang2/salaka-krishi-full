@@ -1,5 +1,4 @@
 import {
-    Box,
     Button,
     createListCollection,
     Field,
@@ -211,11 +210,8 @@ export default function ShippingDetails({
                             <Input
 
                                 variant="subtle"
-                                placeholder="Enter your full name"
                                 readOnly={isReadOnly}
-                                focusRing="none"
-                                _focus={{ borderColor: isReadOnly ? "border.100/30" : "background.300/70" }}
-                                _hover={{ borderColor: isReadOnly ? "border.100/30" : "background.300/70" }}
+                                placeholder="Enter your full name"
                                 {...register("fullName", {
                                     required: "Full name is required",
                                 })}
@@ -233,12 +229,8 @@ export default function ShippingDetails({
 
                             <Input
                                 variant="subtle"
-
                                 placeholder="Enter your address"
                                 readOnly={isReadOnly}
-                                focusRing="none"
-                                _focus={{ borderColor: isReadOnly ? "border.100/30" : "background.300/70" }}
-                                _hover={{ borderColor: isReadOnly ? "border.100/30" : "background.300/70" }}
                                 {...register("address", {
                                     required: "Address is required",
                                 })}
@@ -262,9 +254,6 @@ export default function ShippingDetails({
 
                                 placeholder="Enter your phone"
                                 readOnly={isReadOnly}
-                                focusRing="none"
-                                _focus={{ borderColor: isReadOnly ? "border.100/30" : "background.300/70" }}
-                                _hover={{ borderColor: isReadOnly ? "border.100/30" : "background.300/70" }}
                                 {...register("phone", {
                                     required: "Phone number is required",
                                     pattern: {
@@ -290,19 +279,15 @@ export default function ShippingDetails({
                                 Payment<Text as="span" color="muted.500"> *</Text>
                             </Select.Label>
                             <Select.Control
-                                borderColor={"border.100/30"}
                                 borderWidth={"1"}
                                 borderRadius={"md"}
                                 _focus={{
-                                    borderWidth: isReadOnly ? "1px" : "2px",
-                                    outline: "none",
-                                    ring: "none",
-                                    borderColor: isReadOnly ? "border.100/30" : "background.300/70",
-                                }}
-                                _hover={{
-                                    borderColor: isReadOnly ? "border.100/30" : "primary.300",
-                                }}
-                            >
+                                    borderWidth: "2px",
+                                    outlineColor: "background.300/70",
+                                    borderColor: "background.300/70",
+                                }}>
+
+                            
                                 <Select.Trigger>
                                     <Select.ValueText
                                         placeholder="Payment"
@@ -355,16 +340,30 @@ export default function ShippingDetails({
 
                     </Grid>
                     {isReadOnly && (
-                        <Switch.Root display="flex" justifyContent="space-between" mb={4}>
+                        <Switch.Root
+                            display="flex"
+                            justifyContent="space-between"
+                            mb={4}>
                             <Switch.HiddenInput />
-                            <Switch.Label fontSize={"xl"} color={"primary.300"} fontWeight={400}>
+                            <Switch.Label
+                                fontSize={"xl"}
+                                color={"primary.300"}
+                                fontWeight={400}>
                                 Save data for future payment
                             </Switch.Label>
                             <Switch.Control _checked={{ bg: "primary.300" }} />
                         </Switch.Root>
                     )}
-                    <Flex justifyContent={{ base: "center", sm: "flex-end" }} width="full" mt={4}>
-                        <Tooltip.Root disabled={!isCartEmpty} positioning={{ placement: "top" }}>
+                    <Flex
+                        justifyContent={{
+                            base: "center",
+                            sm: "flex-end"
+                        }}
+                        width="full"
+                        mt={4}>
+                        <Tooltip.Root
+                            disabled={!isCartEmpty}
+                            positioning={{ placement: "top" }}>
                             <Tooltip.Trigger asChild>
                                 <Button
                                     type="submit"
@@ -385,7 +384,13 @@ export default function ShippingDetails({
                             </Tooltip.Trigger>
                             <Portal>
                                 <Tooltip.Positioner>
-                                    <Tooltip.Content bg="primary.300" color="white" px={4} py={2} borderRadius="md" fontSize="sm">
+                                    <Tooltip.Content
+                                        bg="primary.300"
+                                        color="white"
+                                        px={4}
+                                        py={2}
+                                        borderRadius="md"
+                                        fontSize="sm">
                                         Your cart is empty
                                     </Tooltip.Content>
                                 </Tooltip.Positioner>

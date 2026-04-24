@@ -44,8 +44,7 @@ const validationSchema = yup.object({
         .positive("price must be positive")
         .required("Price is required"),
     files: yup.array()
-        .of(yup.string())
-        .min(1, "At least one image URL is required"),
+        .min(1, "At least one image is required"),
     rating: yup.number()
         .typeError("Rating must be a number")
         .min(0, "Rating cannot be negative")
@@ -98,6 +97,9 @@ const validationSchema = yup.object({
             .trim()
             .required("Tags cannot be empty"))
         .min(1, "At least one tag is required"),
+    categoryId: yup.string()
+        .uuid("Invalid category ID")
+        .required("Category is required"),
 });
 
 export default function Page() {
@@ -148,11 +150,22 @@ export default function Page() {
         validationSchema,
         onSubmit: async (values, { setSubmitting, resetForm }) => {
             setSubmitting(true);
-            const { files, price, rating, sold, stock, discountPercentage, ...rest } = values;
-            let productImages: string[] = [];
+            const { 
+                files, 
+                price, 
+                rating, 
+                sold, 
+                stock, 
+                discountPercentage, 
+                discountStartDate, 
+                discountEndDate,
+                imageUrls: _,
+                addedBy: __,
+                ...rest 
+            } = values;
 
             const uploadedImages = await uploadFiles(files, true);
-            productImages = uploadedImages?.map((file: any) => file?.filename) ?? [];
+            const productImages = uploadedImages?.map((file: any) => file?.filename) ?? [];
 
             const payload = {
                 ...rest,
@@ -162,10 +175,10 @@ export default function Page() {
                 stock: Number(stock),
                 estimatedDeliveryMinDays: Number(rest.estimatedDeliveryMinDays),
                 estimatedDeliveryMaxDays: Number(rest.estimatedDeliveryMaxDays),
-                ...(discountPercentage && { discountPercentage: Number(discountPercentage) }),
-
+                ...(discountPercentage > 0 && { discountPercentage: Number(discountPercentage) }),
+                ...(discountStartDate && { discountStartDate }),
+                ...(discountEndDate && { discountEndDate }),
                 imageUrls: productImages,
-                addedBy: user?.id || "",
             };
             createProductMutation.mutate(payload, {
                 onSuccess: (data) => {

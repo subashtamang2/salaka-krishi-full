@@ -137,6 +137,7 @@ export class CreateProductDto {
 
     @IsDate()
     @IsOptional()
+    @Type(() => Date)
     @ApiProperty({
         example: "2025-6-01T00:00:00.000Z",
     })
@@ -144,6 +145,7 @@ export class CreateProductDto {
 
     @IsDate()
     @IsOptional()
+    @Type(() => Date)
     @ApiProperty({
         example: "2025-10-15T00:00:00.000Z",
     })

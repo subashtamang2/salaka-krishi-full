@@ -110,16 +110,23 @@ export default function OrderVerification() {
                                 fontWeight={700}
                                 as="h4">Your Order</Heading>
 
-                            <Flex gap={4} flexWrap="wrap" justifyContent={{ base: "center", sm: "start" }}>
+                            <Flex gap={10}
+                                flexWrap="wrap"
+                                justifyContent={{
+                                    base: "center",
+                                    sm: "start"
+                                }}>
                                 {products.map((item, index) => (
                                     <Flex
+
                                         key={index}
                                         width={{
                                             base: "100%",
                                             md: "132px"
                                         }}
                                         height={{
-                                            base: "109px"
+                                            base: "200px",
+                                            md: "109px"
                                         }}
                                         aspectRatio={1}
                                         borderRadius={"14px"}
@@ -138,7 +145,8 @@ export default function OrderVerification() {
                                 ))}
                             </Flex>
 
-                            {appliedCoupon && <TokenVerificationInput token={appliedCoupon.code} />}
+                            {appliedCoupon && <TokenVerificationInput
+                                token={appliedCoupon.code} />}
 
                             <Flex flexDir={"column"} mt={4}>
                                 {
@@ -147,6 +155,7 @@ export default function OrderVerification() {
                                         const isTotal = item.label === "Total";
                                         return (
                                             <Flex
+
                                                 key={item.id}
                                                 justifyContent={"space-between"}
                                                 alignItems={"center"}

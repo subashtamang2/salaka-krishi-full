@@ -33,7 +33,6 @@ export default function CartView() {
     });
 
 
-
     if (isLoading) return <ProductRow />;
     if (isError) return <NotFoundSm />;
 
@@ -64,7 +63,8 @@ export default function CartView() {
 
     return (
         <>
-            <CustomContainer py={20}>
+            <CustomContainer
+                py={20}>
                 <Grid
                     gap={{
                         base: 8,
@@ -90,7 +90,8 @@ export default function CartView() {
                             lg: "sticky"
                         }}
                         top={10}
-                        bg={"primary.300/10"} py={10} >
+                        bg={"primary.300/10"}
+                        py={10} >
                         <Flex
                             flexDir={"column"}
                             gap={8}>
@@ -104,7 +105,9 @@ export default function CartView() {
                                 fontWeight={700}
                                 as="h4">Cart Item</Heading>
 
-                            <Flex flexDir="column" gap={2}>
+                            <Flex
+                                flexDir="column"
+                                gap={2}>
                                 {products.map((item, index) => (
                                     <OrderCart key={index} product={item} />
                                 ))}

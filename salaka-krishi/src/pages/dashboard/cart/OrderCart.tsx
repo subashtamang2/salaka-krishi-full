@@ -2,6 +2,7 @@ import {
     Button,
     Flex,
     Grid,
+    Heading,
     Image,
     Text,
 } from "@chakra-ui/react";
@@ -91,124 +92,264 @@ export default function OrderCart({ product }: CartProps) {
     return (
         <Flex
 
-            px={3}
-            py={4}
-            gap={4}
-            alignItems="center"
-            borderBottomWidth={1}
-            borderBottomColor="primary.100/20"
-            _last={{ borderBottomWidth: 0 }}
-        >
-            <Flex
-                width="150px"
-                height="150px"
-                overflow={"hidden"}
-                flexShrink={0}>
-                <Image
-                    src={getImageSrc(currentProduct?.imageUrls?.[0])}
-                    alt={currentProduct?.name}
-                    h={"100%"}
-                    w={"100%"}
-                    objectFit={"cover"}
-                    objectPosition={"center"} />
-            </Flex>
 
+            gap={{
+                base: 3,
+                lg: 4
+            }}
+            flexDir={"column"}>
             <Flex
-                flexDir="column"
-                gap={1}
-                flex={1}>
-                <Text
-                    fontWeight="600"
-                    fontSize="md"
-                    color="primary.300"
-                    lineClamp={1}>
-                    {currentProduct?.name}
-                </Text>
+                flexDir={{
+                    base: "column",
+                    md: "row",
+                }}
+
+                gap={{
+                    base: 1,
+                    md: 3,
+                    xl: 2
+                }}
+                justifyContent={"space-between"}
+                alignItems={{
+                    base: "start",
+                    md: "center"
+                }}>
                 <Flex
-                    justifyContent="space-between"
-                    alignItems="center">
-                    <Grid
-                        borderWidth={1}
-                        borderColor={"primary.300"}
-                        height={10}
-                        templateColumns={"repeat(3, 1fr)"}>
-                        <Button
-                            h={"full"}
-                            w={"full"}
-                            rounded={"none"}
-                            fontWeight={700}
-                            fontSize={{
-                                base: "lg",
-                                xl: "xl"
-                            }}
-                            bg="white"
-                            color="primary.300"
-                            py={0}
-                            px={2}
-                            onClick={() => handleQuantityChange(value - 1)}>-</Button>
-                        <Flex
-                            bg={"secondary.200"}
-                            alignItems={"center"}
-                            justifyContent={"center"}
-                            fontWeight={700}
-                            fontSize={{
-                                base: "lg",
-                                xl: "xl"
-                            }}
-                            color={"primary.300"}>
-                            {value}
-                        </Flex>
-                        <Button
-                            h={"full"}
-                            w={"full"}
-                            rounded={"none"}
-                            bg="white"
-                            color="primary.300"
-                            fontWeight={700}
-                            fontSize={{
-                                base: "lg",
-                                xl: "xl"
-                            }}
-                            py={0}
-                            px={2}
-                            onClick={() => handleQuantityChange(value + 1)}>+</Button>
 
-                    </Grid>
-                    <Text fontWeight="600" fontSize="sm" color="primary.300">
-                        {formatPrice(displayPrice)}
-                    </Text>
+
+                    flex={1}
+                    flexDir={{
+                        base: "column",
+                        sm: "row"
+                    }}
+                    w={{
+                        base: "full",
+                        sm: "fit-content"
+                    }}
+                    alignItems={{
+                        base: "start",
+                        sm: "center"
+                    }}>
+                    <Flex
+                        width={{
+                            base: "100%",
+                            sm: "170px",
+                            lg: "150px",
+                            xl: "150px",
+                            "2xl": "160px",
+                        }}
+                        height={{
+                            base: "240px",
+                            sm: "180px"
+                        }}>
+                        <Image
+                            height={"full"}
+                            width={"full"}
+                            objectPosition={"top"}
+                            objectFit={"cover"}
+                            src={getImageSrc(currentProduct?.imageUrls?.[0])}
+                            alt={currentProduct?.name} />
+                    </Flex>
                 </Flex>
-                <Flex gap={3}>
-                    <Button
-                        variant="plain"
-                        color="primary.300"
-                        size="xs"
-                        p={0}
-                        height="auto"
-                        width="fit-content"
-                        textDecoration="underline"
-                        fontWeight={400}
-                        _hover={{ bg: "none" }}
-                        onClick={handleRemoveFromCart}
-                    >
-                        Remove
-                    </Button>
-                    <Button
-                        variant="plain"
-                        color="primary.300"
-                        size="xs"
-                        p={0}
-                        height="auto"
-                        width="fit-content"
-                        textDecoration="underline"
-                        fontWeight={400}
-                        _hover={{ bg: "none" }}
-                        onClick={handleViewProduct}
-                    >
-                        View
-                    </Button>
+                <Flex
+                    flexDir={"column"}
+                    width={"full"}>
+                    <Flex
+
+                        flex={1}
+                        w={{
+                            base: "full",
+                            sm: "fit-content"
+                        }}
+                        flexDir={{
+                            base: "column",
+                            sm: "row"
+                        }}
+
+
+                        justifyContent={{
+                            base: "center"
+                        }}
+                        alignItems={{
+                            base: "center",
+                            sm: "center"
+                        }}
+                        gap={{
+                            base: 4,
+                            xl: 4,
+                        }}>
+                        <Flex
+
+                            alignItems={{
+                                base: "start",
+                                md: "start",
+                            }}
+                            gap={1}
+
+                            flexDir={"column"}>
+                            <Heading
+                                textAlign={"start"}
+                                fontWeight={500}
+                                fontFamily={"primary"}
+                                color={"primary.300"}
+                                fontSize={{
+                                    base: "xl",
+                                    lg: "xl",
+                                    xl: "2xl"
+                                }}>
+                                {currentProduct?.name}
+                            </Heading>
+                            <Flex
+
+                                justifyContent={"end"}
+                                alignItems={{
+                                    base: "start",
+                                    md: "start",
+                                }}
+                                gap={4}
+
+                                flexDir={"column"}>
+
+                                <Text
+                                    color={"text.1100"}
+                                    fontWeight={400}
+                                    fontSize={"lg"}>Quantity</Text>
+                                <Flex
+
+                                    alignItems={{
+                                        base: "center",
+                                        md: "start"
+                                    }}
+
+                                    flexDir="row"
+                                    gap={{
+                                        base: "2",
+                                        md: "6",
+                                        lg: "2",
+                                        xl: "6",
+                                    }}>
+
+                                    <Grid
+
+                                        borderWidth={1}
+                                        borderColor={"primary.300"}
+                                        height={10}
+                                        templateColumns={"repeat(3, 1fr)"}>
+                                        <Button
+                                            h={"full"}
+                                            w={"full"}
+                                            rounded={"none"}
+                                            fontWeight={700}
+                                            fontSize={{
+                                                base: "xl",
+                                                lg: "xl",
+                                                xl: "2xl"
+                                            }}
+                                            bg="white"
+                                            color="primary.300"
+                                            py={0}
+                                            px={{
+                                                base: "4",
+                                                md: "2",
+                                                lg: "2",
+                                                xl: "2",
+
+                                            }}
+                                            onClick={() => handleQuantityChange(value - 1)}>-</Button>
+                                        <Flex
+                                            bg={"secondary.200"}
+
+                                            alignItems={"center"}
+                                            justifyContent={"center"}
+                                            fontWeight={700}
+                                            fontSize={{
+                                                base: "xl",
+                                                xl: "2xl"
+                                            }}
+
+                                            color={"primary.300"}>
+                                            {value}
+                                        </Flex>
+                                        <Button
+                                            h={"full"}
+                                            w={"full"}
+                                            rounded={"none"}
+                                            bg="white"
+                                            color="primary.300"
+                                            fontWeight={700}
+                                            fontSize={{
+                                                base: "xl",
+                                                lg: "xl",
+                                                xl: "2xl"
+                                            }}
+
+                                            py={0}
+                                            px={{
+                                                base: "4",
+                                                md: "2",
+                                                lg: "2",
+                                                xl: "2",
+
+                                            }}
+                                            onClick={() => handleQuantityChange(value + 1)}>+</Button>
+
+                                    </Grid>
+                                    <Text
+                                        fontWeight={500}
+                                        color={"primary.300"}
+                                        whiteSpace="nowrap"
+                                        flexShrink={0}
+                                        fontSize={{
+                                            base: "xl",
+                                            lg: "xl",
+                                            xl: "2xl"
+                                        }}
+                                    >{formatPrice(displayPrice)}</Text>
+                                </Flex>
+                                <Flex
+                                    gap={3}>
+                                    <Button
+                                        textDecoration={"underline"}
+                                        px="0"
+                                        py="0"
+                                        bg="none"
+                                        height={"fit-content"}
+                                        fontSize={"md"}
+                                        color={"primary.300"}
+                                        fontWeight={400}
+                                        _hover={{
+                                            bg: "none",
+                                        }}
+                                        _focus={{
+                                            bg: "none",
+                                        }}
+                                        onClick={handleRemoveFromCart}
+                                    >Remove
+                                    </Button>
+                                    <Button
+                                        textDecoration={"underline"}
+                                        px="0"
+                                        py="0"
+                                        bg="none"
+                                        height={"fit-content"}
+                                        fontSize={"md"}
+                                        color={"primary.300"}
+                                        fontWeight={400}
+                                        _hover={{
+                                            bg: "none",
+                                        }}
+                                        _focus={{
+                                            bg: "none",
+                                        }}
+                                        onClick={handleViewProduct}
+                                    >View
+                                    </Button>
+                                </Flex>
+                            </Flex>
+                        </Flex>
+                    </Flex>
                 </Flex>
             </Flex>
-        </Flex>
+        </Flex >
     );
 }
