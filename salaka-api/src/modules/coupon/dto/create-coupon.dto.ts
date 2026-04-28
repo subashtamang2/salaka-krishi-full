@@ -10,7 +10,7 @@ import {
   IsOptional,
   IsString,
 } from "class-validator";
-import { COUPON_TYPE } from "generated/prisma/enums";
+import { COUPON_TYPE } from "@prisma/client";
 
 export class CreateCouponDto {
   @IsString()

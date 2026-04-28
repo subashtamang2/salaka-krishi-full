@@ -15,13 +15,14 @@ export class KhaltiService {
       email: string;
       phone: string;
     };
+    returnUrl?: string;
   }) {
     if (!this.secretKey) {
       throw new InternalServerErrorException('Khalti secret key not configured');
     }
 
     const payload = {
-      return_url: process.env.KHALTI_RETURN_URL || `${process.env.CORS_ORIGIN}/khalti-success`,
+      return_url: data.returnUrl || process.env.KHALTI_RETURN_URL || `${process.env.CORS_ORIGIN}/khalti-success`,
       website_url: process.env.CORS_ORIGIN || 'http://localhost:5173',
       amount: Math.round(data.amount * 100), // paisa
       purchase_order_id: data.orderId,
@@ -41,7 +42,13 @@ export class KhaltiService {
 
       const result = await response.json();
       if (!response.ok) {
-        throw new BadRequestException(result.message || 'Khalti initiation failed');
+        console.error('Khalti Initiation Error Payload:', result);
+        // Extract field-specific errors if available
+        const errorMsg = result.error_key === 'validation_error' 
+          ? Object.entries(result).filter(([k]) => k !== 'error_key').map(([k, v]) => `${k}: ${v}`).join(', ')
+          : (result.message || result.detail || 'Khalti initiation failed');
+          
+        throw new BadRequestException(errorMsg);
       }
 
       return result;
@@ -68,13 +75,14 @@ export class KhaltiService {
 
       const result = await response.json();
       if (!response.ok) {
-        throw new BadRequestException(result.message || 'Khalti verification failed');
+        throw new BadRequestException(result.detail || result.message || 'Khalti verification failed');
       }
 
       return {
         success: result.status === 'Completed',
         transaction_id: result.transaction_id,
         amount: result.total_amount / 100, // back to rs
+        status: result.status,
         raw: result
       };
     } catch (error: any) {

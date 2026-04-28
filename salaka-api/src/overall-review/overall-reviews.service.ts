@@ -5,7 +5,7 @@ import {
 } from "@nestjs/common";
 import { OverallReviewsHelper } from "./overall-reviews.helper";
 import { CreateOverallReviewDto } from "./dto/create-overall-review.dto";
-import { JwtPayload } from "src/modules/auth/interface";
+import { JwtPayload } from "../modules/auth/interface";
 import { UpdateOverallReviewDto } from "./dto/update-overall-review.dto";
 
 @Injectable()
@@ -24,9 +24,7 @@ export class OverallReviewsService {
 
   async findAll() {
     const result = await this.overallReviewsHelper.findAll();
-    if (!result || result.length === 0)
-      throw new NotFoundException("Overall  reviews not found");
-    return result;
+    return result || [];
   }
 
   async findOne(id: string) {

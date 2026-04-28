@@ -16,12 +16,12 @@ import {
 import { CategoriesService } from "./categories.service";
 import { CreateCategoryDto } from "./dto/create-category.dto";
 import { UpdateCategoryDto } from "./dto/update-category.dto";
-import { Serializer } from "src/interceptors/serializer.interceptor";
+import { Serializer } from "../../interceptors/serializer.interceptor";
 import { Category } from "./entities/category.entity";
 import { RolesGuard } from "../auth/guards/roles.guard";
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 import { JwtPayload } from "../auth/interface";
-import { ROLE } from "generated/prisma/enums";
+import { ROLE } from "@prisma/client";
 import { Roles } from "../auth/decorators/roles.decorators";
 
 @Controller("categories")

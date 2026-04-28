@@ -13,6 +13,7 @@ import MilkCategorySection from "@src/components/common/MilkCategorySection";
 import DealShowCaseCard from "@src/components/cards/DealShowCaseCard";
 import ReviewFormModal from "@src/components/cards/review/ReviewFormModel";
 import { getBannersByTag } from "@src/api/banner";
+import { useSearchParams } from "react-router";
 import { getQueryFilterProducts } from "@src/api/products";
 import type { ProductSchema } from "@src/schema/product";
 import type { DataWrapper } from "@src/schema/schema";
@@ -27,11 +28,21 @@ export default function Dairy() {
     const navigateToProductDetails = useNavigateToProductDetails();
     const baseImageUrl = import.meta.env.VITE_IMAGE_BASE_URL;
 
+    const [searchParams] = useSearchParams();
+    const filters: any = {};
+    ["categories", "availability", "search"].forEach(key => {
+        const val = searchParams.get(key);
+        if (val) filters[key] = val.split(",");
+    });
+
     // Fetch Milk Products
     const { data: productsResponse, isLoading: productsLoading } = useQuery<DataWrapper<ProductSchema[]>>({
-        queryKey: ["products", "milk"],
+        queryKey: ["products", "milk", searchParams.toString()],
         queryFn: async () => {
-            const res = await getQueryFilterProducts({ categories: ["milk", "dairy", "khuwa"] });
+            const res = await getQueryFilterProducts({
+                ...filters,
+                categories: filters.categories?.length ? filters.categories : ["milk", "dairy", "khuwa"]
+            });
             return res.data;
         }
     });
@@ -105,7 +116,7 @@ export default function Dairy() {
                         }}
                         gap={14}>
                         <ProductReviews
-                            products={milkProducts.slice(0, 5)}
+                            products={milkProducts}
                         />
                     </Grid>
                 </Flex>

@@ -3,9 +3,9 @@ import {
   CreateSiteInfoDto,
   UpsertSocialMediaDto,
 } from "./dto/create-site-info.dto";
-import { PrismaService } from "src/prisma/prisma.service";
+import { PrismaService } from "../../prisma/prisma.service";
 import { instanceToPlain } from "class-transformer";
-import { PRODUCT_STATUS, ROLE } from "generated/prisma/enums";
+import { PRODUCT_STATUS, ROLE } from "@prisma/client";
 
 @Injectable()
 export class SiteInfoService {

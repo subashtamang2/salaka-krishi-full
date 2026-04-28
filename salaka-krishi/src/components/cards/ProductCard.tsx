@@ -20,6 +20,7 @@ import { usePrice } from "@src/hooks/usePrice";
 import { getImageSrc } from "@src/utils/image";
 import { getAccessToken } from "@src/utils/local-storage";
 import { useAuthModalStore } from "@src/store/useAuthModalStore";
+import { isProductNew } from "@src/utils/product";
 
 
 interface ProductProps {
@@ -36,15 +37,10 @@ export default function ProductCard({ product }: ProductProps) {
     const [wishlistStatus, setWishlistStatus] = useState<boolean>(product.isInWishlist ?? false);
     const [cartStatus, setCartStatus] = useState<boolean>(product.isInCart ?? false);
     const { formatPrice } = usePrice();
-    const recentDaysForNewProduct = import.meta.env.VITE_RECENT_DAYS_FOR_NEW_PRODUCT;
+    const recentDaysForNewProduct = Number(import.meta.env.VITE_RECENT_DAYS_FOR_NEW_PRODUCT) || 7;
 
-
-    const dataObj = product?.createdAt ? product.createdAt.split("T")[0] : null;
-
-    const dateParts = dataObj?.split("-")?.[2];
-    const currentDate = new Date();
     const isPreOrder = product.availability === "PreOrder";
-    const isNew = dateParts ? (Number(dateParts) + Number(recentDaysForNewProduct)) >= currentDate.getDate() : false;
+    const isNew = isProductNew(product.createdAt, recentDaysForNewProduct);
 
 
     const productPriceAfterDiscount = product.discountPercentage
@@ -190,8 +186,8 @@ export default function ProductCard({ product }: ProductProps) {
 
                     }}>
                     <Image
-                        src={getImageSrc(product?.imageUrls?.[0])}
-                        alt={product.name}
+                        src={getImageSrc(product?.imageUrls?.[0] || product?.imageUrl)}
+                        alt={product.name || product.title}
                         w="100%"
                         h="100%"
                         objectFit="cover"
@@ -249,7 +245,7 @@ export default function ProductCard({ product }: ProductProps) {
                 <Text fontSize="xl"
                     color={"secondary.100"}
                     fontWeight={400}>
-                    {product?.name}
+                    {product?.name || product?.title}
                 </Text>
                 <Flex gap={6} justifyContent={"space-between"}>
 

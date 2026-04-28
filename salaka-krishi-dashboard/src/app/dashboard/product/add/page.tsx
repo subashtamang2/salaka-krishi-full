@@ -56,8 +56,7 @@ const validationSchema = yup.object({
         .optional(),
     isFeatured: yup.boolean()
         .optional(),
-    isLimitedStock: yup.boolean()
-        .optional(),
+
     status: yup.string()
         .oneOf(Object.values(ProductStatus), "Invalid product status")
         .required("Status is required"),
@@ -106,6 +105,7 @@ export default function Page() {
     const router = useRouter();
     const { user } = userStore();
 
+
     const { data: categoryList, isLoading: isCategoryLoading, error: categoryError } = useQuery<CategoryResponse[]>({
         queryKey: ["categories"],
         queryFn: async () => {
@@ -134,7 +134,7 @@ export default function Page() {
             availability: ProductAvailability.IN_STOCK,
             isBlackFriday: false,
             isFeatured: false,
-            isLimitedStock: false,
+
             stock: 0,
             sold: 0,
             estimatedDeliveryMinDays: 2,
@@ -150,18 +150,17 @@ export default function Page() {
         validationSchema,
         onSubmit: async (values, { setSubmitting, resetForm }) => {
             setSubmitting(true);
-            const { 
-                files, 
-                price, 
-                rating, 
-                sold, 
-                stock, 
-                discountPercentage, 
-                discountStartDate, 
+            const {
+                files,
+                price,
+                rating,
+                sold,
+                stock,
+                discountPercentage,
+                discountStartDate,
                 discountEndDate,
                 imageUrls: _,
-                addedBy: __,
-                ...rest 
+                ...rest
             } = values;
 
             const uploadedImages = await uploadFiles(files, true);
@@ -175,10 +174,11 @@ export default function Page() {
                 stock: Number(stock),
                 estimatedDeliveryMinDays: Number(rest.estimatedDeliveryMinDays),
                 estimatedDeliveryMaxDays: Number(rest.estimatedDeliveryMaxDays),
-                ...(discountPercentage > 0 && { discountPercentage: Number(discountPercentage) }),
-                ...(discountStartDate && { discountStartDate }),
-                ...(discountEndDate && { discountEndDate }),
+                ...(discountPercentage > 0 ? { discountPercentage: Number(discountPercentage) } : {}),
+                ...(discountStartDate ? { discountStartDate } : {}),
+                ...(discountEndDate ? { discountEndDate } : {}),
                 imageUrls: productImages,
+                addedBy: user?.id || "",
             };
             createProductMutation.mutate(payload, {
                 onSuccess: (data) => {
@@ -493,17 +493,7 @@ export default function Page() {
                                             onChange={formik.handleChange} />}
                                         label="Black Friday Product" />
                                 </Grid>
-                                <Grid item xs={12} sm={4} sx={{
-                                    display: "flex",
-                                    alignItems: "center",
-                                }}>
-                                    <FormControlLabel
-                                        control={<Checkbox
-                                            size="small"
-                                            name="isLimitedStock" checked={formik.values.isLimitedStock}
-                                            onChange={formik.handleChange} />}
-                                        label="Limited Stock" />
-                                </Grid>
+
                                 <Grid item xs={12}>
                                     <Stack sx={{ gap: 1 }}>
                                         <InputLabel>Upload Product Images</InputLabel>

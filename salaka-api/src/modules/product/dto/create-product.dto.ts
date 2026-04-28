@@ -13,7 +13,7 @@ import {
     IsArray,
     ArrayMaxSize,
 } from "class-validator";
-import { AVAILABILITY, PRODUCT_STATUS } from "generated/prisma/enums";
+import { AVAILABILITY, PRODUCT_STATUS } from "@prisma/client";
 
 export class CreateProductDto {
     @IsString()
@@ -70,12 +70,7 @@ export class CreateProductDto {
     })
     availability?: AVAILABILITY;
 
-    @IsBoolean()
-    @IsOptional()
-    @ApiProperty({
-        example: true,
-    })
-    isLimitedStock?: boolean;
+
 
     @IsNumber()
     @IsOptional()
@@ -194,6 +189,7 @@ export class FilterProductsDto {
     availability?: string[];
     @IsOptional()
     @IsString()
+    @Transform(({ value }) => (typeof value === "string" ? value.replace(/,/g, " ") : value))
     search?: string;
 
     @IsOptional()

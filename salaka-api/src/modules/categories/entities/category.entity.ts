@@ -1,7 +1,7 @@
 
 import { Exclude, Expose } from "class-transformer";
 import { IsArray, IsDate, IsEnum, IsString, IsUUID } from "class-validator";
-import { CATEGORY_STATUS } from "generated/prisma/enums";
+import { CATEGORY_STATUS } from "@prisma/client";
 export class Category {
   @Expose()
   @IsUUID()

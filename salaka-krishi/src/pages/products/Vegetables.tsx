@@ -7,12 +7,12 @@ import VegetableCategorySection from "@src/components/VegetablecategorySection";
 import DealShowCaseCard from "@src/components/cards/DealShowCaseCard";
 import ReviewFormModal from "@src/components/cards/review/ReviewFormModel";
 import { useState } from "react";
-import { productsData } from "@src/data/Products";
 import useIsVisible from "@src/utils/useIsVisible";
 import { useQuery } from "@tanstack/react-query";
 import type { DataWrapper } from "@src/schema/schema";
 import type { ProductSchema } from "@src/schema/product";
 import type { OverallReviewInterface } from "@src/schema/overallReviews";
+import { useSearchParams } from "react-router";
 import { getQueryFilterProducts } from "@src/api/products";
 import { getOverallReviews } from "@src/api/overallReviews";
 
@@ -54,12 +54,22 @@ export default function Vegetables() {
     const { openModal } = useAuthModalStore();
     const { userDetail } = useUserStore();
 
+    const [searchParams] = useSearchParams();
+    const filters: any = {};
+    ["categories", "availability", "search"].forEach(key => {
+        const val = searchParams.get(key);
+        if (val) filters[key] = val.split(",");
+    });
+
     // 2. Fetch Vegetables Products
     const { data, isLoading, isError } = useQuery<DataWrapper<ProductSchema[]>>({
-        queryKey: ["products", "vegetables"],
+        queryKey: ["products", "vegetables", searchParams.toString()],
         enabled: !!isVisible,
         queryFn: async () => {
-            const res = await getQueryFilterProducts({ categories: ["vegetables"] });
+            const res = await getQueryFilterProducts({
+                ...filters,
+                categories: filters.categories?.length ? filters.categories : ["vegetables"]
+            });
             return res.data;
         },
     });
@@ -98,13 +108,7 @@ export default function Vegetables() {
     };
     const closeReview = () => setIsReviewOpen(false);
 
-    const apiProducts = Array.isArray(data?.data) ? data.data : (data?.data as any)?.products || [];
-    const vegetableProducts = apiProducts.length > 0
-        ? apiProducts
-        : productsData.filter(
-            PRODUCT => PRODUCT.category === "vegetables" ||
-                PRODUCT.category === "seasonalVegetables"
-        );
+    const vegetableProducts = Array.isArray(data?.data) ? data.data : (data?.data as any)?.products || [];
     const visibleProducts = showAllProducts
         ? vegetableProducts
         : vegetableProducts.slice(0, 4);
@@ -173,11 +177,7 @@ export default function Vegetables() {
                         }}>
                         {reviewsLoading ? (
                             <ProductListLoad />
-                        ) : reviewsError ? (
-                            <Text color="red.400" gridColumn="1 / -1">
-                                Failed to load reviews.
-                            </Text>
-                        ) : reviews.length === 0 ? (
+                        ) : (reviewsError || reviews.length === 0) ? (
                             <Text color="text.200" gridColumn="1 / -1">
                                 No reviews yet. Be the first to add one!
                             </Text>

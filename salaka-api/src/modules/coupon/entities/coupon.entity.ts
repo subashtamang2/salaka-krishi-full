@@ -1,6 +1,6 @@
 
 import { Expose } from "class-transformer";
-import { COUPON_TYPE } from "generated/prisma/enums";
+import { COUPON_TYPE } from "@prisma/client";
 
 export class CouponResponseDto {
   @Expose()

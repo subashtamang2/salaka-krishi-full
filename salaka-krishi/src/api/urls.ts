@@ -204,5 +204,9 @@ const urls = {
         url: "orders/:id/cancel",
         method: "POST",
     },
+    checkoutSummary: {
+        url: "checkout/summary",
+        method: "POST",
+    },
 };
 export default urls;

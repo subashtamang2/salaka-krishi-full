@@ -17,7 +17,7 @@ import { CreateFaqDto } from "./dto/create-faq.dto";
 import { UpdateFaqDto } from "./dto/update-faq.dto";
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 import { RolesGuard } from "../auth/guards/roles.guard";
-import { ROLE } from "generated/prisma/enums";
+import { ROLE } from "@prisma/client";
 import { Roles } from "../auth/decorators/roles.decorators";
 
 @Controller("faq")

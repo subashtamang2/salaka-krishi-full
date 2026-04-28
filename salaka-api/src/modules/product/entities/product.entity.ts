@@ -9,7 +9,7 @@ import {
     IsString,
     IsUUID,
 } from "class-validator";
-import { AVAILABILITY, PRODUCT_STATUS } from "generated/prisma/enums";
+import { AVAILABILITY, PRODUCT_STATUS } from "@prisma/client";
 
 export class CategoryDto {
     @Expose() id: string;
@@ -75,9 +75,7 @@ export class Product {
     isBlackFriday: boolean;
 
 
-    @Expose()
-    @IsBoolean()
-    isLimitedStock: boolean;
+
 
     @Expose()
     @IsNumber()

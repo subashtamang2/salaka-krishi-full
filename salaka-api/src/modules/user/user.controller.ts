@@ -16,10 +16,10 @@ import { FilterUsersDto } from "./dto/create-user.dto";
 
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 import { RolesGuard } from "../auth/guards/roles.guard";
-import { Serializer } from "src/interceptors/serializer.interceptor";
+import { Serializer } from "../../interceptors/serializer.interceptor";
 import { User } from "./entities/user.entity";
 import { JwtPayload } from "../auth/interface";
-import { ROLE, USER_STATUS } from "generated/prisma/enums";
+import { ROLE, USER_STATUS } from "@prisma/client";
 import { Roles } from "../auth/decorators/roles.decorators";
 
 @Controller("user")

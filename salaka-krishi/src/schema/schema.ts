@@ -6,6 +6,7 @@ export interface FilterParamsInterface {
   categories?: string[];
   shops?: string[];
   search?: string[];
+  limit?: number;
 }
 export interface PaginationMeta<T> {
   message: string;
@@ -255,6 +256,7 @@ export interface OrderInterface {
   phoneNumber: string;
   subTotal: number;
   discount: number;
+  deliveryCharge: number;
   total: number;
   paymentMethod: string;
   paymentStatus: PaymentStatus;

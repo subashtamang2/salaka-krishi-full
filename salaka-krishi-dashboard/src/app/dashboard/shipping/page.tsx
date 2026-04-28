@@ -9,8 +9,10 @@ import {
     TableRow,
     Typography,
     Button,
+    Link,
 } from "@mui/material";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 import { getShippingDetails, deleteShippingDetail } from "api/shipping";
 import MainCard from "components/MainCard";
 import Loading from "app/loading";
@@ -74,6 +76,7 @@ function DeleteButton({ id }: { id: string }) {
 }
 
 export default function ShippingDetailsPage() {
+    const router = useRouter();
     const { data: shippingRes, isLoading, isError } = useQuery({
         queryKey: ["shipping-details"],
         queryFn: async () => {
@@ -96,6 +99,7 @@ export default function ShippingDetailsPage() {
                         <TableHead>
                             <TableRow>
                                 <TableCell>SN</TableCell>
+                                <TableCell>Order ID</TableCell>
                                 <TableCell>Customer</TableCell>
                                 <TableCell>Email</TableCell>
                                 <TableCell>Address</TableCell>
@@ -107,7 +111,7 @@ export default function ShippingDetailsPage() {
                         <TableBody>
                             {shippingList.length === 0 && (
                                 <TableRow>
-                                    <TableCell colSpan={7} align="center">
+                                    <TableCell colSpan={8} align="center">
                                         <Typography variant="body2" color="text.secondary" py={4}>
                                             No shipping details found
                                         </Typography>
@@ -117,6 +121,24 @@ export default function ShippingDetailsPage() {
                             {shippingList.map((item: any, index: number) => (
                                 <TableRow hover key={item.id}>
                                     <TableCell>{index + 1}</TableCell>
+                                    <TableCell>
+                                        {item.user?.orders?.[0] ? (
+                                            <Link
+                                                component="button"
+                                                variant="body2"
+                                                fontWeight={700}
+                                                color="primary"
+                                                onClick={() => router.push(`/dashboard/orders/${item.user.orders[0].id}`)}
+                                                sx={{ textDecoration: "none", "&:hover": { textDecoration: "underline" } }}
+                                            >
+                                                #{item.user.orders[0].orderNumber}
+                                            </Link>
+                                        ) : (
+                                            <Typography variant="body2" color="text.secondary">
+                                                —
+                                            </Typography>
+                                        )}
+                                    </TableCell>
                                     <TableCell>
                                         <Typography variant="body2" fontWeight={600}>
                                             {item.user?.firstName || ""} {item.user?.lastName || ""}

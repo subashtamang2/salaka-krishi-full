@@ -1,8 +1,8 @@
 import { Injectable } from "@nestjs/common";
-import { PrismaService } from "src/prisma/prisma.service";
+import { PrismaService } from "../../prisma/prisma.service";
 import { CreateBannerDto } from "./dto/create-banner.dto";
 import { UpdateBannerDto } from "./dto/update-banner.dto";
-import { BANNER_TAG, PRODUCT_STATUS } from "generated/prisma/enums";
+import { BANNER_TAG, PRODUCT_STATUS } from "@prisma/client";
 
 @Injectable()
 export class BannerRepository {

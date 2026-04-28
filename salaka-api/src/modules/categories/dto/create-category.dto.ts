@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsEnum, IsOptional, IsString, IsUUID } from "class-validator";
-import { CATEGORY_STATUS } from "generated/prisma/enums";
+import { CATEGORY_STATUS } from "@prisma/client";
 
 export class CreateCategoryDto {
   @ApiProperty({ example: "Electronics" })

@@ -51,14 +51,24 @@ export default function ProductsTab() {
         enabled: true,
     });
 
+    const { data: newData } = useQuery<DataWrapper<ProductSchema[]>>({
+        queryKey: ["products", "new-check"],
+        queryFn: async () => {
+            const response = await fetch(`${API_BASE_URL}/product/filter/new`);
+            return response.json();
+        }
+    });
+
+    const hasNewProducts = newData?.data && newData.data.length > 0;
+
     const products = data?.data || [];
 
     const tabs: { label: string; value: ProductFilter }[] = [
         { label: "All", value: "all" },
         { label: "Featured", value: "featured" },
-        { label: "New", value: "new" },
-        { label: "OnSale", value: "on_sale" },
-        { label: "Limited Stock", value: "limited_stock" },
+        ...(hasNewProducts ? ([{ label: "New", value: "new" }] as const) : []),
+        { label: "OnSale", value: "on_sale" as ProductFilter },
+        { label: "Limited Stock", value: "limited_stock" as ProductFilter },
     ];
 
     return (

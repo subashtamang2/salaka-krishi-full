@@ -17,12 +17,13 @@ import { ProductService } from "./product.service";
 import { CreateProductDto, FilterProductsDto } from "./dto/create-product.dto";
 import { UpdateProductDto } from "./dto/update-product.dto";
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
+import { OptionalJwtAuthGuard } from "../auth/guards/optional-jwt-auth.guard";
 import { RolesGuard } from "../auth/guards/roles.guard";
 import { JwtPayload } from "../auth/interface";
-import { Serializer } from "src/interceptors/serializer.interceptor";
+import { Serializer } from "../../interceptors/serializer.interceptor";
 import { Product } from "./entities/product.entity";
 import { PRODUCT_FILTER } from "./product.enum";
-import { ROLE } from "generated/prisma/enums";
+import { ROLE } from "@prisma/client";
 import { Roles } from "../auth/decorators/roles.decorators";
 
 @Controller("product")
@@ -49,7 +50,7 @@ export class ProductController {
 
   @Get("query")
   @HttpCode(HttpStatus.OK)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(OptionalJwtAuthGuard)
   async findByQuery(
     @Query() filter: FilterProductsDto,
     @Req() req: Request & { user?: JwtPayload }
@@ -76,7 +77,7 @@ export class ProductController {
   }
   @Get("slug/:slug")
   @HttpCode(HttpStatus.OK)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(OptionalJwtAuthGuard)
   async findProductBySlug(
     @Param("slug") slug: string,
     @Req() req: Request & { user?: JwtPayload }
@@ -90,7 +91,7 @@ export class ProductController {
   }
   @Get("filter/:filterType")
   @HttpCode(HttpStatus.OK)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(OptionalJwtAuthGuard)
   async findFilterProducts(
     @Req() req: Request & { user?: JwtPayload },
     @Param("filterType") filterType: PRODUCT_FILTER
@@ -106,7 +107,7 @@ export class ProductController {
 
   @Get("/featured")
   @HttpCode(HttpStatus.OK)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(OptionalJwtAuthGuard)
   async findFeatured(@Req() req: Request & { user?: JwtPayload }) {
     const user = req?.user;
     const products = await this.productService.findFeatured(user);

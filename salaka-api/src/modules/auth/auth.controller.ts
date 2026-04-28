@@ -12,7 +12,7 @@ import { AuthService } from "./auth.service";
 import type { Request, Response } from "express";
 import { ConfigService } from "@nestjs/config";
 import { CreateAuthDto } from "./dto/create-auth.dto";
-import { LoginAuthDto } from "./dto/login-auth.dto";
+import { LoginAuthDto } from "./dto/auth-login.dto";
 
 @Controller("auth")
 export class AuthController {

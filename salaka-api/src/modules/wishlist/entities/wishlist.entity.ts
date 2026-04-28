@@ -1,5 +1,5 @@
 import { Expose, Type } from "class-transformer";
-import { Product } from "src/modules/product/entities/product.entity";
+import { Product } from "../../product/entities/product.entity";
 
 export class wishlist {
     @Expose()

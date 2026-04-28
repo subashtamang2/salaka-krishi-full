@@ -1,6 +1,6 @@
 import { Type } from "class-transformer";
 import { IsOptional, IsNumber, IsString, IsEnum } from "class-validator";
-import { ROLE, USER_STATUS } from "generated/prisma/enums";
+import { ROLE, USER_STATUS } from "@prisma/client";
 
 export class CreateUserDto{}
 

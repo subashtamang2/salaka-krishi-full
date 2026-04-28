@@ -1,5 +1,5 @@
 import { ConflictException, Injectable, InternalServerErrorException } from "@nestjs/common";
-import { PrismaService } from "src/prisma/prisma.service";
+import { PrismaService } from "../../prisma/prisma.service";
 import { CreateNewsletterDto } from "./dto/create-newsletter.dto";
 
 @Injectable()

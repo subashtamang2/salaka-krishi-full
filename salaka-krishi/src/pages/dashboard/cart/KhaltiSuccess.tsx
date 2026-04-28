@@ -13,10 +13,11 @@ export default function KhaltiSuccess() {
     const [status, setStatus] = useState<"loading" | "success" | "error">("loading");
 
     const pidx = searchParams.get("pidx");
+    const purchase_order_id = searchParams.get("purchase_order_id");
 
     useEffect(() => {
         if (pidx) {
-            verifyPayment(pidx);
+            verifyPayment(pidx, purchase_order_id);
         } else {
             const statusParam = searchParams.get("status");
             if (statusParam === "User canceled") {
@@ -48,18 +49,18 @@ export default function KhaltiSuccess() {
         }
     }, [status, navigate]);
 
-    const verifyPayment = async (pidx: string) => {
+    const verifyPayment = async (pidx: string, purchaseOrderId: string | null) => {
         try {
             // Double Verification: Always confirm with the backend /lookup/ API
-            const response = await axios.get(`/orders/verify-khalti?pidx=${pidx}`);
+            const response = await axios.get(`/orders/verify-khalti`, {
+                params: { 
+                    pidx, 
+                    purchase_order_id: purchaseOrderId 
+                }
+            });
             
             if (response.status === 200 || response.status === 201) {
                 setStatus("success");
-                toaster.create({
-                    title: "Payment Successful",
-                    description: "Your Khalti payment has been verified successfully.",
-                    type: "success",
-                });
             } else {
                 setStatus("error");
             }

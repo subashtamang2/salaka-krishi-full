@@ -72,6 +72,9 @@ export default function CouponBox({ onApply, totalAmount }: CouponBoxProps) {
                         onChange={(e) => setPromoCode(e.target.value)}
                         placeholder="Enter Coupon Code here" />
                     <Button
+                        _hover={{
+                            bg: "primary.300"
+                        }}
                         loading={validateCouponMutation.isPending}
                         onClick={handleApplyPromoCode}
                         w={"full"}>APPLY COUPON</Button>

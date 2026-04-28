@@ -24,7 +24,8 @@ export default function ProductReviews({ products }: ProductReviewsProps) {
 
     const specificReviews = productReviewsQueries
         .map(q => (q.data as any)?.data?.reviews?.[0])
-        .filter(review => review && review.id);
+        .filter(review => review && review.id)
+        .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
     if (anyReviewLoading) {
         return (
@@ -44,7 +45,7 @@ export default function ProductReviews({ products }: ProductReviewsProps) {
 
     return (
         <>
-            {specificReviews.map(review => (
+            {specificReviews.slice(0, 4).map(review => (
                 <ReviewCard
                     key={review.id}
                     person={{

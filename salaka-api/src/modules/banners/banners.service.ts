@@ -2,7 +2,7 @@ import { Injectable, InternalServerErrorException, NotAcceptableException } from
 import { BannerRepository } from "./banner.repo";
 import { CreateBannerDto } from "./dto/create-banner.dto";
 import { UpdateBannerDto } from "./dto/update-banner.dto";
-import { BANNER_TAG } from "generated/prisma/enums";
+import { BANNER_TAG } from "@prisma/client";
 import { ProductRepository } from "../product/product.repo";
 
 @Injectable()

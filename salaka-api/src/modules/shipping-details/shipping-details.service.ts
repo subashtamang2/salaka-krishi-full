@@ -93,6 +93,14 @@ export class ShippingDetailsService {
             lastName: true,
             email: true,
             profileUrl: true,
+            orders: {
+              orderBy: { createdAt: 'desc' },
+              take: 1,
+              select: {
+                id: true,
+                orderNumber: true,
+              },
+            },
           },
         },
       },

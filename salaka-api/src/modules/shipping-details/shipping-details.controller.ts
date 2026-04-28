@@ -17,9 +17,9 @@ import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 import { RolesGuard } from "../auth/guards/roles.guard";
 import { Request } from "express";
 import { JwtPayload } from "../auth/interface";
-import { Serializer } from "src/interceptors/serializer.interceptor";
+import { Serializer } from "../../interceptors/serializer.interceptor";
 import { ShippingDetail } from "./entities/shipping-detail.entity";
-import { ROLE } from "generated/prisma/enums";
+import { ROLE } from "@prisma/client";
 import { Roles } from "../auth/decorators/roles.decorators";
 
 @Controller("shipping-details")

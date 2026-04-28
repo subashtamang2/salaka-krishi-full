@@ -16,8 +16,8 @@ import { UpdateHeroBannerDto } from "./dto/update-hero-banner.dto";
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 import { RolesGuard } from "../auth/guards/roles.guard";
 import { Roles } from "../auth/decorators/roles.decorators";
-import { ROLE } from "generated/prisma/enums";
-import { Serializer } from "src/interceptors/serializer.interceptor";
+import { ROLE } from "@prisma/client";
+import { Serializer } from "../../interceptors/serializer.interceptor";
 import { HeroBanner } from "./entities/hero-banner.entity";
 
 @Controller("hero-banner")

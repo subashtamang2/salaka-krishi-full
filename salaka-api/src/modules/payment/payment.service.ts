@@ -39,6 +39,7 @@ export class PaymentService {
         orderId: data.orderNumber,
         orderName: `Order #${data.orderNumber}`,
         customerInfo: data.customerInfo,
+        returnUrl: data.successUrl,
       });
     }
 
@@ -53,7 +54,12 @@ export class PaymentService {
     }
 
     if (sanitizedMethod === 'khalti') {
-      return this.khaltiService.verifyPayment(verifyData.pidx);
+      // For Khalti, we mostly need pidx, but we can also return purchase_order_id if provided
+      const result = await this.khaltiService.verifyPayment(verifyData.pidx);
+      return {
+        ...result,
+        transaction_uuid: verifyData.purchase_order_id || result.raw?.purchase_order_id,
+      };
     }
 
     throw new BadRequestException(`Unsupported payment method: ${method}`);

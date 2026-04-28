@@ -3,6 +3,8 @@ import { OrderService } from './order.service';
 import { PaymentService } from '../payment/payment.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { CouponService } from '../coupon/coupon.service';
+import { CheckoutSummaryRequestDto } from './dto/checkout-summary.dto';
 
 @Injectable()
 export class CheckoutService {
@@ -10,7 +12,15 @@ export class CheckoutService {
     private readonly orderService: OrderService,
     private readonly paymentService: PaymentService,
     private readonly prisma: PrismaService,
+    private readonly couponService: CouponService,
   ) {}
+
+  /**
+   * Get summary for frontend display
+   */
+  async getSummary(userId: string, dto: CheckoutSummaryRequestDto) {
+    return this.orderService.getSummary(userId, dto);
+  }
 
   /**
    * Step 1: Initiate Order

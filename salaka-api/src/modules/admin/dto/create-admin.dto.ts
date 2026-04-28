@@ -1,5 +1,5 @@
 import { IsEmail, IsEnum, IsNotEmpty, IsOptional, IsString, isString, MinLength } from "class-validator";
-import { ROLE } from "generated/prisma/enums";
+import { ROLE } from "@prisma/client";
 
 export class CreateAdminDto {
     @IsEmail()
@@ -30,7 +30,7 @@ export class CreateAdminDto {
 
 import { Type } from "class-transformer";
 import { IsNumber, IsBoolean } from "class-validator";
-import { USER_STATUS } from "generated/prisma/enums";
+import { USER_STATUS } from "@prisma/client";
 
 export class FilterAdminsDto {
     @IsOptional()

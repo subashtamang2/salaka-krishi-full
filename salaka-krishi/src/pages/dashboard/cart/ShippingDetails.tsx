@@ -71,6 +71,7 @@ export default function ShippingDetails({
     const [payment, setPayment] = useState<string[]>(
         initialData?.payment ? [initialData.payment] : []
     );
+    const [paymentError, setPaymentError] = useState<string>("");
     const {
         handleSubmit,
         register,
@@ -85,7 +86,7 @@ export default function ShippingDetails({
                 fullName: data.fullName,
                 address: data.address,
                 phoneNumber: data.phone,
-                paymentMethod: payment[0] || "CashOnDelivery",
+                paymentMethod: payment[0],
                 couponCode: appliedCoupon?.code,
             }),
         onSuccess: (response: any) => {
@@ -135,11 +136,6 @@ export default function ShippingDetails({
                 }
             } else if (normalizedMethod === 'cashondelivery') {
                 console.log("Finalizing as Cash on Delivery.");
-                toaster.create({
-                    title: "Order Placed!",
-                    description: "Your order has been placed successfully.",
-                    duration: 3000,
-                });
                 router(routes.cart.orderSuccess);
             } else {
                 console.warn("Unrecognized payment method or missing data. Falling back to order history.", { normalizedMethod, hasPaymentData: !!paymentData });
@@ -157,6 +153,10 @@ export default function ShippingDetails({
     });
 
     const onSubmit = (data: ContactFormProps) => {
+        if (!payment[0]) {
+            setPaymentError("Please select a payment method before continuing.");
+            return;
+        }
         if (isReadOnly) {
             console.log("Placing order with data:", { ...data, payment: payment[0] });
             orderMutation.mutate(data);
@@ -164,7 +164,7 @@ export default function ShippingDetails({
             console.log("Navigating to verification with data:", { ...data, payment: payment[0] });
             router(routes.cart.orderVerification, {
                 state: {
-                    shippingDetails: { ...data, payment: payment[0] || "CashOnDelivery" },
+                    shippingDetails: { ...data, payment: payment[0] },
                     appliedCoupon
                 }
             });
@@ -267,75 +267,83 @@ export default function ShippingDetails({
                             </Field.ErrorText>
                         </Field.Root>
 
-                        <Select.Root
-                            collection={paymentMethod}
-                            value={payment}
-                            disabled={isReadOnly}
-                            onValueChange={(e) => setPayment(e.value)}>
-                            <Select.HiddenSelect />
-                            <Select.Label
-                                color={"primary.300"}
-                                fontWeight={400}>
-                                Payment<Text as="span" color="muted.500"> *</Text>
-                            </Select.Label>
-                            <Select.Control
-                                borderWidth={"1"}
-                                borderRadius={"md"}
-                                _focus={{
-                                    borderWidth: "2px",
-                                    outlineColor: "background.300/70",
-                                    borderColor: "background.300/70",
+                        <Field.Root invalid={!!paymentError}>
+                            <Select.Root
+                                collection={paymentMethod}
+                                value={payment}
+                                disabled={isReadOnly}
+                                onValueChange={(e) => {
+                                    setPayment(e.value);
+                                    setPaymentError("");
                                 }}>
+                                <Select.HiddenSelect />
+                                <Select.Label
+                                    color={"primary.300"}
+                                    fontWeight={400}>
+                                    Payment<Text as="span" color="muted.500"> *</Text>
+                                </Select.Label>
+                                <Select.Control
+                                    borderWidth={"1"}
+                                    borderRadius={"md"}
+                                    _focus={{
+                                        borderWidth: "2px",
+                                        outlineColor: "background.300/70",
+                                        borderColor: "background.300/70",
+                                    }}>
 
-                            
-                                <Select.Trigger>
-                                    <Select.ValueText
-                                        placeholder="Payment"
-                                        color={"text.200"}
-                                        fontWeight={500}
-                                    />
-                                </Select.Trigger>
-                                <Select.IndicatorGroup>
-                                    <Select.Indicator />
-                                </Select.IndicatorGroup>
-                            </Select.Control>
-                            <Portal>
-                                <Select.Positioner>
-                                    <Select.Content
-                                        p={0}
-                                        m={0}
 
-                                        borderWidth={1}
-                                        borderColor={"primary.100"}  >
-                                        {paymentMethod.items.map((payment) => (
-                                            <Select.Item item={payment}
-                                                color={"primary.300"}
-                                                border="2px solid transparent"
-                                                _hover={{
-                                                    borderStyle: "solid",
-                                                    bg: "primary.300/20",
-                                                    borderWidth: "1",
-                                                    borderColor: "primary.100",
-                                                }}
+                                    <Select.Trigger>
+                                        <Select.ValueText
+                                            placeholder="Payment"
+                                            color={"text.200"}
+                                            fontWeight={500}
+                                        />
+                                    </Select.Trigger>
+                                    <Select.IndicatorGroup>
+                                        <Select.Indicator />
+                                    </Select.IndicatorGroup>
+                                </Select.Control>
+                                <Portal>
+                                    <Select.Positioner>
+                                        <Select.Content
+                                            p={0}
+                                            m={0}
 
-                                                px={4}
-                                                py={4}
-
-                                                key={payment.value}>
-                                                <Flex
+                                            borderWidth={1}
+                                            borderColor={"primary.100"}  >
+                                            {paymentMethod.items.map((payment) => (
+                                                <Select.Item item={payment}
                                                     color={"primary.300"}
-                                                    width={"full"}
-                                                    justifyContent={"enter"}>
-                                                    {payment.label}
-                                                </Flex>
+                                                    border="2px solid transparent"
+                                                    _hover={{
+                                                        borderStyle: "solid",
+                                                        bg: "primary.300/20",
+                                                        borderWidth: "1",
+                                                        borderColor: "primary.100",
+                                                    }}
 
-                                                <Select.ItemIndicator />
-                                            </Select.Item>
-                                        ))}
-                                    </Select.Content>
-                                </Select.Positioner>
-                            </Portal>
-                        </Select.Root>
+                                                    px={4}
+                                                    py={4}
+
+                                                    key={payment.value}>
+                                                    <Flex
+                                                        color={"primary.300"}
+                                                        width={"full"}
+                                                        justifyContent={"enter"}>
+                                                        {payment.label}
+                                                    </Flex>
+
+                                                    <Select.ItemIndicator />
+                                                </Select.Item>
+                                            ))}
+                                        </Select.Content>
+                                    </Select.Positioner>
+                                </Portal>
+                            </Select.Root>
+                            <Field.ErrorText>
+                                {paymentError}
+                            </Field.ErrorText>
+                        </Field.Root>
 
 
                     </Grid>

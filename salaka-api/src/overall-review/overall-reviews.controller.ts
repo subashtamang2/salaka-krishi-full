@@ -12,12 +12,12 @@ import {
     Req,
 } from "@nestjs/common";
 import { OverallReviewsService } from "./overall-reviews.service";
-import { JwtAuthGuard } from "src/modules/auth/guards/jwt-auth.guard";
-import { RolesGuard } from "src/modules/auth/guards/roles.guard";
-import { ROLE } from "generated/prisma/enums";
-import { Roles } from "src/modules/auth/decorators/roles.decorators";
+import { JwtAuthGuard } from "../modules/auth/guards/jwt-auth.guard";
+import { RolesGuard } from "../modules/auth/guards/roles.guard";
+import { ROLE } from "@prisma/client";
+import { Roles } from "../modules/auth/decorators/roles.decorators";
 import { CreateOverallReviewDto } from "./dto/create-overall-review.dto";
-import { JwtPayload } from "src/modules/auth/interface";
+import { JwtPayload } from "../modules/auth/interface";
 import { UpdateOverallReviewDto } from "./dto/update-overall-review.dto";
 @Controller("overall-reviews")
 export class OverallReviewsController {

@@ -17,10 +17,10 @@ import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 import { Request } from "express";
 import { JwtPayload } from "../auth/interface";
 import { RolesGuard } from "../auth/guards/roles.guard";
-import { Serializer } from "src/interceptors/serializer.interceptor";
+import { Serializer } from "../../interceptors/serializer.interceptor";
 import { Roles } from "../auth/decorators/roles.decorators";
 import { wishlist } from "./entities/wishlist.entity";
-import { ROLE } from "generated/prisma/enums";
+import { ROLE } from "@prisma/client";
 
 @Controller("wishlist")
 @Serializer(wishlist)

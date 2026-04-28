@@ -11,7 +11,6 @@ import CustomContainer from "@src/components/common/CustomContainer";
 import ShippingDetails from "./ShippingDetails";
 import TokenVerificationInput from "./components/TokenVerification";
 import { useQuery } from "@tanstack/react-query";
-import { getCart } from "@src/api/cart";
 import { getAccessToken } from "@src/utils/local-storage";
 import type { CartInterface } from "@src/schema/schema";
 import type { ProductSchema } from "@src/schema/product";
@@ -20,6 +19,7 @@ import NotFoundSm from "@src/pages/NotFoundSm";
 import { useLocation, Navigate } from "react-router";
 import routes from "@src/router/routes";
 import { getImageSrc } from "@src/utils/image";
+import { getCart, getCheckoutSummary } from "@src/api/cart";
 
 export default function OrderVerification() {
     const { state } = useLocation();
@@ -35,21 +35,36 @@ export default function OrderVerification() {
         }
     });
 
+    const appliedCoupon = state.appliedCoupon;
+
+    const { data: summaryData, isLoading: isSummaryLoading } = useQuery({
+        queryKey: ['checkout-summary', appliedCoupon?.code],
+        enabled: !!accessToken,
+        queryFn: async () => {
+            const res = await getCheckoutSummary(appliedCoupon?.code);
+            return res.data.data;
+        }
+    });
+
+
     if (!state || !state.shippingDetails) {
         return <Navigate to={routes.cart.cartCheckout} replace />;
     }
 
-    if (isLoading) return <ProductRow />;
+    if (isLoading || isSummaryLoading) return <ProductRow />;
     if (isError) return <NotFoundSm />;
 
     const cartData = data?.data;
     const products = cartData?.products || [];
-    const subTotal = cartData?.totalAmount || 0;
-    const appliedCoupon = state.appliedCoupon;
-    const discountAmount = Number(appliedCoupon?.discountAmount || 0);
-    const finalTotal = Number(subTotal || 0) - discountAmount;
+    
+    const summary = summaryData;
+    const subTotal = summary?.subtotal || 0;
+    const discountAmount = summary?.discount || 0;
+    const deliveryCharge = summary?.deliveryCharge || 0;
+    const finalTotal = summary?.total || 0;
 
     const COUPON_DISCOUNT = "Coupon Discount";
+    const DELIVERY_CHARGE_LABEL = "Delivery Charge";
     const cartTableCalculation = [
         {
             id: 1,
@@ -59,7 +74,12 @@ export default function OrderVerification() {
         {
             id: 2,
             label: COUPON_DISCOUNT,
-            value: `${currencyTypes} ${discountAmount.toFixed(2)}`,
+            value: `${currencyTypes} - ${discountAmount.toFixed(2)}`,
+        },
+        {
+            id: 3,
+            label: DELIVERY_CHARGE_LABEL,
+            value: `${currencyTypes} ${deliveryCharge}`,
         },
         {
             id: 4,

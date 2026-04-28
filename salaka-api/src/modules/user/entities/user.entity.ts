@@ -1,7 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Exclude, Expose } from "class-transformer";
 import { IsDate, IsEnum, IsNumber, IsString, IsUUID } from "class-validator";
-import { ROLE, USER_STATUS } from "generated/prisma/enums";
+import { ROLE, USER_STATUS } from "@prisma/client";
 
 export class User {
     @ApiProperty()

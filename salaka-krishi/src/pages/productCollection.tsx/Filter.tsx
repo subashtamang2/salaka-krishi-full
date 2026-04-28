@@ -56,33 +56,38 @@ export default function Filter({ open, onToggle, showCloseButton = true }: Filte
     const handleFilterChange = (e: ChangeEvent<HTMLInputElement>, group: string) => {
         const { value, checked } = e.target;
 
-        setSelectedFilters((prev) => {
-            const updatedGroup = prev[group] ? [...prev[group]] : [];
-            if (checked) {
-                if (!updatedGroup.includes(value)) updatedGroup.push(value);
-            } else {
-                const index = updatedGroup.indexOf(value);
-                if (index > -1) updatedGroup.splice(index, 1);
-            }
+        // Calculate the new state immediately to use for side effects
+        const currentGroup = selectedFilters[group] ? [...selectedFilters[group]] : [];
+        let updatedGroup: string[];
 
-            const updatedFilters = { ...prev, [group]: updatedGroup };
+        if (checked) {
+            updatedGroup = currentGroup.includes(value) ? currentGroup : [...currentGroup, value];
+        } else {
+            updatedGroup = currentGroup.filter((item) => item !== value);
+        }
 
-            const newSearchParams = new URLSearchParams(searchParams);
-            Object.entries(updatedFilters).forEach(([key, values]) => {
-                if (values.length) newSearchParams.set(key, values.join(","));
-                else newSearchParams.delete(key);
-            });
-            setSearchParams(newSearchParams);
+        const updatedFilters = { ...selectedFilters, [group]: updatedGroup };
 
-            // Navigate to products page if not already there
-            const hasFilter = Object.values(updatedFilters).flat().length > 0;
-            if (hasFilter && !location.pathname.startsWith(routes.products.root)) {
-                navigate(`${routes.products.root}?${newSearchParams.toString()}`);
-                onToggle();
-            }
+        // Update local state
+        setSelectedFilters(updatedFilters);
 
-            return updatedFilters;
+        // Handle side effects (URL update and navigation)
+        const newSearchParams = new URLSearchParams(searchParams);
+        Object.entries(updatedFilters).forEach(([key, values]) => {
+            if (values.length) newSearchParams.set(key, values.join(","));
+            else newSearchParams.delete(key);
         });
+
+        setSearchParams(newSearchParams);
+
+        // Navigate to products page if not exactly on the root products page
+        const hasFilter = Object.values(updatedFilters).flat().length > 0;
+        const isRootProductsPage = location.pathname === routes.products.root;
+
+        if (hasFilter && !isRootProductsPage) {
+            navigate(`${routes.products.root}?${newSearchParams.toString()}`);
+            onToggle();
+        }
     };
 
     return (

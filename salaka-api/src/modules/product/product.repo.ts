@@ -1,9 +1,9 @@
-import { PrismaService } from "src/prisma/prisma.service";
+import { PrismaService } from "../../prisma/prisma.service";
 import { CreateProductDto, FilterProductsDto } from "./dto/create-product.dto";
 import { Injectable } from "@nestjs/common";
 import { UpdateProductDto } from "./dto/update-product.dto";
 import { ConfigService } from "@nestjs/config";
-import { AVAILABILITY, PRODUCT_STATUS } from "generated/prisma/enums";
+import { AVAILABILITY, PRODUCT_STATUS } from "@prisma/client";
 
 @Injectable()
 export class ProductRepository {
@@ -197,15 +197,16 @@ export class ProductRepository {
         });
     }
     findNewestProduct(wishlistId?: string | null, cartId?: string | null) {
-        const last7Days = new Date();
-        last7Days.setDate(last7Days.getDate() - 7);
-        last7Days.setHours(0, 0, 0, 0);
+        const thresholdDays = this.config.get<number>("product.recentDaysThreshold") || 7;
+        const lastDays = new Date();
+        lastDays.setDate(lastDays.getDate() - thresholdDays);
+        lastDays.setHours(0, 0, 0, 0);
 
         return this.prisma.product.findMany({
             where: {
                 status: PRODUCT_STATUS.Active,
                 availability: AVAILABILITY.InStock,
-                createdAt: { gte: last7Days },
+                createdAt: { gte: lastDays },
             },
             include: {
                 cart: cartId
@@ -283,7 +284,7 @@ export class ProductRepository {
             },
             take: this.postPerPage,
             orderBy: {
-                sold: "desc",
+                createdAt: "desc",
             },
         });
     }
@@ -326,7 +327,7 @@ export class ProductRepository {
             },
             take: this.postPerPage,
             orderBy: {
-                rating: "desc",
+                createdAt: "desc",
             },
         });
     }
@@ -368,7 +369,7 @@ export class ProductRepository {
             },
             take: this.postPerPage,
             orderBy: {
-                discountPercentage: "desc",
+                createdAt: "desc",
             },
         });
     }
@@ -418,7 +419,7 @@ export class ProductRepository {
             },
             take: this.postPerPage,
             orderBy: {
-                stock: "asc",
+                createdAt: "desc",
             }
         });
     }
@@ -462,7 +463,7 @@ export class ProductRepository {
                 },
             },
             orderBy: {
-                sold: "desc",
+                createdAt: "desc",
             },
         });
     }
