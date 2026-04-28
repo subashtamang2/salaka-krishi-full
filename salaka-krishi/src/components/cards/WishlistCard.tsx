@@ -16,6 +16,7 @@ import { getAccessToken } from "@src/utils/local-storage";
 import { getImageSrc } from "@src/utils/image";
 import type { CartInterface, DataWrapper, wishlistWrapper } from "@src/schema/schema";
 import type { ProductSchema } from "@src/schema/product";
+import EmptyWishlist from "@src/pages/dashboard/wishlist/components/EmptyWishlist";
 
 export default function WishlistCard() {
     const queryClient = useQueryClient();
@@ -95,11 +96,7 @@ export default function WishlistCard() {
     const items = data?.data?.products || [];
 
     if (items.length === 0) {
-        return (
-            <Center py={10}>
-                <Text fontSize="lg" color="gray.500">Your wishlist is empty.</Text>
-            </Center>
-        );
+        return <EmptyWishlist />;
     }
 
     return (

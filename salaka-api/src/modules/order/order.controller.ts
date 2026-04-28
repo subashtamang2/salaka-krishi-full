@@ -51,8 +51,8 @@ export class OrderController {
   @Get('verify-khalti')
   @ApiOperation({ summary: 'Verify Khalti payment' })
   async verifyKhalti(@Req() req: any) {
-    const { pidx } = req.query;
-    return this.checkoutService.verifyAndFinalize('Khalti', { pidx });
+    const { pidx, purchase_order_id } = req.query;
+    return this.checkoutService.verifyAndFinalize('Khalti', { pidx, purchase_order_id });
   }
 
   @UseGuards(JwtAuthGuard)

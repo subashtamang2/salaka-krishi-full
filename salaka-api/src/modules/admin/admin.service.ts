@@ -5,12 +5,12 @@ import {
 } from "@nestjs/common";
 import { CreateAdminDto } from "./dto/create-admin.dto";
 
-import { LoginAuthDto } from "./dto/login-auth.dto";
+import { LoginAdminDto } from "./dto/login-auth.dto";
 import { AdminRepository } from "./admin.repository";
 import * as bcrypt from "bcrypt";
 import { CustomJwtService } from "../auth/CustomJwt.service";
 import { UpdateAdminDto } from "./dto/update-admin";
-import { ROLE, USER_STATUS } from "generated/prisma/enums";
+import { ROLE, USER_STATUS } from "@prisma/client";
 import { FilterAdminsDto } from "./dto/create-admin.dto";
 
 @Injectable()
@@ -20,7 +20,7 @@ export class AdminService {
     private readonly jwtService: CustomJwtService
   ) {}
 
-  async login(body: LoginAuthDto) {
+  async login(body: LoginAdminDto) {
     const { email, password } = body;
     if (!email || !password)
       throw new BadRequestException(

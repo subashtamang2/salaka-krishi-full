@@ -2,13 +2,13 @@ import { Flex } from "@chakra-ui/react";
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
 import ProductCard from "./cards/ProductCard";
-import { productsData } from "@src/data/Products";
 import { ButtonGroup } from "./common/CustomArrow";
 import CustomContainer from "./common/CustomContainer";
 import { useQuery } from "@tanstack/react-query";
 import type { DataWrapper } from "@src/schema/schema";
 import { type ProductSchema } from "@src/schema/product";
 import { getQueryFilterProducts } from "@src/api/products";
+import { useSearchParams } from "react-router";
 import ProductRow from "@src/pages/Loadings/ProductRow";
 import NotFoundSm from "@src/pages/NotFoundSm";
 
@@ -22,10 +22,20 @@ const responsive = {
 
 
 export default function ProductCarousel({ isVisible }: { isVisible: boolean }) {
+    const [searchParams] = useSearchParams();
+    const filters: any = {};
+    ["categories", "availability", "search"].forEach(key => {
+        const val = searchParams.get(key);
+        if (val) filters[key] = val.split(",");
+    });
+
     const { data, isLoading, isError } = useQuery<DataWrapper<ProductSchema[]>>({
-        queryKey: ["products", "seasonal vegetables", isVisible],
+        queryKey: ["products", "seasonal vegetables", isVisible, searchParams.toString()],
         queryFn: async () => {
-            const res = await getQueryFilterProducts({ categories: ["seasonal vegetables"] });
+            const res = await getQueryFilterProducts({
+                ...filters,
+                categories: filters.categories?.length ? filters.categories : ["seasonalVegetables"]
+            });
             return res.data;
         },
         enabled: !!isVisible,
@@ -34,10 +44,7 @@ export default function ProductCarousel({ isVisible }: { isVisible: boolean }) {
     if (isLoading) return <ProductRow noOfRows={{ base: 1, md: 2, lg: 3, xl: 4 }} />;
     if (isError) return <NotFoundSm />;
 
-    const backendProducts: ProductSchema[] = Array.isArray(data?.data) ? data.data : (data?.data as any)?.products ?? [];
-    const products: ProductSchema[] = backendProducts.length > 0
-        ? backendProducts
-        : productsData.filter(product => product.category === "seasonalVegetables");
+    const products: ProductSchema[] = Array.isArray(data?.data) ? data.data : (data?.data as any)?.products ?? [];
 
     return (
         <Flex

@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
-import { PrismaService } from "src/prisma/prisma.service";
+import { PrismaService } from "../../prisma/prisma.service";
 import { CreateFaqDto } from "./dto/create-faq.dto";
-import { FAQ_CATEGORY } from "generated/prisma/enums";
+import { FAQ_CATEGORY } from "@prisma/client";
 import { UpdateFaqDto } from "./dto/update-faq.dto";
 
 @Injectable()

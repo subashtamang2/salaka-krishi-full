@@ -1,7 +1,7 @@
 import { Injectable, InternalServerErrorException } from "@nestjs/common";
 import { CreateCartDto } from "./dto/create-cart.dto";
 import { JwtPayload } from "../auth/interface";
-import { PrismaService } from "src/prisma/prisma.service";
+import { PrismaService } from "../../prisma/prisma.service";
 
 @Injectable()
 export class CartStrategy {

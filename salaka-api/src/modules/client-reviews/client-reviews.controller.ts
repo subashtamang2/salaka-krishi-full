@@ -17,7 +17,7 @@ import { UpdateClientReviewDto } from "./dto/update-client-review.dto";
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 import { RolesGuard } from "../auth/guards/roles.guard";
 import { JwtPayload } from "../auth/interface";
-import { ROLE } from "generated/prisma/enums";
+import { ROLE } from "@prisma/client";
 import { Roles } from "../auth/decorators/roles.decorators";
 
 @Controller("client-reviews")

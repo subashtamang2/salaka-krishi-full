@@ -14,9 +14,9 @@ import { StaticPageService } from "./static-page.service";
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 import { RolesGuard } from "../auth/guards/roles.guard";
 import { JwtPayload } from "../auth/interface";
-import { Serializer } from "src/interceptors/serializer.interceptor";
+import { Serializer } from "../../interceptors/serializer.interceptor";
 import { StaticPage } from "./entities/static-page.entity";
-import { ROLE } from "generated/prisma/enums";
+import { ROLE } from "@prisma/client";
 import { Roles } from "../auth/decorators/roles.decorators";
 import { CreateStaticPageDto } from "./dto/create-static-page-dto";
 @Controller("static-page")

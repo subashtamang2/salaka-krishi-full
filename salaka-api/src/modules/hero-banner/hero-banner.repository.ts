@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { PrismaService } from "src/prisma/prisma.service";
+import { PrismaService } from "../../prisma/prisma.service";
 import { CreateHeroBannerDto } from "./dto/create-hero-banner.dto";
 import { UpdateHeroBannerDto } from "./dto/update-hero-banner.dto";
 

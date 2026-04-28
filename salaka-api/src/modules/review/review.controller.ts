@@ -18,14 +18,14 @@ import { UpdateReviewDto } from "./dto/update-review.dto";
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 import { Request } from "express";
 import { JwtPayload } from "../auth/interface";
-import { Serializer } from "src/interceptors/serializer.interceptor";
+import { Serializer } from "../../interceptors/serializer.interceptor";
 import { RolesGuard } from "../auth/guards/roles.guard";
 import {
   ReviewPaginationResponseDto,
   ReviewResponseDto,
 } from "./entities/review.entity";
 import { plainToInstance } from "class-transformer";
-import { ROLE } from "generated/prisma/enums";
+import { ROLE } from "@prisma/client";
 import { Roles } from "../auth/decorators/roles.decorators";
 import { ApiTags, ApiOperation, ApiBearerAuth } from "@nestjs/swagger";
 import { ReviewAdminQueryDto } from "./dto/review-admin-query.dto";

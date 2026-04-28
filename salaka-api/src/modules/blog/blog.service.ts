@@ -8,7 +8,7 @@ import { CreateBlogDto } from "./dto/create-blog.dto";
 import { UpdateBlogDto } from "./dto/update-blog.dto";
 import { BlogRepo } from "./blog.repo";
 import { JwtPayload } from "../auth/interface";
-import { ROLE } from "generated/prisma/enums";
+import { ROLE } from "@prisma/client";
 
 @Injectable()
 export class BlogService {

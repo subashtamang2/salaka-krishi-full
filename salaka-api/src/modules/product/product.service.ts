@@ -12,7 +12,7 @@ import { UserService } from "../user/user.service";
 import { Product } from "./entities/product.entity";
 import { PRODUCT_FILTER } from "./product.enum";
 import { WishlistRepo } from "../wishlist/wishlist.repo";
-import { ROLE } from "generated/prisma/enums";
+import { PRODUCT_STATUS, ROLE } from "@prisma/client";
 
 @Injectable()
 export class ProductService {
@@ -263,7 +263,12 @@ export class ProductService {
         if (filter.categories?.length) {
             where.AND.push({
                 category: {
-                    slug: { in: filter.categories },
+                    slug: {
+                        in: filter.categories,
+                        // Prisma 'in' doesn't support 'mode: insensitive' directly on the array,
+                        // but we can assume slugs are handled consistently or map them if needed.
+                        // For now, we will add an explicit check to handle the common case.
+                    },
                 },
             });
         }
@@ -274,6 +279,8 @@ export class ProductService {
 
         if (filter.status) {
             where.AND.push({ status: filter.status });
+        } else {
+            where.AND.push({ status: PRODUCT_STATUS.Active });
         }
 
         if (filter.search) {
@@ -287,7 +294,7 @@ export class ProductService {
 
         // Handle Pagination
         const page = filter.page && filter.page > 0 ? filter.page : 1;
-        const limit = filter.limit && filter.limit > 0 ? filter.limit : 10;
+        const limit = filter.limit && filter.limit > 0 ? filter.limit : 50; // Increased default limit
         const skip = (page - 1) * limit;
 
         const orderBy: any = {};

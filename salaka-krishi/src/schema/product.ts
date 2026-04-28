@@ -28,7 +28,6 @@ export interface ProductSchema {
     isNew?: boolean; // Add isNew for compatibility
     isAvailable?: boolean; // Add isAvailable for compatibility
     isInWishlist?: boolean;
-    isLimitedStock?: boolean;
     isInCart?: boolean;
     stock?: number;
     sold?: number;

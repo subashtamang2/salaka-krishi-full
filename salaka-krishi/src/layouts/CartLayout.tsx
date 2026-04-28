@@ -16,8 +16,8 @@ export default function CartLayout() {
             <Header />
             <CustomContainer fontFamily={"primary"}
                 mx={{ base: 0, md: "auto" }}
-                bg={"background.300/6"} >
-                <Flex flexDir={"column"} mt={16} >
+                bg={"background.300/6"} py={10} >
+                <Flex flexDir={"column"}  >
                     <BreadCrumb />
                 </Flex>
 

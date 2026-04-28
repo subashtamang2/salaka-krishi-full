@@ -42,6 +42,7 @@ export default function OrderCart({ product }: CartProps) {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['cart'] });
             queryClient.invalidateQueries({ queryKey: ['currentUser'] });
+            queryClient.invalidateQueries({ queryKey: ['checkout-summary'] });
             toaster.create({
                 title: "Removed from cart",
                 description: `${currentProduct.name} has been removed from your cart.`,
@@ -66,6 +67,7 @@ export default function OrderCart({ product }: CartProps) {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['cart'] });
             queryClient.invalidateQueries({ queryKey: ['currentUser'] });
+            queryClient.invalidateQueries({ queryKey: ['checkout-summary'] });
         },
         onError: () => {
             toaster.create({

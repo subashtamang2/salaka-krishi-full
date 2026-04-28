@@ -41,4 +41,9 @@ export default () => ({
     secret_key: process.env.STRIPE_SECRET_KEY as string,
     publishable_key: process.env.STRIPE_PUBLISHABLE_KEY as string,
   },
+  product: {
+    recentDaysThreshold: process.env.RECENT_DAYS_FOR_NEW_PRODUCT
+      ? parseInt(process.env.RECENT_DAYS_FOR_NEW_PRODUCT)
+      : 7,
+  },
 });

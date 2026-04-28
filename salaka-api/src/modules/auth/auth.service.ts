@@ -10,7 +10,7 @@ import { CreateAuthDto } from "./dto/create-auth.dto";
 import { AuthRepository } from "./auth.repository";
 import { ConfigService } from "@nestjs/config";
 import { google } from "googleapis";
-import { LoginAuthDto } from "./dto/login-auth.dto";
+import { LoginAuthDto } from "./dto/auth-login.dto";
 import * as bcrypt from "bcrypt";
 import { CustomJwtService } from "./CustomJwt.service";
 

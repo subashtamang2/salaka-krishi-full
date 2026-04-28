@@ -2,10 +2,9 @@ import { Injectable, BadRequestException, NotFoundException } from '@nestjs/comm
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import * as crypto from 'crypto';
-
 import { CouponService } from '../coupon/coupon.service';
-
 import { CartService } from '../cart/cart.service';
+import { CheckoutSummaryRequestDto } from './dto/checkout-summary.dto';
 
 @Injectable()
 export class OrderService {
@@ -15,12 +14,11 @@ export class OrderService {
     private readonly cartService: CartService,
   ) {}
 
-  async createOrder(userId: string, createOrderDto: CreateOrderDto) {
-    console.log('--- START CREATE ORDER ---', { userId, createOrderDto });
-    const user = await this.prisma.user.findUnique({ where: { id: userId } });
-    if (!user) throw new NotFoundException('User not found');
-
-    // 1. Get User's Cart
+  /**
+   * authoritative calculation of order totals
+   */
+  async calculatePricing(userId: string, couponCode?: string) {
+    // 1. Fetch Cart
     const cart = await this.prisma.cart.findUnique({
       where: { userId },
       include: {
@@ -31,26 +29,58 @@ export class OrderService {
     });
 
     if (!cart || cart.products.length === 0) {
-      console.log('Cart is empty for user:', userId);
       throw new BadRequestException('Cart is empty');
     }
-    console.log('Cart found with items:', cart.products.length);
 
-    // 2. Calculate Totals
-    const subTotal = cart.products.reduce((acc, item) => acc + (item.product.price * item.quantity), 0);
-    let total = subTotal;
-    let discountAmount = 0;
-
-    // 2.1 Handle Coupon Validation & Calculation
-    if (createOrderDto.couponCode) {
-      const couponResult = await this.couponService.calculateDiscount(
-        createOrderDto.couponCode,
-        userId,
-        subTotal
-      );
-      discountAmount = couponResult.discountAmount;
-      total = couponResult.finalTotal;
+    // 2. Calculate Subtotal
+    const subtotal = cart.products.reduce((acc, item) => acc + (item.product.price * item.quantity), 0);
+    
+    // 3. Calculate Discount
+    let discount = 0;
+    if (couponCode) {
+      const couponResult = await this.couponService.calculateDiscount(couponCode, userId, subtotal);
+      discount = couponResult.discountAmount;
     }
+
+    // 4. Calculate Delivery Charge
+    // Fixed Rs. 10 for now, free over 2000
+    let deliveryCharge = 10;
+    if (subtotal > 2000) {
+      deliveryCharge = 0;
+    }
+
+    // 5. Total
+    const total = subtotal - discount + deliveryCharge;
+
+    return {
+      subtotal,
+      discount,
+      deliveryCharge,
+      total,
+      products: cart.products
+    };
+  }
+
+  /**
+   * Get summary for frontend display
+   */
+  async getSummary(userId: string, dto: CheckoutSummaryRequestDto) {
+    const pricing = await this.calculatePricing(userId, dto.couponCode);
+    return {
+      subtotal: pricing.subtotal,
+      discount: pricing.discount,
+      deliveryCharge: pricing.deliveryCharge,
+      total: pricing.total,
+    };
+  }
+
+  async createOrder(userId: string, createOrderDto: CreateOrderDto) {
+    console.log('--- START CREATE ORDER ---', { userId, createOrderDto });
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    if (!user) throw new NotFoundException('User not found');
+
+    // 1. Calculate pricing (Authoritative)
+    const { subtotal, discount, deliveryCharge, total, products } = await this.calculatePricing(userId, createOrderDto.couponCode);
 
     // 3. Generate Order Number
     const orderNumber = `ORD-${Date.now()}`;
@@ -89,13 +119,14 @@ export class OrderService {
           fullName: createOrderDto.fullName,
           address: createOrderDto.address,
           phoneNumber: createOrderDto.phoneNumber,
-          subTotal,
-          discount: discountAmount,
+          subTotal: subtotal,
+          discount: discount,
+          deliveryCharge: deliveryCharge,
           total,
           appliedCoupon: createOrderDto.couponCode,
           paymentMethod: createOrderDto.paymentMethod || 'CashOnDelivery',
           items: {
-            create: cart.products.map((item) => ({
+            create: products.map((item) => ({
               productId: item.productId,
               name: item.product.name,
               price: item.product.price,
@@ -145,7 +176,7 @@ export class OrderService {
         where: { id: orderId },
         data: {
           paymentStatus: 'Paid',
-          orderStatus: 'Processing',
+          orderStatus: 'Pending',
         },
         include: { items: true }
       });
@@ -371,8 +402,7 @@ export class OrderService {
       }
 
       const updateData: any = {
-        orderStatus: 'Processing',
-        cancellationReason: null,
+        orderStatus: 'Pending',
         isRefundPending: false
       };
 

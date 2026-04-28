@@ -1,7 +1,6 @@
 import { Button, Flex, Grid } from "@chakra-ui/react";
 import VermicompostCard from "./cards/VermicompostCard";
 import CustomContainer from "./common/CustomContainer";
-import { productsData } from "@src/data/Products";
 import { useState } from "react";
 import useIsVisible from "@src/utils/useIsVisible";
 import { useQuery } from "@tanstack/react-query";
@@ -10,15 +9,26 @@ import ProductRow from "../pages/Loadings/ProductRow";
 import NotFoundSm from "../pages/NotFoundSm";
 import type { DataWrapper } from "@src/schema/schema";
 import type { ProductSchema } from "@src/schema/product";
+import { useSearchParams } from "react-router";
 
 
 export default function VermicompostSection() {
     const { isVisible, ref } = useIsVisible<HTMLDivElement>();
+    const [searchParams] = useSearchParams();
+    const filters: any = {};
+    ["categories", "availability", "search"].forEach(key => {
+        const val = searchParams.get(key);
+        if (val) filters[key] = val.split(",");
+    });
+
     const { data, isLoading, isError } = useQuery<DataWrapper<ProductSchema[]>>({
-        queryKey: ["products", "vermicompost"],
+        queryKey: ["products", "vermicompost", searchParams.toString()],
         enabled: !!isVisible,
         queryFn: async () => {
-            const res = await getQueryFilterProducts({ categories: ["vermicompost"] });
+            const res = await getQueryFilterProducts({
+                ...filters,
+                categories: filters.categories?.length ? filters.categories : ["vermicompost"]
+            });
             return res.data;
         },
     });
@@ -30,12 +40,7 @@ export default function VermicompostSection() {
 
     const [showAllProducts, setShowAllProducts] = useState(false);
 
-    const apiProducts = Array.isArray(data?.data) ? data.data : (data?.data as any)?.products || [];
-    const vermicompostProducts = apiProducts.length > 0
-        ? apiProducts
-        : productsData.filter(
-            product => product.category === "vermicompost"
-        );
+    const vermicompostProducts = Array.isArray(data?.data) ? data.data : (data?.data as any)?.products || [];
     const visibleProducts = showAllProducts
         ? vermicompostProducts : vermicompostProducts.slice(0, 4);
 

@@ -22,7 +22,7 @@ export class JwtAuthGuard implements CanActivate {
       .getRequest<Request & { user?: JwtPayload }>();
 
     const authHeader = request.headers?.authorization;
-    if (!authHeader) return true;
+    if (!authHeader) throw new UnauthorizedException("Unauthorized access");
 
     if (!authHeader.startsWith("Bearer "))
       throw new UnauthorizedException("Unauthorized access");

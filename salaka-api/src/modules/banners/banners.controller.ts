@@ -20,10 +20,10 @@ import { UpdateBannerDto } from "./dto/update-banner.dto";
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 import { RolesGuard } from "../auth/guards/roles.guard";
 import { JwtPayload } from "../auth/interface";
-import { Serializer } from "src/interceptors/serializer.interceptor";
+import { Serializer } from "../../interceptors/serializer.interceptor";
 import { Banner } from "./entities/banner.entity";
 import { Roles } from "../auth/decorators/roles.decorators";
-import { BANNER_TAG, ROLE } from "generated/prisma/enums";
+import { BANNER_TAG, ROLE } from "@prisma/client";
 
 @Controller("banners")
 @Serializer(Banner)

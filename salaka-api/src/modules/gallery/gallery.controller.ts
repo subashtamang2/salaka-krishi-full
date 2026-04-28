@@ -16,7 +16,7 @@ import { UpdateGalleryDto } from "./dto/update-gallery.dto";
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 import { RolesGuard } from "../auth/guards/roles.guard";
 import { Roles } from "../auth/decorators/roles.decorators";
-import { ROLE } from "generated/prisma/enums";
+import { ROLE } from "@prisma/client";
 import { CreateGalleryDto } from "./dto/create-gellery.dto";
 
 @Controller("gallery")

@@ -1,4 +1,4 @@
-import { PrismaService } from "src/prisma/prisma.service";
+import { PrismaService } from "../../prisma/prisma.service";
 import { CreateBlogDto } from "./dto/create-blog.dto";
 import { Injectable } from "@nestjs/common";
 import { UpdateBlogDto } from "./dto/update-blog.dto";

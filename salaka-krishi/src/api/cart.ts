@@ -32,3 +32,11 @@ export function removeFromCart(cartItemId: string) {
         method: urls.removeFromCart.method,
     });
 }
+
+export function getCheckoutSummary(couponCode?: string) {
+    return axios({
+        url: urls.checkoutSummary.url,
+        method: urls.checkoutSummary.method,
+        data: { couponCode },
+    });
+}

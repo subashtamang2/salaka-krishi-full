@@ -449,7 +449,7 @@ export default function OrderDetail() {
                                     </Text>
                                     <Text
                                         fontWeight="600">
-                                        {formatPrice(0)}
+                                        {formatPrice(order.deliveryCharge || 0)}
                                     </Text>
                                 </Flex>
                                 <Flex

@@ -21,9 +21,9 @@ import { RolesGuard } from "../auth/guards/roles.guard";
 
 
 import { JwtPayload } from "../auth/interface";
-import { Serializer } from "src/interceptors/serializer.interceptor";
+import { Serializer } from "../../interceptors/serializer.interceptor";
 import { SiteInfo, Socialmedia } from "./entities/site-info.entity";
-import { ROLE } from "generated/prisma/enums";
+import { ROLE } from "@prisma/client";
 import { Roles } from "../auth/decorators/roles.decorators";
 
 @Controller("site-info")

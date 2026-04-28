@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException, ConflictException } from "@nestjs/common";
 import { ReviewRepository } from "./entities/review.repository";
 import { CreateReviewDto } from "./dto/create-review.dto";
-import { JwtPayload } from "src/modules/auth/interface";
+import { JwtPayload } from "../auth/interface";
 import { UpdateReviewDto } from "./dto/update-review.dto";
 import { ProductRepository } from "../product/product.repo";
 

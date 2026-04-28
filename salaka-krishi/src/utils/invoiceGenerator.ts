@@ -100,7 +100,7 @@ export const generateInvoicePDF = async (order: OrderInterface) => {
     
     currentY += 7;
     doc.text("Delivery Fee:", totalsX, currentY);
-    doc.text("Rs. 0", pageWidth - margin - 5, currentY, { align: "right" });
+    doc.text(`Rs. ${(order.deliveryCharge || 0).toLocaleString()}`, pageWidth - margin - 5, currentY, { align: "right" });
     
     if (order.discount) {
         currentY += 7;

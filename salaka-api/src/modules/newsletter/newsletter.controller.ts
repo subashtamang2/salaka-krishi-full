@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { NewsletterService } from "./newsletter.service";
-import { Serializer } from "src/interceptors/serializer.interceptor";
+import { Serializer } from "../../interceptors/serializer.interceptor";
 import { CreateNewsletterDto } from "./dto/create-newsletter.dto";
 import { Newsletters } from "./entities/newsletter.entity";
 

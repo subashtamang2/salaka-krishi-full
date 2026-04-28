@@ -3,7 +3,7 @@ import { PrismaService } from "../../prisma/prisma.service";
 import { CreateAuthDto } from "./dto/create-auth.dto";
 import { ConfigService } from "@nestjs/config";
 import * as bcrypt from "bcrypt";
-import { ROLE } from "generated/prisma/enums";
+import { ROLE } from "@prisma/client";
 
 @Injectable()
 export class AuthRepository {

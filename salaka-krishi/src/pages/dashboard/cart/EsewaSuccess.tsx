@@ -40,11 +40,6 @@ export default function EsewaSuccess() {
             if (response.status === 200 || response.status === 201) {
                 setStatus("success");
                 localStorage.removeItem("pendingEsewaOrderId");
-                toaster.create({
-                    title: "Payment Successful",
-                    description: "Your payment has been verified successfully.",
-                    type: "success",
-                });
             } else {
                 setStatus("error");
             }

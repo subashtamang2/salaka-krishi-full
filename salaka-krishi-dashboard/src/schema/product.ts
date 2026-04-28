@@ -18,7 +18,6 @@ export interface CreateProductSchema {
   availability: ProductAvailability;
   isBlackFriday: boolean;
   isFeatured: boolean;
-  isLimitedStock: boolean;
   status: ProductStatus;
   stock: number;
   sold: number;

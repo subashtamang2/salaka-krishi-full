@@ -1,6 +1,6 @@
-import { ConflictException, Injectable, NotFoundException } from "@nestjs/common";
+import { BadRequestException, ConflictException, Injectable, NotFoundException } from "@nestjs/common";
 import { UserStrategy } from "./user.strategy";
-import { USER_STATUS } from "generated/prisma/enums";
+import { USER_STATUS } from "@prisma/client";
 import { FilterUsersDto } from "./dto/create-user.dto";
 
 @Injectable()
@@ -75,6 +75,9 @@ export class UserService {
     return user;
   }
   async findCurrentUser(id: string) {
+    if (!id) {
+      throw new BadRequestException("User ID is required");
+    }
     const user = await this.userStrategy.findCurrentUser(id);
     const userCartProducts = user?.Cart?.products || [];
 

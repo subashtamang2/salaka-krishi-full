@@ -18,11 +18,11 @@ import { CreateBlogDto } from "./dto/create-blog.dto";
 import { UpdateBlogDto } from "./dto/update-blog.dto";
 import { JwtPayload } from "../auth/interface";
 import { RolesGuard } from "../auth/guards/roles.guard";
-import { Serializer } from "src/interceptors/serializer.interceptor";
+import { Serializer } from "../../interceptors/serializer.interceptor";
 import { BlogReponse, PaginatedBlogResponse } from "./entities/blog.entity";
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 import { Roles } from "../auth/decorators/roles.decorators";
-import { ROLE } from "generated/prisma/enums";
+import { ROLE } from "@prisma/client";
 
 @Controller("blog") // Assuming you want to serialize the response with CreateBlogDto
 export class BlogController {

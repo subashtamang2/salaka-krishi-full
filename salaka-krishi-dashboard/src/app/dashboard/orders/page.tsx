@@ -491,6 +491,7 @@ export default function OrdersPage() {
                     <Table sx={{ minWidth: 900, "& .MuiTableCell-root": { px: 1.5, py: 1.5 } }}>
                         <TableHead sx={{ bgcolor: alpha(theme.palette.primary.main, 0.03) }}>
                             <TableRow>
+                                <TableCell sx={{ fontWeight: 700 }}>SN</TableCell>
                                 <TableCell sx={{ fontWeight: 700 }}>Order ID</TableCell>
                                 <TableCell sx={{ fontWeight: 700 }}>Customer</TableCell>
                                 <TableCell align="center" sx={{ fontWeight: 700 }}>Items</TableCell>
@@ -505,12 +506,12 @@ export default function OrdersPage() {
                         <TableBody>
                             {orders.length === 0 && (
                                 <TableRow>
-                                    <TableCell colSpan={9} align="center">
+                                    <TableCell colSpan={11} align="center">
                                         <Typography variant="body1" color="text.secondary" py={6}>No orders found</Typography>
                                     </TableCell>
                                 </TableRow>
                             )}
-                            {orders.map((order: any) => {
+                            {orders.map((order: any, index: number) => {
                                 const canArchive = order.orderStatus === "Delivered" || order.orderStatus === "Cancelled";
                                 return (
                                     <TableRow
@@ -518,6 +519,9 @@ export default function OrdersPage() {
                                         key={order.id}
                                         sx={{ "&:hover": { bgcolor: alpha(theme.palette.primary.main, 0.02) + " !important" }, transition: "background-color 0.2s" }}
                                     >
+                                        <TableCell>
+                                            <Typography variant="body2">{(page - 1) * limit + index + 1}</Typography>
+                                        </TableCell>
                                         <TableCell>
                                             <Link
                                                 component="button"

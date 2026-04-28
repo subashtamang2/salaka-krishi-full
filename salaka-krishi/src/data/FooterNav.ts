@@ -11,7 +11,7 @@ export const FooterNav: NavbarItem[] = [
     {
         id: "2",
         label: "Product",
-        href: routes.products.dairy,
+        href: `${routes.products.root}/${routes.products.dairy}`,
     },
     {
         id: "3",
@@ -26,7 +26,7 @@ export const FooterNav: NavbarItem[] = [
     {
         id: "6",
         label: "login",
-        href: `${routes.auth.base}/${routes.auth.base}`,
+        href: routes.auth.base,
     },
 ]
 export const SupportNav: NavbarItem[] = [

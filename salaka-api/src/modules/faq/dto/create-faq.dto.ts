@@ -1,6 +1,6 @@
  import { ApiProperty } from "@nestjs/swagger";
 import { IsEnum, IsLowercase, IsString } from "class-validator";
-import { FAQ_CATEGORY } from "generated/prisma/enums";
+import { FAQ_CATEGORY } from "@prisma/client";
 
 export class CreateFaqDto {
   @IsString()

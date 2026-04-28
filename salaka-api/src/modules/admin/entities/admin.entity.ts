@@ -8,8 +8,8 @@ import {
     Reviews,
     UseCouponCode,
     Wishlist
-} from "generated/prisma/client";
-import { ROLE, USER_STATUS } from "generated/prisma/enums";
+} from "@prisma/client";
+import { ROLE, USER_STATUS } from "@prisma/client";
 
 export class AdminReponse {
     @ApiProperty()

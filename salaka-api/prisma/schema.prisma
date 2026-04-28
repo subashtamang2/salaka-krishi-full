@@ -6,7 +6,6 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated/prisma"
   moduleFormat = "cjs"
 }
 
@@ -249,7 +248,7 @@ model Product {
     rating             Float?         @default(0)
     availability       AVAILABILITY   @default(InStock)
     //                 flags
-    isLimitedStock          Boolean?       @default(false)
+
     isFeatured         Boolean?       @default(false)
     isBlackFriday      Boolean?       @default(false)
     // stock and sale tracking
@@ -501,6 +500,7 @@ model Order {
     // Financials
     subTotal        Float
     discount        Float       @default(0)
+    deliveryCharge  Float       @default(0)
     total           Float
 
     // Payment & Status

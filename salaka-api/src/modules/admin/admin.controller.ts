@@ -1,12 +1,12 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards } from "@nestjs/common";
 import { AdminService } from "./admin.service";
 import { FilterAdminsDto } from "./dto/create-admin.dto";
-import { LoginAuthDto } from "./dto/login-auth.dto";
+import { LoginAdminDto } from "./dto/login-auth.dto";
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 import { RolesGuard } from "../auth/guards/roles.guard";
 import { Roles } from "../auth/decorators/roles.decorators";
 import { CreateAdminDto } from "./dto/create-admin.dto";
-import { Serializer } from "src/interceptors/serializer.interceptor";
+import { Serializer } from "../../interceptors/serializer.interceptor";
 import { AdminReponse } from "./entities/admin.entity";
 import { UpdateAdminDto } from "./dto/update-admin";
 
@@ -15,7 +15,7 @@ export class AdminController {
   constructor(private readonly adminService: AdminService) {}
 
   @Post("login")
-  loginAdmin(@Body() body: LoginAuthDto) {
+  loginAdmin(@Body() body: LoginAdminDto) {
     return this.adminService.login(body);
   }
 

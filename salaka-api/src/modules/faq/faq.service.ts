@@ -8,7 +8,7 @@ import { CreateFaqDto } from "./dto/create-faq.dto";
 import { UpdateFaqDto } from "./dto/update-faq.dto";
 import { FaqHelper } from "./faq.helper";
 import { JwtPayload } from "../auth/interface";
-import { FAQ_CATEGORY } from "generated/prisma/enums";
+import { FAQ_CATEGORY } from "@prisma/client";
 
 @Injectable()
 export class FaqService {

@@ -4,7 +4,6 @@ import {
     Flex,
     Grid,
     GridItem,
-    IconButton,
     Text,
     useDisclosure
 } from "@chakra-ui/react";
@@ -13,7 +12,6 @@ import { ButtonGroup } from "@src/components/common/CustomArrow";
 import CustomContainer from "@src/components/common/CustomContainer";
 import SectionHeading from "@src/components/common/SectionHeading";
 import { useEffect, useState } from "react";
-import { FaArrowRight } from "react-icons/fa";
 import Carousel from "react-multi-carousel";
 import Filter from "./Filter";
 import { useSearchParams } from "react-router";
@@ -51,11 +49,14 @@ export default function ProductCollection() {
         }
     });
 
+    const [totalProducts, setTotalProducts] = useState(0);
+
     useEffect(() => {
         const timer = setTimeout(async () => {
-            const result = await mutateAsync(filters);
+            const result = await mutateAsync({ ...filters, limit: 50 }); // Fetch more products
             const responseData = result?.data;
             setProducts(Array.isArray(responseData) ? responseData : (responseData as any)?.products || []);
+            setTotalProducts((responseData as any)?.totalCount || 0);
         }, 300);
 
         return () => clearTimeout(timer);
@@ -130,36 +131,12 @@ export default function ProductCollection() {
                         borderWidth={1}
                         borderColor="green.100">
 
-                        <Flex
-                            flexWrap={"wrap"}
-                            px={4}
-                            py={6}
-                            borderBottomWidth={1}
-                            borderColor="green.100"
-                            justifyContent="space-between">
                             <Flex
                                 color={"text.400"}
                                 alignItems="center"
                                 gap={2}>
-                                <Text>1</Text>
-                                of
-                                <IconButton
-                                    bg="none"
-                                    h={"fit-content"}
-                                    minW={"fit-content"}
-                                    color={"text.400"}
-                                    fontSize={"xs"}
-                                    aria-label="Previous Page"
-                                    size="sm"
-                                    _hover={{
-                                        bg: "transparent"
-                                    }}>
-                                    <FaArrowRight />
-                                </IconButton>
-
-                                <Text>10</Text>
+                                <Text>Showing {products.length} of {totalProducts} products</Text>
                             </Flex>
-                        </Flex>
                         {
                             !isSuccess && <ProductRow />
                         }

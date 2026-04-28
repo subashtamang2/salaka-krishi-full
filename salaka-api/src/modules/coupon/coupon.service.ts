@@ -8,7 +8,7 @@ import { CreateCouponDto } from "./dto/create-coupon.dto";
 
 import { CouponRepository } from "./coupon.repo";
 import { JwtPayload } from "../auth/interface";
-import { ROLE } from "generated/prisma/enums";
+import { ROLE } from "@prisma/client";
 import { UpdateCouponDto } from "./dto/update_coupon.dto";
 
 

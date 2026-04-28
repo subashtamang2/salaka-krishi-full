@@ -18,6 +18,7 @@ import ProductRow from "@src/pages/Loadings/ProductRow";
 import NotFoundSm from "@src/pages/NotFoundSm";
 import OrderCart from "./OrderCart";
 import { useState } from "react";
+import EmptyCart from "./components/EmptyCart";
 
 export default function CartCheckout() {
     const [appliedCoupon, setAppliedCoupon] = useState<any>(null);
@@ -40,10 +41,12 @@ export default function CartCheckout() {
     const cartData = data?.data;
     const products = cartData?.products || [];
     const subTotal = cartData?.totalAmount || 0;
+    const DELIVERY_CHARGE = 10;
     const discountAmount = appliedCoupon ? appliedCoupon.discount : 0;
-    const finalTotal = subTotal - discountAmount;
+    const finalTotal = subTotal - discountAmount + DELIVERY_CHARGE;
 
     const COUPON_DISCOUNT = "Coupon Discount";
+    const DELIVERY_CHARGE_LABEL = "Delivery Charge";
     const cartTableCalculation = [
         {
             id: 1,
@@ -53,7 +56,12 @@ export default function CartCheckout() {
         {
             id: 2,
             label: COUPON_DISCOUNT,
-            value: `${currencyTypes} ${discountAmount.toFixed(2)}`,
+            value: `${currencyTypes} - ${discountAmount.toFixed(2)}`,
+        },
+        {
+            id: 3,
+            label: DELIVERY_CHARGE_LABEL,
+            value: `${currencyTypes} ${DELIVERY_CHARGE}`,
         },
         {
             id: 4,
@@ -65,90 +73,94 @@ export default function CartCheckout() {
     return (
         <>
             <CustomContainer py={20}>
-                <Grid
-                    gap={{
-                        base: 8,
-                        lg: 0
-                    }}
-                    gridTemplateColumns={{
-                        base: "100%",
-                        xl: "46% 45%",
-                        "2xl": "45% 45%",
-                    }}
-                    alignItems={"center"}
-                    justifyContent={"space-around"}>
-
-                    <GridItem
-                        px={{
-                            base: "10",
-                            lg: "10",
-                            xl: "4",
-                            "2xl": "20",
+                {products.length === 0 ? (
+                    <EmptyCart />
+                ) : (
+                    <Grid
+                        gap={{
+                            base: 8,
+                            lg: 0
                         }}
-                        height={"fit-content"}
-                        pos={{
-                            lg: "sticky"
+                        gridTemplateColumns={{
+                            base: "100%",
+                            xl: "46% 45%",
+                            "2xl": "45% 45%",
                         }}
-                        top={10}
-                        bg={"primary.300/10"} py={10} >
-                        <Flex
-                            flexDir={"column"}
-                            gap={8}>
-                            <Heading
-                                textAlign={{
-                                    base: "center",
-                                    sm: "start",
-                                }}
-                                color={"primary.300"}
-                                fontSize={"2xl"}
-                                fontWeight={700}
-                                as="h4">Cart Item</Heading>
+                        alignItems={"center"}
+                        justifyContent={"space-around"}>
 
-                            <Flex flexDir="column" gap={2}>
-                                {products.map((item, index) => (
-                                    <OrderCart key={index} product={item} />
-                                ))}
+                        <GridItem
+                            px={{
+                                base: "10",
+                                lg: "10",
+                                xl: "4",
+                                "2xl": "20",
+                            }}
+                            height={"fit-content"}
+                            pos={{
+                                lg: "sticky"
+                            }}
+                            top={10}
+                            bg={"primary.300/10"} py={10} >
+                            <Flex
+                                flexDir={"column"}
+                                gap={8}>
+                                <Heading
+                                    textAlign={{
+                                        base: "center",
+                                        sm: "start",
+                                    }}
+                                    color={"primary.300"}
+                                    fontSize={"2xl"}
+                                    fontWeight={700}
+                                    as="h4">Cart Item</Heading>
+
+                                <Flex flexDir="column" gap={2}>
+                                    {products.map((item, index) => (
+                                        <OrderCart key={index} product={item} />
+                                    ))}
+                                </Flex>
+
+                                <CouponBox
+                                    totalAmount={subTotal}
+                                    onApply={(coupon) => setAppliedCoupon(coupon)}
+                                />
+
+                                <Flex flexDir={"column"} mt={4}>
+                                    {
+                                        cartTableCalculation.map((item) => {
+                                            const isCoupon = item.label === COUPON_DISCOUNT;
+                                            const isTotal = item.label === "Total";
+                                            return (
+                                                <Flex
+                                                    key={item.id}
+                                                    justifyContent={"space-between"}
+                                                    alignItems={"center"}
+                                                    fontSize={"md"}
+                                                    borderTopWidth={1}
+                                                    borderTopColor={"primary.100/50"}
+                                                    py={3} >
+                                                    <Text
+                                                        color={isCoupon ? "border.300" : isTotal ? "Primary.300" : "primary.300"}
+                                                        fontWeight={isTotal ? "700" : "500"}
+                                                        fontSize={"md"}>{item.label}</Text>
+                                                    <Text
+                                                        color={isCoupon ? "border.300" : isTotal ? "Primary.300" : "primary.300"}
+                                                        fontWeight={isTotal ? "700" : "500"}
+                                                        fontSize={"sm"}>{item.value}</Text>
+                                                </Flex>
+                                            )
+                                        })}
+                                </Flex>
                             </Flex>
-
-                            <CouponBox
-                                totalAmount={subTotal}
-                                onApply={(coupon) => setAppliedCoupon(coupon)}
+                        </GridItem>
+                        <GridItem>
+                            <ShippingDetails
+                                appliedCoupon={appliedCoupon}
                             />
-
-                            <Flex flexDir={"column"} mt={4}>
-                                {
-                                    cartTableCalculation.map((item) => {
-                                        const isCoupon = item.label === COUPON_DISCOUNT;
-                                        const isTotal = item.label === "Total";
-                                        return (
-                                            <Flex
-                                                key={item.id}
-                                                justifyContent={"space-between"}
-                                                alignItems={"center"}
-                                                fontSize={"md"}
-                                                borderTopWidth={1}
-                                                borderTopColor={"primary.100/50"}
-                                                py={3} >
-                                                <Text
-                                                    color={isCoupon ? "border.300" : isTotal ? "Primary.300" : "primary.300"}
-                                                    fontWeight={isTotal ? "700" : "500"}
-                                                    fontSize={"md"}>{item.label}</Text>
-                                                <Text
-                                                    color={isCoupon ? "border.300" : isTotal ? "Primary.300" : "primary.300"}
-                                                    fontWeight={isTotal ? "700" : "500"}
-                                                    fontSize={"sm"}>{item.value}</Text>
-                                            </Flex>
-                                        )
-                                    })}
-                            </Flex>
-                        </Flex>
-                    </GridItem>
-                    <GridItem>
-                        <ShippingDetails
-                            appliedCoupon={appliedCoupon}
-                        />
-                    </GridItem>
-                </Grid >
+                        </GridItem>
+                    </Grid >
+                )}
             </CustomContainer >
         </>
     )

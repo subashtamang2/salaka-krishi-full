@@ -77,8 +77,7 @@ const validationSchema = yup.object({
         .integer("Must be an integer")
         .min(yup.ref('estimatedDeliveryMinDays'), "Max days must be greater than or equal to min days")
         .required("Max delivery days is required"),
-    isLimitedStock: yup.boolean()
-        .optional(),
+
     discountPercentage: yup.number()
         .typeError("Discount must be a number")
         .min(0, "Discount cannot be negative")
@@ -146,7 +145,7 @@ export default function Page() {
             availability: product?.availability || ProductAvailability.IN_STOCK,
             isBlackFriday: product?.isBlackFriday || false,
             isFeatured: product?.isFeatured || false,
-            isLimitedStock: product?.isLimitedStock || false,
+
             stock: product?.stock || 0,
             sold: product?.sold || 0,
             estimatedDeliveryMinDays: product?.estimatedDeliveryMinDays || 2,
@@ -163,7 +162,7 @@ export default function Page() {
         validationSchema,
         onSubmit: async (values, { setSubmitting, resetForm }) => {
             setSubmitting(true);
-            const { files, slug: _, price, rating: __, sold: ___, addedBy: ____, stock, discountPercentage, ...rest } = values;
+            const { files, slug: _, price, rating, sold, addedBy: ____, stock, discountPercentage, ...rest } = values;
 
             const processImages = async (files: UploadFile[]) => {
 
@@ -182,6 +181,8 @@ export default function Page() {
                     ...rest,
                     price: Number(price),
                     stock: Number(stock),
+                    rating: Number(rating),
+                    sold: Number(sold),
                     estimatedDeliveryMinDays: Number(rest.estimatedDeliveryMinDays),
                     estimatedDeliveryMaxDays: Number(rest.estimatedDeliveryMaxDays),
                     ...(discountPercentage && { discountPercentage: Number(discountPercentage) }),
@@ -501,19 +502,7 @@ export default function Page() {
                                             label="Black Friday Product" />
                                     </Stack>
                                 </Grid>
-                                <Grid item xs={3} sx={{
-                                    display: "flex",
-                                    alignItems: "center",
-                                }}>
-                                    <Stack sx={{ gap: 1, }}>
-                                        <FormControlLabel
-                                            control={<Checkbox
-                                                size="small"
-                                                name="isLimitedStock" checked={formik.values.isLimitedStock}
-                                                onChange={formik.handleChange} />}
-                                            label="Limited Stock" />
-                                    </Stack>
-                                </Grid>
+
                                 <Grid item xs={12}>
                                     <Stack sx={{ gap: 1 }}>
                                         <InputLabel>Upload Product Images</InputLabel>

@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
-import { PrismaService } from "src/prisma/prisma.service";
+import { PrismaService } from "../../prisma/prisma.service";
 import { CreateStaticPageDto } from "./dto/create-static-page-dto";
-import { STATIC_PAGE_KEY } from "generated/prisma/enums";
+import { STATIC_PAGE_KEY } from "@prisma/client";
 
 @Injectable()
 export class StaticPageService {
