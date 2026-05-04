@@ -16,13 +16,12 @@ import {
 } from "@chakra-ui/react";
 import { paymentMethods } from "@src/data/PaymentMethod";
 import routes from "@src/router/routes";
-import { useEffect, useState } from "react";
+import {  useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createOrder } from "@src/api/order";
 import { toaster } from "@src/components/ui/toaster";
-import axios from "@src/utils/axios-interceptor";
 
 interface ContactFormProps {
     fullName: string;
@@ -47,23 +46,14 @@ export default function ShippingDetails({
     const router = useNavigate();
     const queryClient = useQueryClient();
 
-    useEffect(() => {
-        const abandonedOrderId = localStorage.getItem("pendingEsewaOrderId");
-        if (abandonedOrderId) {
-            axios.patch(`/orders/${abandonedOrderId}/payment-failed`).then(() => {
-                console.log("Automatically marked abandoned eSewa session as failed.");
-            }).catch((err) => {
-                console.error("Auto cancel error:", err);
-            }).finally(() => {
-                localStorage.removeItem("pendingEsewaOrderId");
-            });
-        }
-    }, []);
+    // No longer aggressively cancelling orders on mount.
+    // The system now allows orders to stay Pending until the background job cleans them up (after 30-60 mins).
+
 
     const paymentMethod = createListCollection({
         items: [
             { label: "Khalti", value: "Khalti" },
-            { label: "eSewa", value: "eSewa" },
+            { label: "eSewa", value: "Esewa" },
             { label: "Cash on Delivery", value: "CashOnDelivery" },
         ],
     });
@@ -86,7 +76,7 @@ export default function ShippingDetails({
                 fullName: data.fullName,
                 address: data.address,
                 phoneNumber: data.phone,
-                paymentMethod: payment[0],
+                paymentProvider: payment[0],
                 couponCode: appliedCoupon?.code,
             }),
         onSuccess: (response: any) => {
@@ -100,23 +90,25 @@ export default function ShippingDetails({
                 return;
             }
 
-            const { order, paymentData, paymentMethod: receivedMethod } = rootData;
-            const normalizedMethod = (receivedMethod || order?.paymentMethod || "").toLowerCase();
+            const { order, paymentData, paymentProvider: receivedMethod } = rootData;
+            const normalizedMethod = (receivedMethod || order?.paymentProvider || "").toLowerCase();
 
             console.log(`Detected payment method: ${normalizedMethod}`);
 
             if (normalizedMethod === 'esewa' && paymentData) {
-                console.log("Processing eSewa redirect...");
                 const form = document.createElement("form");
                 form.setAttribute("method", "POST");
                 form.setAttribute("action", paymentData.url);
+                // Ensure the form opens in the top-level window and sends the referer correctly
+                form.setAttribute("target", "_top");
+                form.setAttribute("referrerpolicy", "no-referrer-when-downgrade");
 
-                Object.keys(paymentData).forEach((key) => {
+                Object.entries(paymentData).forEach(([key, value]) => {
                     if (key !== "url") {
                         const input = document.createElement("input");
                         input.setAttribute("type", "hidden");
                         input.setAttribute("name", key);
-                        input.setAttribute("value", paymentData[key]);
+                        input.setAttribute("value", value as string);
                         form.appendChild(input);
                     }
                 });

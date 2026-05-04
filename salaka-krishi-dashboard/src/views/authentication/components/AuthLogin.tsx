@@ -74,7 +74,9 @@ export default function AuthLogin() {
                             }, 500);
                         },
                         onError: (error: any) => {
-                            toast.error(error?.response?.data?.message || 'Login failed. Please try again.');
+                            const message = error?.response?.data?.message;
+                            const errorMessage = Array.isArray(message) ? message[0] : (message || 'Login failed. Please try again.');
+                            toast.error(errorMessage);
                             setSubmitting(false);
                             setStatus({ success: false });
                         }

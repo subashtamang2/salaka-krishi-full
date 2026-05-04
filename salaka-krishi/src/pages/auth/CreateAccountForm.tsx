@@ -15,7 +15,7 @@ import { FiEye, FiEyeOff } from "react-icons/fi";
 import { MdLockOutline, MdOutlineEmail } from "react-icons/md";
 import { useMutation } from "@tanstack/react-query";
 import type { SignUpProps } from "@src/schema/schema";
-import { toast } from "react-toastify";
+import { toaster } from "@src/components/ui/toaster";
 import { signUp } from "@src/api/auth";
 import { useNavigate } from "react-router";
 import routes from "@src/router/routes";
@@ -43,7 +43,11 @@ export default function CreateAccountForm({ onSuccess }: CreateAccountFormProps)
             return res.data;
         },
         onSuccess: () => {
-            toast.success("Account created successfully! Please login to continue.");
+            toaster.create({
+                title: "Account created",
+                description: "Account created successfully! Please login to continue.",
+                type: "success",
+            });
             if (onSuccess) {
                 onSuccess();
             } else {
@@ -51,8 +55,13 @@ export default function CreateAccountForm({ onSuccess }: CreateAccountFormProps)
             }
         },
         onError: (error: any) => {
-            const message = error?.response?.data?.message || "An error occurred. Please try again.";
-            toast.error(message);
+            const message = error?.response?.data?.message;
+            const errorMessage = Array.isArray(message) ? message[0] : (message || "An error occurred. Please try again.");
+            toaster.create({
+                title: "Signup failed",
+                description: errorMessage,
+                type: "error",
+            });
         }
         //  onError: (error: any) => {
         //             console.log("Signup Error:", error);

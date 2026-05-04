@@ -46,7 +46,7 @@ import { format } from "date-fns";
 const ORDER_STATUSES = ["Pending", "Processing", "Shipped", "Delivered"];
 const STATUS_FLOW = ["Pending", "Processing", "Shipped", "Delivered"];
 
-const isCOD = (paymentMethod: string) => paymentMethod === "CashOnDelivery";
+const isCOD = (paymentProvider: string) => paymentProvider === "CashOnDelivery";
 
 function getPaymentStatusColor(status: string): "warning" | "success" | "error" | "default" {
     switch (status) {
@@ -127,7 +127,7 @@ function CodDeliveryConfirmModal({ open, onYes, onNo, onCancel, loading }: CodCo
 }
 
 // --------------- Status Dropdown ---------------
-function StatusDropdown({ orderId, currentStatus, paymentStatus, paymentMethod }: any) {
+function StatusDropdown({ orderId, currentStatus, paymentStatus, paymentProvider }: any) {
     const [status, setStatus] = useState(currentStatus || "Pending");
     const [pendingStatus, setPendingStatus] = useState<string | null>(null);
     const [codModalOpen, setCodModalOpen] = useState(false);
@@ -161,7 +161,7 @@ function StatusDropdown({ orderId, currentStatus, paymentStatus, paymentMethod }
 
     const handleChange = (newStatus: string) => {
         // COD + Delivered → show payment confirmation modal
-        if (isCOD(paymentMethod) && newStatus === "Delivered") {
+        if (isCOD(paymentProvider) && newStatus === "Delivered") {
             setPendingStatus(newStatus);
             setCodModalOpen(true);
             return;
@@ -338,7 +338,7 @@ export default function OrdersPage() {
     const [debouncedSearch, setDebouncedSearch] = useState("");
     const [statusFilter, setStatusFilter] = useState("All");
     const [paymentStatusFilter, setPaymentStatusFilter] = useState("All");
-    const [paymentMethodFilter, setPaymentMethodFilter] = useState("All");
+    const [paymentProviderFilter, setPaymentProviderFilter] = useState("All");
     const [page, setPage] = useState(1);
     const limit = 15;
 
@@ -355,13 +355,13 @@ export default function OrdersPage() {
         search: debouncedSearch || undefined,
         status: statusFilter !== "All" ? statusFilter : undefined,
         payment_status: paymentStatusFilter !== "All" ? paymentStatusFilter : undefined,
-        payment_method: paymentMethodFilter !== "All" ? paymentMethodFilter : undefined,
+        payment_provider: paymentProviderFilter !== "All" ? paymentProviderFilter : undefined,
         page,
         limit,
     };
 
     const [confirmDialog, setConfirmDialog] = useState<{
-        open: boolean; type: string; orderId: string; paymentMethod?: string; orderStatus?: string;
+        open: boolean; type: string; orderId: string; paymentProvider?: string; orderStatus?: string;
     }>({ open: false, type: "", orderId: "" });
 
     const { data: ordersRes, isLoading, isError } = useQuery({
@@ -396,11 +396,11 @@ export default function OrdersPage() {
 
 
     const handleAction = (type: string, order: any) => {
-        setConfirmDialog({ open: true, type, orderId: order.id, paymentMethod: order.paymentMethod, orderStatus: order.orderStatus });
+        setConfirmDialog({ open: true, type, orderId: order.id, paymentProvider: order.paymentProvider, orderStatus: order.orderStatus });
     };
 
     const getDialogConfig = () => {
-        const isCodOrder = isCOD(confirmDialog.paymentMethod || "");
+        const isCodOrder = isCOD(confirmDialog.paymentProvider || "");
         const isReopeningDelivered = confirmDialog.type === "reopen" && confirmDialog.orderStatus === "Delivered";
         switch (confirmDialog.type) {
             case "cancel": return { title: "Cancel Order", desc: "Are you sure? This will restore stock.", color: "error" as const, showCodReset: false };
@@ -475,10 +475,10 @@ export default function OrdersPage() {
                         </FormControl>
                         <FormControl size="small" sx={{ minWidth: 140 }}>
                             <InputLabel>Payment</InputLabel>
-                            <Select value={paymentMethodFilter} label="Payment" onChange={(e) => { setPaymentMethodFilter(e.target.value); setPage(1); }}>
+                            <Select value={paymentProviderFilter} label="Payment" onChange={(e) => { setPaymentProviderFilter(e.target.value); setPage(1); }}>
                                 <MenuItem value="All">All</MenuItem>
                                 <MenuItem value="CashOnDelivery">COD</MenuItem>
-                                <MenuItem value="eSewa">eSewa</MenuItem>
+                                <MenuItem value="Esewa">eSewa</MenuItem>
                                 <MenuItem value="Khalti">Khalti</MenuItem>
                             </Select>
                         </FormControl>
@@ -546,14 +546,14 @@ export default function OrdersPage() {
                                         </TableCell>
                                         <TableCell>
                                             <Typography variant="body2" fontWeight={600}>
-                                                {isCOD(order.paymentMethod) ? "Cash on Delivery" : order.paymentMethod}
+                                                {isCOD(order.paymentProvider) ? "Cash on Delivery" : order.paymentProvider}
                                             </Typography>
                                         </TableCell>
                                         <TableCell align="center">
                                             <Chip
-                                                label={order.paymentStatus}
+                                                label={order.payment?.status || "Pending"}
                                                 size="small"
-                                                color={getPaymentStatusColor(order.paymentStatus) as any}
+                                                color={getPaymentStatusColor(order.payment?.status || "Pending") as any}
                                                 variant="light"
                                                 sx={{ borderRadius: "6px", fontWeight: 700, minWidth: 75 }}
                                             />
@@ -563,10 +563,10 @@ export default function OrdersPage() {
                                                 <StatusDropdown
                                                     orderId={order.id}
                                                     currentStatus={order.orderStatus}
-                                                    paymentStatus={order.paymentStatus}
-                                                    paymentMethod={order.paymentMethod}
+                                                    paymentStatus={order.payment?.status}
+                                                    paymentProvider={order.paymentProvider}
                                                 />
-                                                {(order.orderStatus === "Cancelled" || order.orderStatus === "Delivered") && order.paymentStatus !== "Failed" && (
+                                                {(order.orderStatus === "Cancelled" || order.orderStatus === "Delivered") && order.payment?.status !== "Failed" && (
                                                     <Tooltip title="Reopen Order">
                                                         <IconButton
                                                             size="small"

@@ -346,5 +346,26 @@ getFilteredProducts: {
     url: "overall-reviews/:id",
     method: "delete",
   },
+  // Gallery
+  getGalleryImages: {
+    url: "gallery",
+    method: "get",
+  },
+  getSingleGalleryImage: {
+    url: "gallery/:id",
+    method: "get",
+  },
+  createGalleryImage: {
+    url: "gallery",
+    method: "post",
+  },
+  updateGalleryImage: {
+    url: "gallery/:id",
+    method: "patch",
+  },
+  deleteGalleryImage: {
+    url: "gallery/:id",
+    method: "delete",
+  },
 };
 export default urls;

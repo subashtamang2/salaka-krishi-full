@@ -7,7 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getBlog } from "@src/api/blog";
 import type { PaginationMeta } from "@src/schema/schema";
 import type { BlogInterface } from "@src/schema/blog";
-import ProductRow from "../Loadings/ProductRow";
+import BlogLoading from "../Loadings/BlogLoading";
 
 export default function LatestBlog({ currentBlog }: { currentBlog: string }) {
     const { data, isLoading } = useQuery<PaginationMeta<BlogInterface[]>>({
@@ -26,7 +26,7 @@ export default function LatestBlog({ currentBlog }: { currentBlog: string }) {
         .slice(0, 3);
 
     if (isLoading) {
-        return <ProductRow noOfRows={{ base: 1, md: 2, lg: 3, xl: 3 }} />;
+        return <BlogLoading count={3} />;
     }
 
     return (

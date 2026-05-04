@@ -14,12 +14,15 @@ import { PRODUCT_FILTER } from "./product.enum";
 import { WishlistRepo } from "../wishlist/wishlist.repo";
 import { PRODUCT_STATUS, ROLE } from "@prisma/client";
 
+import { CategoriesService } from "../categories/categories.service";
+ 
 @Injectable()
 export class ProductService {
     constructor(
         private readonly productRepository: ProductRepository,
         private readonly userService: UserService,
-        private readonly wishlistRepo: WishlistRepo
+        private readonly wishlistRepo: WishlistRepo,
+        private readonly categoriesService: CategoriesService,
     ) { }
 
     async create(createProductDto: CreateProductDto, user: JwtPayload) {
@@ -29,6 +32,9 @@ export class ProductService {
         );
         if (checkSlug)
             throw new NotAcceptableException("Product with this slug already exists");
+ 
+        // Verify Category Existence
+        await this.categoriesService.findOne(createProductDto.categoryId);
 
         const product = await this.productRepository.createProduct(
             createProductDto,
@@ -64,21 +70,20 @@ export class ProductService {
     async findProductBySlug(slug: string, user: JwtPayload | undefined) {
         const userId = user?.sub;
 
-        let currentUser;
-
-        if (userId) currentUser = await this.userService.getUniqueUser(userId);
-
+        const { wishlistId, cartId } = await this.getCurrentWishlistAndCart(userId);
         const product = await this.productRepository.findActiveProductBySlug(
             slug,
-            userId
+            userId,
+            cartId
         );
         if (!product) {
             throw new NotFoundException("Product does not exist");
         }
-        const { wishlist, ...rest } = product;
+        const { wishlist, cart, ...rest } = product as any;
         return {
             ...rest,
             isInWishlist: wishlist && wishlist.length > 0,
+            isInCart: cart && cart.length > 0,
         };
     }
 

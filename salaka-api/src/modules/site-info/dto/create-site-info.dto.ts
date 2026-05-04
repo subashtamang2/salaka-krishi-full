@@ -16,18 +16,20 @@ export class CreateSiteInfoDto {
   name: string;
 
   @IsString()
-  @ApiProperty({ example: "https://example.com/logo.png" })
-  logoUrl: string;
+  @IsOptional()
+  @ApiProperty({ example: "https://example.com/logo.png", required: false })
+  logoUrl?: string;
 
   @IsArray()
-  @ArrayNotEmpty()
+  @IsOptional()
   @IsString({ each: true })
-  @ApiProperty({ example: ["ecommerce", "shopping", "online store"] })
-  keywords: string[];
+  @ApiProperty({ example: ["ecommerce", "shopping", "online store"], required: false })
+  keywords?: string[];
 
   @IsString()
-  @ApiProperty({ example: "This is an awesome e-commerce site." })
-  description: string;
+  @IsOptional()
+  @ApiProperty({ example: "This is an awesome e-commerce site.", required: false })
+  description?: string;
 
   @IsEmail()
   @IsString()

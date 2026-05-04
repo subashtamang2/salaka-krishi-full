@@ -10,8 +10,13 @@ export class OverallReviewsHelper {
     return this.prisma.overallReview.create({
       data: {
         ...createOverallReviewDto,
-        createedById: userId,
+        createdById: userId,
       },
+    });
+  }
+  findByUser(userId: string) {
+    return this.prisma.overallReview.findFirst({
+      where: { createdById: userId },
     });
   }
   findAll() {

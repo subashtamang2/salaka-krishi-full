@@ -2,6 +2,7 @@ import {
   Injectable,
   InternalServerErrorException,
   NotFoundException,
+  ConflictException,
 } from "@nestjs/common";
 import { OverallReviewsHelper } from "./overall-reviews.helper";
 import { CreateOverallReviewDto } from "./dto/create-overall-review.dto";
@@ -13,6 +14,12 @@ export class OverallReviewsService {
   constructor(private readonly overallReviewsHelper: OverallReviewsHelper) {}
   async create(createOverallReviewDto: CreateOverallReviewDto, user: JwtPayload) {
     const userId = user.sub;
+
+    const existingReview = await this.overallReviewsHelper.findByUser(userId);
+    if (existingReview) {
+      throw new ConflictException("You have already submitted a review.");
+    }
+
     const restult = await this.overallReviewsHelper.create(
       createOverallReviewDto,
       userId

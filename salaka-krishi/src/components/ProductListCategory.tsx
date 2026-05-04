@@ -11,24 +11,15 @@ import { getProductByFilter } from "@src/api/products";
 import type { ProductSchema } from "@src/schema/product";
 import type { DataWrapper } from "@src/schema/schema";
 import ProductListLoad from "@src/pages/Loadings/ProductListLoad";
-import NotFound from "@src/pages/NotFound";
+import NotFoundSm from "@src/pages/NotFoundSm";
 
 interface CategorySectionProps {
     title: string;
-    filter: "top_rated" | "best_selling" | "on_sale";
+    products: ProductSchema[];
+    isLoading: boolean;
 }
 
-function CategorySection({ title, filter }: CategorySectionProps) {
-    const { data, isLoading, isError } = useQuery<DataWrapper<ProductSchema[]>>({
-        queryKey: ["products", filter],
-        queryFn: () => getProductByFilter(filter).then(res => res.data),
-    });
-
-    const products = data?.data || [];
-
-    if (isError) return <NotFound title="Product Not Found" />;
-    if (isLoading) return <ProductListLoad />;
-
+function CategorySection({ title, products, isLoading }: CategorySectionProps) {
     return (
         <Flex flexDir={"column"} gap={4}>
             <Flex flexDir={"column"} gap={2}>
@@ -45,18 +36,43 @@ function CategorySection({ title, filter }: CategorySectionProps) {
                 />
             </Flex>
 
-            {products.length > 0 ? (
+            {isLoading ? (
+                <ProductListLoad noOfRows={{ base: 1, md: 1, lg: 1, xl: 1 }} />
+            ) : products.length > 0 ? (
                 products.slice(0, 3).map((product) => (
                     <ProductListCategoryCard key={product.id} product={product} />
                 ))
-            ) : (
-                <NotFound title="Product NotFound "/>
-            )}
+            ) : null}
         </Flex>
     );
 }
 
 export default function ProductListCategory() {
+    const { data: topRatedData, isLoading: isTopRatedLoading, isError: isTopRatedError } = useQuery<DataWrapper<ProductSchema[]>>({
+        queryKey: ["products", "top_rated"],
+        queryFn: () => getProductByFilter("top_rated").then(res => res.data),
+    });
+
+    const { data: bestSellingData, isLoading: isBestSellingLoading, isError: isBestSellingError } = useQuery<DataWrapper<ProductSchema[]>>({
+        queryKey: ["products", "best_selling"],
+        queryFn: () => getProductByFilter("best_selling").then(res => res.data),
+    });
+
+    const { data: onSaleData, isLoading: isOnSaleLoading, isError: isOnSaleError } = useQuery<DataWrapper<ProductSchema[]>>({
+        queryKey: ["products", "on_sale"],
+        queryFn: () => getProductByFilter("on_sale").then(res => res.data),
+    });
+
+    const topRated = topRatedData?.data || [];
+    const bestSelling = bestSellingData?.data || [];
+    const onSale = onSaleData?.data || [];
+
+    // Combined loading state to show/hide all skeletons at once
+    const isCombinedLoading = isTopRatedLoading || isBestSellingLoading || isOnSaleLoading;
+    
+    const anyError = isTopRatedError || isBestSellingError || isOnSaleError;
+    const allEmpty = !isCombinedLoading && topRated.length === 0 && bestSelling.length === 0 && onSale.length === 0;
+
     return (
         <CustomContainer py={16}>
             <Grid
@@ -71,15 +87,33 @@ export default function ProductListCategory() {
                 }}
             >
                 <GridItem>
-                    <CategorySection title="Top Rated" filter="top_rated" />
+                    <CategorySection
+                        title="Top Rated"
+                        products={topRated}
+                        isLoading={isCombinedLoading}
+                    />
                 </GridItem>
                 <GridItem>
-                    <CategorySection title="Best Selling" filter="best_selling" />
+                    <CategorySection
+                        title="Best Selling"
+                        products={bestSelling}
+                        isLoading={isCombinedLoading}
+                    />
                 </GridItem>
                 <GridItem>
-                    <CategorySection title="On Sale" filter="on_sale" />
+                    <CategorySection
+                        title="On Sale"
+                        products={onSale}
+                        isLoading={isCombinedLoading}
+                    />
                 </GridItem>
             </Grid>
+
+            {!isCombinedLoading && (anyError || allEmpty) && (
+                <Flex flexDir="column" align="center" gap={4} py={10} width="full">
+                    <NotFoundSm />
+                </Flex>
+            )}
         </CustomContainer>
     );
 }

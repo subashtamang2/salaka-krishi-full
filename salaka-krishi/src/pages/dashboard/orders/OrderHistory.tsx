@@ -175,7 +175,7 @@ export default function OrderHistory() {
                                             <Text
                                                 fontSize="xs"
                                                 color="primary.300">
-                                                {order.paymentMethod}
+                                                {order.paymentProvider}
                                                 {order.orderStatus === 'Cancelled' && order.paymentStatus === 'Paid' && (
                                                     <Text as="span" color="red.500" fontWeight="bold"> (Refund Pending)</Text>
                                                 )}

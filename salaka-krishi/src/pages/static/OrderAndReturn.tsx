@@ -1,4 +1,9 @@
-import { Flex, Link, Text, Spinner, Center } from "@chakra-ui/react";
+import {
+Flex,
+ Link,
+ Text,
+ Center
+ } from "@chakra-ui/react";
 import FaqCard from "@src/components/cards/FaqCard";
 import CustomContainer from "@src/components/common/CustomContainer";
 import { EMAIL, PHONE } from "@src/utils/constants";
@@ -7,6 +12,7 @@ import { getFaq } from "@src/api/faq";
 import type { DataWrapper } from "@src/schema/schema";
 import type { FaqResponse } from "@src/schema/faq";
 import { useSiteInfo } from "@src/store/useSiteInfo";
+import StaticPageLoading from "../Loadings/StaticPageLoading";
 
 export default function OrderAndReturn() {
     const siteInfo = useSiteInfo((state) => state.siteInfo);
@@ -41,9 +47,7 @@ export default function OrderAndReturn() {
                     gap={8}>
 
                     {isLoading ? (
-                        <Center py={10}>
-                            <Spinner size="xl" color="primary.300" />
-                        </Center>
+                        <StaticPageLoading />
                     ) : isError ? (
                         <Center py={10}>
                             <Text color="red.500">Error loading FAQs. Please try again later.</Text>

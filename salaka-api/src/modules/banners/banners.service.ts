@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException, NotAcceptableException } from "@nestjs/common";
+import { Injectable, InternalServerErrorException, NotAcceptableException, NotFoundException } from "@nestjs/common";
 import { BannerRepository } from "./banner.repo";
 import { CreateBannerDto } from "./dto/create-banner.dto";
 import { UpdateBannerDto } from "./dto/update-banner.dto";
@@ -27,6 +27,13 @@ private readonly productRepository: ProductRepository
         if (!createBannerDto.productId) {
             throw new NotAcceptableException("You must select a product for the banner");
         }
+ 
+        // Verify Product Existence
+        const product = await this.productRepository.findProductById(createBannerDto.productId);
+        if (!product) {
+            throw new NotFoundException("Product not found");
+        }
+ 
         const banner = await this.bannerRepository.create(
             createBannerDto,
             userId

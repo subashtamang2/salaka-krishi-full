@@ -15,7 +15,7 @@ datasource db {
 
 model User {
     id              String  @id @default(uuid())
-    email           String
+    email           String  @unique
     firstName       String
     lastName       String?
     password        String?
@@ -110,12 +110,11 @@ model Banner {
   title       String?
   subtitle    String?
   description String?
-  slug String @unique @default("")
+  slug String @unique
   tag         BANNER_TAG?
   imageUrl    String?
-  product     Product   @relation(fields: [productId], references: [id])
+  product     Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
   productId   String
-  buttonLink  String?
   startDate   DateTime?
   endDate     DateTime?
   isActive    Boolean  @default(true)
@@ -158,8 +157,8 @@ model ClientReview {
     imageUrl     String?
     createdAt    DateTime @default(now())
     updatedAt    DateTime @updatedAt
-    createedById String
-    createedBy   User     @relation(fields: [createedById], references: [id], onDelete: Cascade)
+    createdById String
+    createdBy   User     @relation(fields: [createdById], references: [id], onDelete: Cascade)
 }
 
 model OverallReview {
@@ -171,8 +170,8 @@ model OverallReview {
     imageUrl     String?
     createdAt    DateTime @default(now())
     updatedAt    DateTime @updatedAt
-    createedById String
-    createedBy   User     @relation(fields: [createedById], references: [id], onDelete: Cascade)
+    createdById String
+    createdBy   User     @relation(fields: [createdById], references: [id], onDelete: Cascade)
 }
 
 
@@ -190,6 +189,8 @@ model ShippingDetails {
     phone   String
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
+
+    @@map("shipping_details")
 }
 
 model Wishlist {
@@ -275,8 +276,8 @@ model Product {
     // one to one relations
     categoryId String
     addedBy    String
-    category   Category @relation(fields: [categoryId], references: [id])
-    user       User     @relation(fields: [addedBy], references: [id])
+    category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+    user       User     @relation(fields: [addedBy], references: [id], onDelete: Cascade)
     banners Banner[]
     orderItems OrderItem[]
 }
@@ -294,7 +295,7 @@ model Reviews {
     productId String
     Product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 
-    // @@unique([userId, productId]) // Ensure a user can review a product only once
+    @@unique([userId, productId]) // Ensure a user can review a product only once
 }
 
 model HeroBanner {
@@ -307,7 +308,7 @@ model HeroBanner {
 
   // category relation
   categoryId  String
-  category    Category @relation(fields: [categoryId], references: [id])
+  category    Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
 
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -337,7 +338,7 @@ model Category {
     products Product[]
     heroBanners HeroBanner[]
     userId String
-    user   User   @relation(fields: [userId], references: [id])
+    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
     blogs    Blog[]
 }
 
@@ -490,7 +491,7 @@ model Order {
 
     // Customer Info
     userId          String
-    user            User        @relation(fields: [userId], references: [id])
+    user            User        @relation(fields: [userId], references: [id], onDelete: Cascade)
 
     // Shipping Info
     fullName        String
@@ -504,12 +505,13 @@ model Order {
     total           Float
 
     // Payment & Status
-    paymentMethod   String      @default("CashOnDelivery")
-    paymentStatus   PAYMENT_STATUS @default(Pending)
+    paymentProvider PAYMENT_PROVIDER @default(CashOnDelivery)
     orderStatus     ORDER_STATUS   @default(Pending)
 
+    payment         Payment?
+
     appliedCoupon   String?     // Store coupon code to apply usage after payment success
-    
+
     isRefundPending   Boolean?    @default(false)
     isArchived        Boolean     @default(false)
     cashCollected     Boolean     @default(false)
@@ -522,10 +524,9 @@ model Order {
     updatedAt       DateTime    @updatedAt
 
     @@index([orderStatus])
-    @@index([paymentStatus])
-    @@index([paymentMethod])
+    @@index([paymentProvider])
     @@index([createdAt])
-    @@index([orderStatus, paymentStatus])
+    @@index([userId, createdAt])
 }
 
 model OrderItem {
@@ -534,7 +535,7 @@ model OrderItem {
     order       Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
 
     productId   String
-    product     Product  @relation(fields: [productId], references: [id])
+    product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
 
     name        String   // Snapshot of name at time of order
     price       Float    // Snapshot of price at time of order
@@ -551,8 +552,42 @@ enum PAYMENT_STATUS {
     Refunded
 }
 
+
+
+
+model Payment {
+  id            String   @id @default(uuid())
+
+  orderId       String   @unique
+  order         Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  provider      PAYMENT_PROVIDER
+  transactionId String?  @unique
+  pidx          String?  @unique // Khalti specific
+
+  amount        Float
+  status        PAYMENT_STATUS @default(Pending)
+
+  rawResponse   Json?   // store full gateway response
+
+  webhookVerified Boolean @default(false)
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+
+enum PAYMENT_PROVIDER {
+  CashOnDelivery
+  Khalti
+  Esewa
+}
+
+
+
 enum ORDER_STATUS {
     Pending
+    WAITING_ESEWA
     Processing
     Shipped
     Delivered
@@ -564,10 +599,10 @@ model OrderCancellation {
     id          String   @id @default(uuid())
     orderId     String
     order       Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
-    
+
     reason      String
     cancelledBy String   // "user", "admin", "system"
     note        String?
-    
+
     createdAt   DateTime @default(now())
 }

@@ -10,16 +10,20 @@ import { useForm } from "react-hook-form";
 import { GrSearch } from "react-icons/gr";
 interface SearchContainerProps {
     setSearchQuery: (query: string | null) => void;
+    searchQuery: string | null;
 }
 
-export default function SearchContainer({ setSearchQuery }: SearchContainerProps) {
-    const { register, handleSubmit, reset } = useForm<{ searchQuery: string }>();
+export default function SearchContainer({ setSearchQuery, searchQuery }: SearchContainerProps) {
+    const { register, handleSubmit } = useForm<{ searchQuery: string }>({
+        defaultValues: {
+            searchQuery: searchQuery || ""
+        }
+    });
     const isMobile = useBreakpointValue({ base: true, md: false });
 
-    const onSubmit = ({ searchQuery }: { searchQuery: string }) => {
-        const trimmed = searchQuery.trim();
+    const onSubmit = (data: { searchQuery: string }) => {
+        const trimmed = data.searchQuery.trim();
         setSearchQuery(trimmed || null); // pass null if empty
-        reset(); // optional: clear input after submit
     }
 
     return (

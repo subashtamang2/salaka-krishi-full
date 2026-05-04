@@ -47,7 +47,7 @@ const TAG_TO_FILTER_TYPE: Record<string, string | null> = {
 const validationSchema = yup.object({
     title: yup.string().required("Title is required"),
     slug: yup.string().required("Slug is required"),
-    description: yup.string().required("Description is required"),
+    description: yup.string().optional(),
     tag: yup.string().oneOf(BANNER_TAGS, "Invalid tag").nullable(),
     startDate: yup.date().nullable(),
     endDate: yup.date().nullable(),
@@ -91,7 +91,6 @@ export default function EditOfferBannerPage() {
             description: banner?.description || "",
             tag: banner?.tag || "",
             imageUrl: banner?.imageUrl || "",
-            buttonLink: banner?.buttonLink || "",
             productId: banner?.productId || "",
             startDate: banner?.startDate ? new Date(banner.startDate).toISOString().split('T')[0] : "",
             endDate: banner?.endDate ? new Date(banner.endDate).toISOString().split('T')[0] : "",
@@ -336,19 +335,6 @@ export default function EditOfferBannerPage() {
                                     </Stack>
                                 </Grid>
 
-                                <Grid item xs={12}>
-                                    <Stack spacing={1}>
-                                        <InputLabel>Button Link</InputLabel>
-                                        <TextField
-                                            fullWidth
-                                            id="buttonLink"
-                                            name="buttonLink"
-                                            placeholder="https://example.com"
-                                            value={formik.values.buttonLink}
-                                            onChange={formik.handleChange}
-                                        />
-                                    </Stack>
-                                </Grid>
 
                                 <Grid item xs={12}>
                                     <Stack spacing={1}>

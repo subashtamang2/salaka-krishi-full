@@ -53,13 +53,6 @@ export class CreateBannerDto {
     @IsString()
     imageUrl: string;
 
-    @ApiProperty({
-        example: "https://example.com/landing-page",
-        required: false,
-    })
-    @IsOptional()
-    @IsString()
-    buttonLink?: string;
 
 
     @ApiProperty({

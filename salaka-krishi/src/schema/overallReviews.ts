@@ -7,7 +7,7 @@ export interface CreateOverallReviewInterface {
 
 export interface OverallReviewInterface extends CreateOverallReviewInterface {
     id: string;
-    createedById: string;
+    createdById: string;
     createdAt: string;
     updatedAt: string;
 }

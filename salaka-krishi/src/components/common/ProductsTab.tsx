@@ -4,7 +4,6 @@ import {
     Grid,
     GridItem,
     Heading,
-    Text,
 } from "@chakra-ui/react";
 import ProductCard from "../cards/ProductCard";
 import SectionHeading from "./SectionHeading";
@@ -19,7 +18,7 @@ const API_BASE_URL = `${import.meta.env.VITE_BACKEND_ENDPOINT}/api`;
 export default function ProductsTab() {
     const [filter, setFilter] = useState<ProductFilter>("all");
 
-    const { data, isLoading, isError, error } = useQuery<DataWrapper<ProductSchema[]>>({
+    const { data, isLoading, isError } = useQuery<DataWrapper<ProductSchema[]>>({
         queryKey: ["products", filter],
         queryFn: async ({ queryKey }) => {
             const [, activeFilter] = queryKey;
@@ -116,7 +115,7 @@ export default function ProductsTab() {
                     ) : isError ? (
                         <Flex flexDir="column" align="center" gap={4} py={10}>
                             <NotFoundSm />
-                            <Text color="red.500">Error: {(error as Error)?.message || "Failed to load products"}</Text>
+
                         </Flex>
                     ) : Array.isArray(products) && products.length > 0 ? (
                         <Grid

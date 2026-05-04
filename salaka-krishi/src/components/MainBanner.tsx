@@ -3,8 +3,6 @@ import {
     Heading,
     Button,
     Image,
-    Spinner,
-    Center
 } from "@chakra-ui/react";
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
@@ -16,6 +14,9 @@ import { useNavigate } from "react-router";
 import routes from "@src/router/routes";
 import type { CategorySchema } from "@src/schema/categories";
 import { getImageSrc } from "@src/utils/image";
+import HeroBannerLoading from "@src/pages/Loadings/HeroBannerLoading";
+import NotFoundSm from "@src/pages/NotFoundSm";
+
 
 const responsive = {
     desktop: { breakpoint: { max: 3000, min: 1024 }, items: 1, },
@@ -40,14 +41,27 @@ export default function MainBanner() {
 
     if (isBannersLoading) {
         return (
-            <Center h="60vh">
-                <Spinner size="xl" color="green.500" />
-            </Center>
+
+             <HeroBannerLoading/>
+
         );
     }
 
     if (isBannersError || banners.length === 0) {
-        return null;
+        return (
+            <Flex
+                width="full"
+                height={{ base: "400px", md: "500px" }}
+                justifyContent="center"
+                alignItems="center"
+                bg="gray.50"
+                flexDir="column"
+                gap={2}
+            >
+                <NotFoundSm />
+
+            </Flex>
+        );
     }
 
     const handleShopNow = (item: any) => {

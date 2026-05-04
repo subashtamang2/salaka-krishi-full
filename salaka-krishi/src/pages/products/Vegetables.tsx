@@ -1,4 +1,10 @@
-import { Button, Flex, Grid, Heading, Text } from "@chakra-ui/react";
+import {
+ Button,
+Flex,
+ Grid,
+ Heading,
+ Text
+ } from "@chakra-ui/react";
 import ProductCard from "@src/components/cards/ProductCard";
 import ReviewCard from "@src/components/cards/review/ReviewCard";
 import BreadCrumb from "@src/components/common/BreadCrumb";
@@ -24,8 +30,8 @@ import { getAccessToken } from "@src/utils/local-storage";
 import { useAuthModalStore } from "@src/store/useAuthModalStore";
 import { useUserStore } from "@src/store/useUserStore";
 import { toaster } from "@src/components/ui/toaster";
-import ProductListLoad from "../Loadings/ProductListLoad";
 import ProductRow from "../Loadings/ProductRow";
+import ReviewLoading from "../Loadings/ReviewLoading";
 
 export default function Vegetables() {
     const navigateToProductDetails = useNavigateToProductDetails();
@@ -87,7 +93,7 @@ export default function Vegetables() {
     const [isReviewOpen, setIsReviewOpen] = useState(false);
     const [showAllProducts, setShowAllProducts] = useState(false);
 
-    const hasAlreadyReviewed = reviews.some(review => review.createedById === userDetail?.id);
+    const hasAlreadyReviewed = reviews.some(review => review.createdById === userDetail?.id);
 
     const openReview = () => {
         if (!getAccessToken()) {
@@ -98,7 +104,7 @@ export default function Vegetables() {
         if (hasAlreadyReviewed) {
             toaster.create({
                 title: "Already Reviewed",
-                description: "You have already reviewed this product.",
+                description: "You have already submitted an overall review.",
                 type: "info",
             });
             return;
@@ -176,7 +182,7 @@ export default function Vegetables() {
                             xl: 14
                         }}>
                         {reviewsLoading ? (
-                            <ProductListLoad />
+                            <ReviewLoading count={4} />
                         ) : (reviewsError || reviews.length === 0) ? (
                             <Text color="text.200" gridColumn="1 / -1">
                                 No reviews yet. Be the first to add one!

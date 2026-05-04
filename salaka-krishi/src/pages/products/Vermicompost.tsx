@@ -15,10 +15,9 @@ import { vermicompostDealShowcaseData } from "@src/data/Vermicompost";
 import type { BlogInterface } from "@src/schema/blog";
 import { useQuery } from "@tanstack/react-query";
 import type { PaginationMeta } from "@src/schema/schema";
-import ProductRow from "../Loadings/ProductRow";
+import BlogLoading from "../Loadings/BlogLoading";
+import NotFoundSm from "../NotFoundSm";
 
-
-import { blogs as mockBlogs } from "@src/data/blog";
 
 export default function Vermicompost() {
     const { data: blogData, isLoading: isBlogLoading, isError } = useQuery<PaginationMeta<BlogInterface[]>>({
@@ -41,23 +40,6 @@ export default function Vermicompost() {
     });
 
 
-    if ((filteredBlogs.length === 0 || isError) && !isBlogLoading) {
-        filteredBlogs = mockBlogs
-            .filter(b => b.category === "vermicompost" || b.title.toLowerCase().includes("vermi"))
-            .map(b => ({
-                id: b.id,
-                title: b.title,
-                slug: b.slug,
-                shortDesc: b.description,
-                content: b.description,
-                imageUrl: b.image,
-                isPublished: true,
-                keywords: [],
-                _count: { comments: 0 },
-                createdAt: b.date,
-                updatedAt: b.date
-            }));
-    }
 
     const displayBlogs = filteredBlogs.slice(0, 4);
 
@@ -79,9 +61,9 @@ export default function Vermicompost() {
             <CustomContainer
                 py={12}>
                 {isBlogLoading ? (
-                    <ProductRow noOfRows={{ base: 1, md: 2, lg: 2, xl: 2 }} />
-                ) : displayBlogs.length === 0 ? (
-                    <div>No vermicompost blogs found.</div>
+                    <BlogLoading count={4} />
+                ) : (isError || displayBlogs.length === 0) ? (
+                    <NotFoundSm />
                 ) : (
                     <Grid
                         justifyContent={{

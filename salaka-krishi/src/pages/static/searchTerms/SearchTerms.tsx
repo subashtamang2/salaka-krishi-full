@@ -1,4 +1,9 @@
-import { Flex, Heading, Link, Text, Spinner, Center } from "@chakra-ui/react";
+import {
+Flex,
+ Heading,
+ Link,
+ Text
+} from "@chakra-ui/react";
 import FaqCard from "@src/components/cards/FaqCard";
 import CustomContainer from "@src/components/common/CustomContainer";
 import { EMAIL, PHONE } from "@src/utils/constants";
@@ -8,6 +13,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getFaq } from "@src/api/faq";
 import type { FaqResponse } from "@src/schema/faq";
 import type { DataWrapper } from "@src/schema/schema";
+import StaticPageLoading from "../../Loadings/StaticPageLoading";
 
 
 export default function SearchTerms() {
@@ -58,12 +64,13 @@ export default function SearchTerms() {
                         fontWeight={700}
                         as="h1">Hello, How can we help you ?
                     </Heading>
-                    <SearchContainer setSearchQuery={setSearchQuery} />
+                    <SearchContainer
+                        setSearchQuery={setSearchQuery}
+                        searchQuery={searchQuery}
+                    />
 
                     {isSearchLoading || isAllLoading ? (
-                        <Center py={10}>
-                            <Spinner size="xl" color="primary.300" />
-                        </Center>
+                        <StaticPageLoading />
                     ) : searchQuery && searchResults ? (
                         <>
                             <Heading

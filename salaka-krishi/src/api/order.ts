@@ -5,7 +5,7 @@ export interface CreateOrderPayload {
     fullName: string;
     address: string;
     phoneNumber: string;
-    paymentMethod?: string;
+    paymentProvider?: string;
     couponCode?: string;
     deliveryMethod?: string;
 }

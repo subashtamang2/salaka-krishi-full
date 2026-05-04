@@ -34,7 +34,7 @@ export default function ProductCarousel({ isVisible }: { isVisible: boolean }) {
         queryFn: async () => {
             const res = await getQueryFilterProducts({
                 ...filters,
-                categories: filters.categories?.length ? filters.categories : ["seasonalVegetables"]
+                categories: filters.categories?.length ? filters.categories : ["seasonal-vegetables", "seasonalVegetables", "seasonal_vegetables"]
             });
             return res.data;
         },

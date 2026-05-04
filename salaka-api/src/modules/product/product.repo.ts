@@ -21,7 +21,7 @@ export class ProductRepository {
             where: { slug },
         });
     }
-    findActiveProductBySlug(slug: string, userId?: string | undefined) {
+    findActiveProductBySlug(slug: string, userId?: string | undefined, cartId?: string | null) {
         return this.prisma.product.findUnique({
             where: { slug, status: PRODUCT_STATUS.Active },
             include: {
@@ -29,6 +29,13 @@ export class ProductRepository {
                     ? {
                         where: {
                             wishlist: { userId: userId },
+                        },
+                    }
+                    : false,
+                cart: cartId
+                    ? {
+                        where: {
+                            cartId: cartId,
                         },
                     }
                     : false,

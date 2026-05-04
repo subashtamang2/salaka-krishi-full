@@ -35,7 +35,9 @@ export default function EsewaSuccess() {
     const verifyPayment = async (encodedData: string) => {
         try {
             // Double Verification: Always confirm with the backend
-            const response = await axios.get(`/orders/verify-esewa?data=${encodedData}`);
+            const response = await axios.get(`/orders/verify-esewa`, {
+                params: { data: encodedData }
+            });
             
             if (response.status === 200 || response.status === 201) {
                 setStatus("success");

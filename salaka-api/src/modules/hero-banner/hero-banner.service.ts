@@ -2,12 +2,19 @@ import { Injectable, InternalServerErrorException, NotFoundException } from "@ne
 import { HeroBannerRepository } from "./hero-banner.repository";
 import { CreateHeroBannerDto } from "./dto/create-hero-banner.dto";
 import { UpdateHeroBannerDto } from "./dto/update-hero-banner.dto";
+import { CategoriesService } from "../categories/categories.service";
 
 @Injectable()
 export class HeroBannerService {
-  constructor(private readonly heroBannerRepository: HeroBannerRepository) {}
+  constructor(
+    private readonly heroBannerRepository: HeroBannerRepository,
+    private readonly categoriesService: CategoriesService,
+  ) {}
 
   async create(createHeroBannerDto: CreateHeroBannerDto) {
+    // Verify Category Existence
+    await this.categoriesService.findOne(createHeroBannerDto.categoryId);
+
     const result = await this.heroBannerRepository.create(createHeroBannerDto);
     if (!result) {
       throw new InternalServerErrorException("Hero banner creation failed");

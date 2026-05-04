@@ -115,9 +115,7 @@ export default function Dairy() {
                             md: "repeat(2,1fr)"
                         }}
                         gap={14}>
-                        <ProductReviews
-                            products={milkProducts}
-                        />
+                        <ProductReviews />
                     </Grid>
                 </Flex>
             </CustomContainer>

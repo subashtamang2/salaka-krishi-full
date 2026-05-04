@@ -258,7 +258,7 @@ export interface OrderInterface {
   discount: number;
   deliveryCharge: number;
   total: number;
-  paymentMethod: string;
+  paymentProvider: string;
   paymentStatus: PaymentStatus;
   orderStatus: OrderStatus;
   cancellationReason?: string;

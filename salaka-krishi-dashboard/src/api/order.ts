@@ -5,7 +5,7 @@ export interface OrderFilters {
   search?: string;
   status?: string;
   payment_status?: string;
-  payment_method?: string;
+  payment_provider?: string;
   date_from?: string;
   date_to?: string;
   page?: number;

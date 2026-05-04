@@ -4,6 +4,7 @@ import {
   ExecutionContext,
   UnauthorizedException,
 } from "@nestjs/common";
+import { PrismaService } from "src/prisma/prisma.service";
 import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
 import { Request } from "express";
@@ -13,10 +14,11 @@ import { JwtPayload } from "../interface";
 export class JwtAuthGuard implements CanActivate {
   constructor(
     private readonly jwtService: JwtService,
-    private readonly configService: ConfigService
+    private readonly configService: ConfigService,
+    private readonly prisma: PrismaService
   ) {}
 
-  canActivate(context: ExecutionContext): boolean {
+  async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context
       .switchToHttp()
       .getRequest<Request & { user?: JwtPayload }>();
@@ -37,6 +39,15 @@ export class JwtAuthGuard implements CanActivate {
         secret: secretKey,
       });
       request.user = decoded;
+
+      // New: Verify user actually exists in the database
+      const userExists = await this.prisma.user.findUnique({
+        where: { id: decoded.sub }
+      });
+      if (!userExists) {
+        throw new UnauthorizedException("User no longer exists");
+      }
+
       return true;
     } catch (error) {
       throw new UnauthorizedException("Invalid token");

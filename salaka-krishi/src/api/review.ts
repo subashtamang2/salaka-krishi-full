@@ -34,3 +34,13 @@ export function checkUserReview(productId: string) {
         method: urls.checkUserReview.method,
     });
 }
+export function getGlobalProductReviews(page: number, limit: number) {
+    return axios({
+        url: urls.getGlobalProductReviews.url,
+        method: urls.getGlobalProductReviews.method,
+        params: {
+            page,
+            limit,
+        },
+    });
+}

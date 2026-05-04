@@ -9,6 +9,7 @@ import { BlogModule } from "./modules/blog/blog.module";
 import { AdminModule } from "./modules/admin/admin.module";
 import { UserModule } from "./modules/user/user.module";
 import { CacheModule } from "@nestjs/cache-manager";
+import { ScheduleModule } from "@nestjs/schedule";
 import { ContactModule } from "./modules/contact/contact.module";
 import { ProductModule } from "./modules/product/product.module";
 import { CategoriesModule } from "./modules/categories/categories.module";
@@ -34,6 +35,7 @@ import { SiteInfoModule } from "./modules/site-info/site-info.module";
     imports: [
         PrismaModule,
         CacheModule.register(),
+        ScheduleModule.forRoot(),
         ConfigModule.forRoot(appConfig),
         JwtModule.registerAsync({
             global: true,

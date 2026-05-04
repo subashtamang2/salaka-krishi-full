@@ -1,4 +1,11 @@
-import { Box, Grid, HStack, Skeleton,  Stack, useBreakpointValue } from "@chakra-ui/react";
+import {
+    Box,
+    Grid,
+    HStack,
+    Skeleton,
+    Stack,
+    useBreakpointValue
+} from "@chakra-ui/react";
 import CustomContainer from "@src/components/common/CustomContainer";
 
 interface NoOfRows {
@@ -16,22 +23,22 @@ export default function ProductListLoad({
 
     const columns = useBreakpointValue({
         base: noOfRows.base,
-        md: noOfRows.md,
-        lg: noOfRows.lg,
-        xl: noOfRows.xl,
+        // md: noOfRows.md,
+        // lg: noOfRows.lg,
+        // xl: noOfRows.xl,
     });
 
     return (
-        <CustomContainer pt={6} overflow={"hidden"} height={"330px"}>
+        <CustomContainer pt={6} overflow={"hidden"}>
             <Grid
                 rowGap={6}
                 columnGap={4}
                 placeContent={"center"}
                 templateColumns={{
                     base: `repeat(${noOfRows.base}, 1fr)`,
-                    md: `repeat(${noOfRows.md}, 1fr)`,
-                    lg: `repeat(${noOfRows.lg}, 1fr)`,
-                    xl: `repeat(${noOfRows.xl}, 1fr)`,
+                    // md: `repeat(${noOfRows.md}, 1fr)`,
+                    // lg: `repeat(${noOfRows.lg}, 1fr)`,
+                    // // xl: `repeat(${noOfRows.xl}, 1fr)`,
                 }}>
                 {Array.from({ length: columns || 1 }).map((_, index) => (
                     <Stack
@@ -46,7 +53,7 @@ export default function ProductListLoad({
 
                             <Box flex="1">
                                 <Skeleton height="12px" mb={2} />
-                                <Skeleton height="12px"  />
+                                <Skeleton height="12px" />
                             </Box>
                         </HStack>
 

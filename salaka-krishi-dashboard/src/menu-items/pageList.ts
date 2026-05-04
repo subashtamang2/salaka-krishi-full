@@ -182,6 +182,26 @@ const PageList: NavItemType = {
                 },
             ],
         },
+        {
+            id: "Gallery",
+            title: "Gallery",
+            type: "collapse",
+            icon: Gallery,
+            children: [
+                {
+                    id: "ViewGallery",
+                    title: "View Gallery",
+                    type: "item",
+                    url: "/dashboard/gallery",
+                },
+                {
+                    id: "AddGallery",
+                    title: "Add Gallery",
+                    type: "item",
+                    url: "/dashboard/gallery/add",
+                },
+            ],
+        },
 
         // ── Content ──
         {

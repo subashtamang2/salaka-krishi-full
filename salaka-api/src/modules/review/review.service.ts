@@ -19,6 +19,10 @@ export class ReviewService {
     productId: string
   ) {
     const userId = user?.sub;
+ 
+    // Verify Product Existence
+    const product = await this.productRepo.findProductById(productId);
+    if (!product) throw new NotFoundException("Product not found");
 
     const existing = await this.reviewRepo.findByUserAndProduct(userId, productId);
     if (existing) {

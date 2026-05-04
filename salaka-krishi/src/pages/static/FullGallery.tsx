@@ -1,4 +1,4 @@
-import { Grid, Heading, Flex } from "@chakra-ui/react";
+import { Grid } from "@chakra-ui/react";
 import banner from "@assets/images/gallery/banner.png";
 import GalleryCard from "@src/components/cards/gallery/GalleryCard";
 import CustomContainer from "@src/components/common/CustomContainer";
@@ -7,7 +7,8 @@ import { useQuery } from "@tanstack/react-query";
 import { getGalery } from "@src/api/gallery";
 import type { DataWrapper, GalleryCardSchema } from "@src/schema/schema";
 import type { GalleryInterface } from "@src/schema/gallery";
-import ProductRow from "@src/pages/Loadings/ProductRow";
+import GalleryLoading from "@src/pages/Loadings/GalleryLoading";
+import NotFoundSm from "../NotFoundSm";
 
 export default function FullGallery() {
     //  Fetch Gallery from API
@@ -16,7 +17,7 @@ export default function FullGallery() {
     >({
         queryKey: ["full-gallery"],
         queryFn: async () => {
-            // Wrap in try-catch to safely return null on error
+
             try {
                 const res = await getGalery();
                 return res?.data;
@@ -45,7 +46,7 @@ export default function FullGallery() {
 
             <CustomContainer>
                 {isLoading ? (
-                    <ProductRow />
+                    <GalleryLoading count={8} />
                 ) : (
                     <>
                         {galleryData.length > 0 ? (
@@ -64,9 +65,7 @@ export default function FullGallery() {
                                 ))}
                             </Grid>
                         ) : (
-                            <Flex justifyContent="center" py={10}>
-                                <Heading size="md" color="gray.500">No gallery images found.</Heading>
-                            </Flex>
+                            <NotFoundSm />
                         )}
                     </>
                 )}
