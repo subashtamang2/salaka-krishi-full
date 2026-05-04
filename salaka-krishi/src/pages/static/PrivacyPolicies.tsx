@@ -3,8 +3,9 @@ import CustomContainer from "@src/components/common/CustomContainer";
 import { useQuery } from "@tanstack/react-query";
 import { getPrivacyPolicy } from "@src/api/static-page";
 import { type DataWrapper, type staticPageContent } from "@src/schema/schema";
-import { Flex, Spinner, Center } from "@chakra-ui/react";
+import { Flex } from "@chakra-ui/react";
 import SEOContent from "@src/components/SEOContent";
+import StaticPageLoading from "../Loadings/StaticPageLoading";
 
 export default function PrivacyPolicies() {
     const { data: policyData, isLoading } = useQuery<DataWrapper<staticPageContent>>({
@@ -24,9 +25,7 @@ export default function PrivacyPolicies() {
                 
 
                 {isLoading ? (
-                    <Center py={20}>
-                        <Spinner size="xl" color="primary.100" />
-                    </Center>
+                    <StaticPageLoading />
                 ) : (
                     <Flex flexDir="column" minH="50vh">
                         <ContentBlock

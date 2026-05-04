@@ -56,7 +56,7 @@ export default function OrderVerification() {
 
     const cartData = data?.data;
     const products = cartData?.products || [];
-    
+
     const summary = summaryData;
     const subTotal = summary?.subtotal || 0;
     const discountAmount = summary?.discount || 0;

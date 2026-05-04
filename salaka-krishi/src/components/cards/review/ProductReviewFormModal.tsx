@@ -17,6 +17,8 @@ import { toaster } from "@src/components/ui/toaster";
 import useAuth from "@src/hooks/useAuth";
 import { getAccessToken } from "@src/utils/local-storage";
 import AuthContainer from "@src/components/common/auth/AuthContainer";
+import { useNavigate } from "react-router";
+import routes from "@src/router/routes";
 
 interface ReviewFormProps {
     rating: number;
@@ -34,7 +36,7 @@ interface ProductReviewFormModalProps {
 type ModalView = "review" | "login" | "register";
 
 export default function ProductReviewFormModal({ isOpen, onClose, productId, productName }: ProductReviewFormModalProps) {
-
+    const navigate = useNavigate();
     const queryClient = useQueryClient();
     const { refetch, userData } = useAuth();
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -77,6 +79,7 @@ export default function ProductReviewFormModal({ isOpen, onClose, productId, pro
 
             queryClient.invalidateQueries({ queryKey: ["product"] });
             queryClient.invalidateQueries({ queryKey: ["productReviews"] });
+            queryClient.invalidateQueries({ queryKey: ["globalProductReviews"] });
             queryClient.invalidateQueries({ queryKey: ["products"] });
             queryClient.invalidateQueries({ queryKey: ["reviewCheck", productId] });
 
@@ -88,6 +91,8 @@ export default function ProductReviewFormModal({ isOpen, onClose, productId, pro
 
             reset();
             onClose();
+            // Redirect to Dairy page where reviews are displayed
+            navigate(`${routes.products.root}/${routes.products.dairy}`);
         } catch (err: any) {
             console.error("Failed to submit review:", err);
             if (err?.response?.status === 403 || err?.response?.status === 401) {

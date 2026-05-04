@@ -12,7 +12,7 @@ import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router";
 import { useMutation } from "@tanstack/react-query";
 import { verifyOtp, resendOtp } from "@src/api/auth";
-import { toast } from "react-toastify";
+import { toaster } from "@src/components/ui/toaster";
 import routes from "@src/router/routes";
 
 
@@ -57,11 +57,19 @@ export default function VerifyOTP() {
             return res.data;
         },
         onSuccess: () => {
-            toast.success("Account created successfully! Please login to continue.");
+            toaster.create({
+                title: "Account verified",
+                description: "Account created successfully! Please login to continue.",
+                type: "success",
+            });
             navigate(routes.auth.base);
         },
         onError: (error: any) => {
-            toast.error(error?.response?.data?.message || "Verification failed");
+            toaster.create({
+                title: "Verification failed",
+                description: error?.response?.data?.message || "Verification failed",
+                type: "error",
+            });
         },
     });
 
@@ -74,16 +82,28 @@ export default function VerifyOTP() {
             setTimer(300);
             setIsExpired(false);
             setOtp("");
-            toast.success("OTP resent successfully!");
+            toaster.create({
+                title: "OTP Resent",
+                description: "OTP resent successfully!",
+                type: "success",
+            });
         },
         onError: (error: any) => {
-            toast.error(error?.response?.data?.message || "Failed to resend OTP");
+            toaster.create({
+                title: "Resend failed",
+                description: error?.response?.data?.message || "Failed to resend OTP",
+                type: "error",
+            });
         },
     });
 
     const handleVerify = () => {
         if (otp.length !== 6) {
-            toast.error("Please enter 6-digit OTP");
+            toaster.create({
+                title: "Invalid OTP",
+                description: "Please enter 6-digit OTP",
+                type: "warning",
+            });
             return;
         }
         verifyMutation.mutate({ email, otp });

@@ -1,5 +1,5 @@
 import { IsString, IsNotEmpty, IsNumber, IsOptional, IsEnum } from 'class-validator';
-
+import { PAYMENT_PROVIDER } from '@prisma/client';
 export class CreateOrderDto {
   @IsString()
   @IsNotEmpty()
@@ -13,9 +13,9 @@ export class CreateOrderDto {
   @IsNotEmpty()
   phoneNumber: string;
 
-  @IsString()
+  @IsEnum(PAYMENT_PROVIDER)
   @IsOptional()
-  paymentMethod?: string;
+  paymentProvider?: PAYMENT_PROVIDER;
 
   @IsString()
   @IsOptional()

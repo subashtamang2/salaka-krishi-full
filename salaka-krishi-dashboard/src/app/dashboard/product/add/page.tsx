@@ -31,6 +31,7 @@ import { useRouter } from "next/navigation";
 import { userStore } from "store/userStore";
 
 
+
 const validationSchema = yup.object({
     name: yup.string()
         .required("Name is required"),
@@ -103,7 +104,7 @@ const validationSchema = yup.object({
 
 export default function Page() {
     const router = useRouter();
-    const { user } = userStore();
+    const user = userStore((state) => state.user);
 
 
     const { data: categoryList, isLoading: isCategoryLoading, error: categoryError } = useQuery<CategoryResponse[]>({
@@ -166,7 +167,7 @@ export default function Page() {
             const uploadedImages = await uploadFiles(files, true);
             const productImages = uploadedImages?.map((file: any) => file?.filename) ?? [];
 
-            const payload = {
+            const payload: CreateProductSchema = {
                 ...rest,
                 price: Number(price),
                 rating: Number(rating),

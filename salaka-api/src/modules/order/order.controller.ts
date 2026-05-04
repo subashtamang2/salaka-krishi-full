@@ -45,7 +45,7 @@ export class OrderController {
   @ApiOperation({ summary: 'Verify eSewa payment' })
   async verifyEsewa(@Req() req: any) {
     const { data } = req.query;
-    return this.checkoutService.verifyAndFinalize('eSewa', { data });
+    return this.checkoutService.verifyAndFinalize('Esewa', { data });
   }
 
   @Get('verify-khalti')
@@ -67,14 +67,14 @@ export class OrderController {
   @ApiOperation({ summary: 'Get all orders' })
   async getOrders(@Req() req: any) {
     const isAdmin = req.user.role === 'Admin' || req.user.role === 'SuperAdmin';
-    const { includeArchived, search, status, payment_status, payment_method, date_from, date_to, page, limit } = req.query;
+    const { includeArchived, search, status, payment_status, payment_provider, date_from, date_to, page, limit } = req.query;
     return this.orderService.getOrders({
       userId: isAdmin ? undefined : req.user.sub,
       includeArchived: includeArchived === 'true',
       search,
       status,
       paymentStatus: payment_status,
-      paymentMethod: payment_method,
+      paymentProvider: payment_provider,
       dateFrom: date_from,
       dateTo: date_to,
       page: page ? parseInt(page, 10) : undefined,

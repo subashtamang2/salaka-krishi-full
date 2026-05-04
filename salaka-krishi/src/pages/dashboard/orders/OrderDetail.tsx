@@ -499,7 +499,7 @@ export default function OrderDetail() {
                                 <Text
                                     fontWeight="600"
                                     color="primary.400">
-                                    {order.paymentMethod}
+                                    {order.paymentProvider}
                                 </Text>
                             </Box>
                         </Box>

@@ -4,11 +4,14 @@ import { JwtPayload } from "../auth/interface";
 import { CartStrategy } from "./cart.strategy";
 import { ConfigService } from "@nestjs/config";
 
+import { ProductRepository } from "../product/product.repo";
+ 
 @Injectable()
 export class CartService {
   constructor(
     private readonly cartStrategy: CartStrategy,
-    private readonly config: ConfigService
+    private readonly config: ConfigService,
+    private readonly productRepo: ProductRepository,
   ) {}
 
   async create(createCartDto: CreateCartDto, user: JwtPayload) {
@@ -16,6 +19,10 @@ export class CartService {
     let cart;
     cart = await this.cartStrategy.findUserCart(userId);
     if (!cart) cart = await this.cartStrategy.createCart(userId);
+ 
+    // Verify Product Existence
+    const product = await this.productRepo.findProductById(createCartDto.productId);
+    if (!product) throw new NotFoundException("Product not found");
 
     const cartProduct = await this.cartStrategy.addProductsToCart(
       createCartDto,
@@ -31,7 +38,17 @@ export class CartService {
     const userId = user.sub;
     const cart = await this.cartStrategy.findAll(userId);
 
-    if (!cart) throw new NotFoundException("Cart not found for the user.");
+    if (!cart) {
+      return {
+        id: "",
+        userId: userId,
+        products: [],
+        totalItems: 0,
+        totalAmount: 0,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+    }
     const { products, ...rest } = cart;
     const cartProducts = cart.products.map((item) => ({
       product: item.product,

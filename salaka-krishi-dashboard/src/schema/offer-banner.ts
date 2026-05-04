@@ -5,7 +5,6 @@ export interface OfferBannerInterface {
   subtitle?: string;
   description: string;
   imageUrl: string;
-  buttonLink?: string;
   productId?: string;
   tag?: string;
   startDate: string | Date | null;
@@ -21,7 +20,6 @@ export interface CreateOfferBannerSchema {
   subtitle?: string;
   description?: string;
   imageUrl: string;
-  buttonLink?: string;
   productId?: string;
   tag?: string;
   startDate: string | Date | null;

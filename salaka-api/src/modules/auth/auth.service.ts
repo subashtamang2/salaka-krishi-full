@@ -101,7 +101,7 @@ export class AuthService {
 
   async signInUser(loginUser: LoginAuthDto) {
     const user = await this.repository.findUserByEmail(loginUser.email);
-    if (!user) throw new NotFoundException("User does not exist");
+    if (!user) throw new NotFoundException("No account found. Please sign up first.");
 
     if (!user.password) {
       throw new UnauthorizedException("This account was created via social login. Please login with Google/Facebook.");

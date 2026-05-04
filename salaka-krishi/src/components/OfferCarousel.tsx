@@ -4,8 +4,8 @@ import { useQuery } from "@tanstack/react-query";
 import type { ProductSchema } from "@src/schema/product";
 import type { DataWrapper } from "@src/schema/schema";
 import { getProductByFilter } from "@src/api/products";
-import ProductRow from "@src/pages/Loadings/ProductRow";
 import NotFoundSm from "@src/pages/NotFoundSm";
+import HeroBannerLoading from "@src/pages/Loadings/HeroBannerLoading";
 
 const responsive = {
     desktop: { breakpoint: { max: 3000, min: 1024 }, items: 1 },
@@ -20,7 +20,7 @@ export default function OfferCarousel() {
     });
 
     const products = data?.data || [];
-    if (isLoading) return <ProductRow />
+    if (isLoading) return <HeroBannerLoading />
     if (isError) return <NotFoundSm />;
     return (
         <Carousel

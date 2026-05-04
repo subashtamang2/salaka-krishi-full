@@ -19,7 +19,7 @@ export default function EmptyWishlist() {
         >
             <Icon as={HiOutlineHeart} boxSize={20} color="primary.300/30" />
             <Flex direction="column" gap={2}>
-                <Heading size="xl" color="primary.300">
+                <Heading size="xl" color="primary.100">
                     Your wishlist is empty
                 </Heading>
                 <Text fontSize="lg" color="text.400">
@@ -27,11 +27,11 @@ export default function EmptyWishlist() {
                 </Text>
             </Flex>
             <Button
-                bg="primary.300"
+                bg="primary.100"
                 color="white"
                 size="lg"
                 px={10}
-                _hover={{ bg: "primary.400" }}
+                _hover={{ bg: "primary.300" }}
                 onClick={() => navigate(routes.products.root)}
             >
                 Add Items to Wishlist

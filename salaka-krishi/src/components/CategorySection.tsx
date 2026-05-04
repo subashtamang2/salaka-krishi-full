@@ -1,4 +1,4 @@
-import { Flex, Spinner, Text } from "@chakra-ui/react";
+import { Flex,Text } from "@chakra-ui/react";
 import CategoryCard from "./cards/CategoryCard";
 import CustomContainer from "./common/CustomContainer";
 import SectionHeading from "./common/SectionHeading";
@@ -6,6 +6,8 @@ import { useQuery } from "@tanstack/react-query";
 import { getCategories } from "@src/api/categories";
 import type { CategorySchema } from "@src/schema/categories";
 import type { DataWrapper } from "@src/schema/schema";
+import CategoryLoading from "@src/pages/Loadings/CategoryLoading";
+import NotFoundSm from "@src/pages/NotFoundSm";
 
 
 export default function CategorySection() {
@@ -33,11 +35,12 @@ export default function CategorySection() {
                         base: "8",
                     }}>
                     {isLoading ? (
-                        <Flex justify="center" align="center" w="full" py={10}>
-                            <Spinner color="primary.100" />
-                        </Flex>
+                        <CategoryLoading />
                     ) : isError ? (
-                        <Text color="red.500">Failed to load categories. Please try again later.</Text>
+                        <Flex flexDir="column" align="center" w="full" py={10}>
+                            <NotFoundSm />
+
+                        </Flex>
                     ) : categories.length > 0 ? (
                         categories.slice(0, 5).map((category) => (
                             <CategoryCard
@@ -46,6 +49,7 @@ export default function CategorySection() {
                         ))
                     ) : (
                         <Flex flexDir="column" align="center" w="full" py={10}>
+                            <NotFoundSm />
                             <Text color="gray.500">No categories found.</Text>
                         </Flex>
                     )}

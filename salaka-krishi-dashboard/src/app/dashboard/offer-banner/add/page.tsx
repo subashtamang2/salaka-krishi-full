@@ -75,7 +75,6 @@ export default function Page() {
             description: "",
             tag: "",
             imageUrl: "",
-            buttonLink: "",
             productId: "",
             startDate: null,
             endDate: null,
@@ -339,19 +338,6 @@ export default function Page() {
                                     />
                                 </Grid>
 
-                                {/* BUTTON LINK */}
-                                <Grid item xs={12}>
-                                    <Stack spacing={1}>
-                                        <InputLabel>Button Link</InputLabel>
-                                        <TextField
-                                            name="buttonLink"
-                                            placeholder="https://example.com"
-                                            value={formik.values.buttonLink}
-                                            onChange={formik.handleChange}
-                                            fullWidth
-                                        />
-                                    </Stack>
-                                </Grid>
 
                                 {/* ACTION */}
                                 <Grid item xs={12}>

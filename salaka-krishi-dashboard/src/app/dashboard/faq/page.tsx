@@ -12,14 +12,13 @@ import {
     TableRow,
     Paper,
     CircularProgress,
-    Button,
     IconButton,
     Accordion,
     AccordionSummary,
     AccordionDetails,
     Chip,
 } from "@mui/material";
-import { Add, Edit, Trash, ArrowDown2 } from "@wandersonalwes/iconsax-react";
+import {Edit, Trash, ArrowDown2 } from "@wandersonalwes/iconsax-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "api/axios-interceptor";
 import { ToastContainer, toast } from "react-toastify";
@@ -35,7 +34,6 @@ export default function FAQListPage() {
         queryKey: ["faqs"],
         queryFn: async () => {
             const response = await axios.get("/faq");
-            // Expecting data in format: [{ category: 'Shipping', faqs: [...] }, ...]
             return response.data;
         },
     });
@@ -88,9 +86,7 @@ export default function FAQListPage() {
             <ToastContainer position="top-right" autoClose={5000} />
             <Stack direction="row" sx={{ justifyContent: 'space-between', alignItems: 'center' }}>
                 <Typography variant="h3">FAQs</Typography>
-                <Button variant="contained" startIcon={<Add />} onClick={() => router.push("/dashboard/faq/add")}>
-                    Add FAQ
-                </Button>
+
             </Stack>
 
             {categories.length > 0 ? (

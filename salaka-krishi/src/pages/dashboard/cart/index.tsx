@@ -24,7 +24,7 @@ export default function CartView() {
     const [appliedCoupon, setAppliedCoupon] = useState<any>(null);
     const currencyTypes = import.meta.env.VITE_CURRENCY_TYPE;
     const accessToken = getAccessToken();
-    
+
     const { data, isLoading, isError } = useQuery<CartInterface<ProductSchema>>({
         queryKey: ['cart'],
         enabled: !!accessToken,
@@ -47,10 +47,10 @@ export default function CartView() {
     const cartData = data?.data;
     const products = cartData?.products || [];
     const isCartEmpty = data && products.length === 0;
-    
+
     if ((isLoading || isSummaryLoading) && !isCartEmpty) return <ProductRow />;
     if (isError) return <NotFoundSm />;
-    
+
     const summary = summaryData;
     const subTotal = summary?.subtotal || 0;
     const discountAmount = summary?.discount || 0;

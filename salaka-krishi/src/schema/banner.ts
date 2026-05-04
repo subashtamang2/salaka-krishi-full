@@ -6,7 +6,6 @@ export interface BannerSchema {
     description?: string;
     slug: string;
     imageUrl: string;
-    buttonLink?: string | (() => void);
     productId: string;
     tag?: "BestSelling" | "LimitedStock" | "NewArrival" | "BlackFriday";
     startDate?: string;

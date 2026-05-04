@@ -138,6 +138,29 @@ export class ReviewController {
 }
 
 @ApiTags("Review Management")
+@Controller("product-reviews")
+export class ReviewPublicController {
+  constructor(private readonly reviewService: ReviewService) {}
+
+  @Get()
+  @HttpCode(HttpStatus.OK)
+  @Serializer(ReviewPaginationResponseDto)
+  async findAll(
+    @Query("limit") limit: string,
+    @Query("page") page: string
+  ) {
+    const result = await this.reviewService.findAllGlobal(
+      Number(page) || 1,
+      Number(limit) || 10
+    );
+    return {
+      message: "Global reviews fetched successfully",
+      data: result,
+    };
+  }
+}
+
+@ApiTags("Review Management")
 @ApiBearerAuth()
 @Controller("admin-reviews")
 @UseGuards(JwtAuthGuard, RolesGuard)

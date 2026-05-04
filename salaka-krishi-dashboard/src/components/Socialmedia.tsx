@@ -63,9 +63,18 @@ export default function Socialmedia() {
         validationSchema,
         onSubmit: (values, { setSubmitting, resetForm }) => {
             setSubmitting(true);
-            console.log("values", values);
+            
+            // Transform empty strings to null to avoid backend @IsUrl validation errors
+            const payload: SocialmediaInterface = {
+                socialMediaLinks: Object.entries(values.socialMediaLinks).reduce((acc, [key, value]) => {
+                    acc[key as keyof typeof values.socialMediaLinks] = value === "" ? null : value;
+                    return acc;
+                }, {} as SocialmediaInterface["socialMediaLinks"])
+            };
 
-            updateUserMutation.mutate(values, {
+            console.log("payload", payload);
+
+            updateUserMutation.mutate(payload, {
                 onSuccess: (data) => {
                     toast.success("Site social media updated successfully!");
                     resetForm();

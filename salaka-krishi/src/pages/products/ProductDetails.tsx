@@ -1,4 +1,13 @@
-import { Button, Flex, Grid, GridItem, Heading, Image, Link, Text, Spinner } from "@chakra-ui/react";
+import {
+    Button,
+    Flex,
+    Grid,
+    GridItem,
+    Heading,
+    Image,
+    Link,
+    Text,
+} from "@chakra-ui/react";
 import CustomContainer from "@src/components/common/CustomContainer";
 import ProductShareLinks from "@src/components/common/ProductShareLinks";
 import ContactInfoListSecondary from "@src/components/ContactInfoListSecondary";
@@ -21,6 +30,8 @@ import { getImageSrc } from "@src/utils/image";
 import { getAccessToken } from "@src/utils/local-storage";
 import { useAuthModalStore } from "@src/store/useAuthModalStore";
 import { checkUserReview } from "@src/api/review";
+import ProductDetailLoading from "../Loadings/ProductDetailLoading";
+import NotFoundSm from "../NotFoundSm";
 
 export default function ProductDetails() {
     const [showFullDescription, setShowFullDescription] = useState(false);
@@ -68,6 +79,7 @@ export default function ProductDetails() {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["cart"] });
             queryClient.invalidateQueries({ queryKey: ["currentUser"] });
+            queryClient.invalidateQueries({ queryKey: ["product", slug] });
             setCartStatus(true);
             toaster.create({
                 title: "Added to Cart",
@@ -92,6 +104,7 @@ export default function ProductDetails() {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["wishlist"] });
             queryClient.invalidateQueries({ queryKey: ["currentUser"] });
+            queryClient.invalidateQueries({ queryKey: ["product", slug] });
             setWishlistStatus(prev => !prev);
             toaster.create({
                 title: wishlistStatus ? "Removed from wishlist" : "Added to wishlist",
@@ -109,21 +122,11 @@ export default function ProductDetails() {
     });
 
     if (isLoading) {
-        return (
-            <Flex justify="center" align="center" minH="50vh">
-                <Spinner size="xl" color="primary.100" />
-            </Flex>
-        );
+        return <ProductDetailLoading />;
     }
 
     if (isError || !product) {
-        return (
-            <CustomContainer py={20}>
-                <Text fontSize="xl" color="red.500" textAlign="center">
-                    Product not found: {slug}
-                </Text>
-            </CustomContainer>
-        );
+        return <NotFoundSm />;
     }
 
     const productPriceAfterDiscount = product.discountPercentage
@@ -290,9 +293,9 @@ export default function ProductDetails() {
                                         fontWeight={400}
                                         color={"primary.300"}>
                                         Share: </Text>
-                                    <ProductShareLinks 
-                                        productName={product.name || ""} 
-                                        productImage={getImageSrc(product?.imageUrls?.[0])} 
+                                    <ProductShareLinks
+                                        productName={product.name || ""}
+                                        productImage={getImageSrc(product?.imageUrls?.[0])}
                                     />
                                 </Flex>
                             </Flex>

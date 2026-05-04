@@ -1,51 +1,37 @@
-import { Flex, Spinner, Text } from "@chakra-ui/react";
-import { useQueries } from "@tanstack/react-query";
-import type { ProductSchema } from "@src/schema/product";
-import { getProductReview } from "@src/api/review";
+import { Text } from "@chakra-ui/react";
+import { useQuery } from "@tanstack/react-query";
+import { getGlobalProductReviews } from "@src/api/review";
 import ReviewCard from "@src/components/cards/review/ReviewCard";
+import ReviewLoading from "../Loadings/ReviewLoading";
 
-interface ProductReviewsProps {
-    products: ProductSchema[];
-}
-
-export default function ProductReviews({ products }: ProductReviewsProps) {
-    // Fetch reviews for top products
-    const productReviewsQueries = useQueries({
-        queries: products.map(product => ({
-            queryKey: ["productReviews", product.id],
-            queryFn: async () => {
-                const res = await getProductReview(product.id, 1);
-                return res.data;
-            }
-        }))
+export default function ProductReviews() {
+    const { data: reviewsResponse, isLoading } = useQuery({
+        queryKey: ["globalProductReviews"],
+        queryFn: async () => {
+            const res = await getGlobalProductReviews(1, 4);
+            return res.data;
+        }
     });
 
-    const anyReviewLoading = productReviewsQueries.some(q => q.isLoading);
+    const reviews = (reviewsResponse as any)?.data?.reviews || [];
 
-    const specificReviews = productReviewsQueries
-        .map(q => (q.data as any)?.data?.reviews?.[0])
-        .filter(review => review && review.id)
-        .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-
-    if (anyReviewLoading) {
+    if (isLoading) {
         return (
-            <Flex gridColumn="1 / -1" justify="center" py={8}>
-                <Spinner color="primary.100" size="lg" />
-            </Flex>
+            <ReviewLoading count={4} />
         );
     }
 
-    if (specificReviews.length === 0) {
+    if (reviews.length === 0) {
         return (
             <Text color="text.200" gridColumn="1 / -1">
-                No specific product reviews yet. Be the first to add one!
+                No product reviews yet. Be the first to add one!
             </Text>
         );
     }
 
     return (
         <>
-            {specificReviews.slice(0, 4).map(review => (
+            {reviews.map((review: any) => (
                 <ReviewCard
                     key={review.id}
                     person={{

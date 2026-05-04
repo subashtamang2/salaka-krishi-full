@@ -1,4 +1,8 @@
-import { Flex, GridItem, Heading } from "@chakra-ui/react";
+import {
+Flex,
+ GridItem,
+Heading
+} from "@chakra-ui/react";
 import CustomContainer from "@src/components/common/CustomContainer";
 import video from "@assets/video/salaka.mp4";
 import VideoBanner from "@src/components/VideoBanner";

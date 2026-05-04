@@ -1,11 +1,26 @@
 "use client";
 
-import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
+import {
+    useMutation,
+    useQueryClient,
+    useQuery
+} from '@tanstack/react-query';
 import { DataWrapper } from 'schema/schema';
 import Loading from '../loading';
 import {
-    Button, Stack, Typography, Table, TableBody, TableCell,
-    TableContainer, TableHead, TableRow, Paper, IconButton, Chip, Box
+    Stack,
+    Typography,
+    Table,
+    TableBody,
+    TableCell,
+
+    TableContainer,
+    TableHead,
+    TableRow,
+    Paper,
+    IconButton,
+    Chip,
+    Box
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
@@ -13,7 +28,6 @@ import { ToastContainer, toast } from 'react-toastify';
 import Error404 from '../error';
 import { OfferBannerInterface } from 'schema/offer-banner';
 import { getOfferBanners, deleteOfferBanner } from 'api/offer-banner';
-import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 
 export default function Page() {
@@ -62,9 +76,7 @@ export default function Page() {
         <>
             <Stack direction="row" sx={{ alignItems: 'center', justifyContent: 'space-between', mb: 3 }}>
                 <Typography variant="h4">Offer Banners</Typography>
-                <Link href="/dashboard/offer-banner/add" passHref legacyBehavior>
-                    <Button variant="contained">Add Offer Banner</Button>
-                </Link>
+
             </Stack>
 
             <ToastContainer position="top-right" autoClose={5000} hideProgressBar={false} closeOnClick draggable pauseOnHover />

@@ -188,6 +188,8 @@ export const textStyles = {
             },
         },
     },
+
+
     textBordered: {
         value: {
             fontFamily: "primary",
@@ -198,7 +200,13 @@ export const textStyles = {
                 fontSize: "2xl",
                 fontWeight: "500",
                 marginBottom: 4,
-
+                "&:not(:first-of-type)": {
+                    borderTopWidth: 2,
+                    borderTopStyle: "solid",
+                    borderTopColor: "border.200/50",
+                    pt: 8,
+                    mt: 12,
+                }
             },
             "& p": {
                 color: "text.500",
@@ -208,13 +216,6 @@ export const textStyles = {
                 fontWeight: "400",
                 textAlign: "start",
                 mb: 4,
-            },
-          "& p:not(:last-of-type)":{
-                mb: 12,
-                borderBottomWidth: 2,
-                borderBottomStyle: "solid",
-                borderBottomColor: "border.200/50",
-                pb: 5,
             },
         },
     },

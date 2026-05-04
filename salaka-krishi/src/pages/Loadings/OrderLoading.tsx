@@ -1,4 +1,11 @@
-import { Box, Flex, Skeleton, VStack, HStack, Separator } from "@chakra-ui/react";
+import {
+ Box,
+Flex,
+ Skeleton,
+ VStack,
+HStack,
+Separator
+} from "@chakra-ui/react";
 import CustomContainer from "@src/components/common/CustomContainer";
 
 export default function OrderLoading() {
@@ -7,14 +14,13 @@ export default function OrderLoading() {
             <VStack align="stretch" gap={6} mt={6}>
                 <Skeleton height="40px" width="200px" />
                 {[1, 2, 3].map((i) => (
-                    <Box 
-                        key={i} 
-                        p={6} 
-                        borderWidth={1} 
-                        borderColor="gray.100" 
+                    <Box
+                        key={i}
+                        p={6}
+                        borderWidth={1}
+                        borderColor="gray.100"
                         borderRadius="lg"
-                        bg="white"
-                    >
+                        bg="white">
                         <Flex justifyContent="space-between" mb={4} wrap="wrap" gap={4}>
                             <HStack gap={6}>
                                 <VStack align="start" gap={1}>

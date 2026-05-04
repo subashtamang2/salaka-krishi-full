@@ -10,7 +10,7 @@ export class ClientReviewsHelper {
     return this.prisma.clientReview.create({
       data: {
         ...createClientReviewDto,
-        createedById: userId,
+        createdById: userId,
       },
     });
   }
@@ -18,7 +18,7 @@ export class ClientReviewsHelper {
     return this.prisma.clientReview.findMany({
       orderBy: { createdAt: "desc" },
       include: {
-        createedBy: {
+        createdBy: {
           select: {
             firstName: true,
             lastName: true,

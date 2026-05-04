@@ -111,6 +111,10 @@ const urls = {
         url: ":productId/review/check",
         method: "GET",
     },
+    getGlobalProductReviews: {
+        url: "product-reviews",
+        method: "GET",
+    },
     getBlog: {
         url: "blog/all",
         method: "GET",

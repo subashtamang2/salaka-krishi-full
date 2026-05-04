@@ -9,7 +9,7 @@ import useIsVisible from "@src/utils/useIsVisible";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getBlog } from "@src/api/blog";
-import ProductRow from "../Loadings/ProductRow";
+import BlogLoading from "../Loadings/BlogLoading";
 import NotFoundSm from "../NotFoundSm";
 import type { PaginationMeta } from "@src/schema/schema";
 import type { BlogInterface } from "@src/schema/blog";
@@ -70,7 +70,7 @@ export default function Blog() {
                             ))}
                     </Grid>
                     {
-                        isLoading && <ProductRow noOfRows={{ base: 1, md: 2, lg: 2, xl: 2 }} />
+                        isLoading && <BlogLoading count={limit} />
                     }
                     {
                         isError && <NotFoundSm />

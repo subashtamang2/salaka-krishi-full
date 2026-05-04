@@ -15,13 +15,11 @@ import {
     Avatar,
     Tooltip,
     Chip,
-    Button,
     Box
 } from "@mui/material";
 import {
     Edit,
     Trash,
-    Add,
     DocumentText,
 } from "@wandersonalwes/iconsax-react";
 import { DataWrapper } from "schema/schema";
@@ -83,21 +81,12 @@ export default function BlogsPage() {
         <Stack spacing={3} sx={{ p: { xs: 2, md: 3 } }}>
             <ToastContainer position="top-right" autoClose={5000} hideProgressBar={false} closeOnClick draggable pauseOnHover />
 
-            {/* Header Section */}
             <Stack direction={{ xs: 'column', sm: 'row' }} justifyContent="space-between" alignItems={{ xs: 'flex-start', sm: 'center' }} spacing={2}>
                 <Box>
                     <Typography variant="h3" fontWeight={700}>Blog Management</Typography>
                     <Typography variant="body2" color="textSecondary">Create, edit, and manage your articles and news</Typography>
                 </Box>
-                <Button 
-                    variant="contained" 
-                    startIcon={<Add />} 
-                    size="large"
-                    onClick={() => router.push("/dashboard/blog/add")}
-                    sx={{ borderRadius: 2, px: 3 }}
-                >
-                    Add New Blog
-                </Button>
+
             </Stack>
 
             {/* Table Section */}
@@ -137,11 +126,11 @@ export default function BlogsPage() {
                                                 <DocumentText size="20" />
                                             </Avatar>
                                             <Stack spacing={0.25}>
-                                                <Typography variant="subtitle1" fontWeight={600} sx={{ 
-                                                    maxWidth: 300, 
-                                                    overflow: 'hidden', 
-                                                    textOverflow: 'ellipsis', 
-                                                    whiteSpace: 'nowrap' 
+                                                <Typography variant="subtitle1" fontWeight={600} sx={{
+                                                    maxWidth: 300,
+                                                    overflow: 'hidden',
+                                                    textOverflow: 'ellipsis',
+                                                    whiteSpace: 'nowrap'
                                                 }}>
                                                     {blog.title}
                                                 </Typography>
@@ -152,11 +141,11 @@ export default function BlogsPage() {
                                         </Stack>
                                     </TableCell>
                                     <TableCell>
-                                        <Chip 
-                                            label={blog.isPublished ? "Published" : "Draft"} 
+                                        <Chip
+                                            label={blog.isPublished ? "Published" : "Draft"}
                                             color={blog.isPublished ? "success" : "default"}
                                             size="small"
-                                            sx={{ 
+                                            sx={{
                                                 fontWeight: 600,
                                                 bgcolor: blog.isPublished ? 'success.lighter' : 'grey.100',
                                                 color: blog.isPublished ? 'success.dark' : 'text.secondary',

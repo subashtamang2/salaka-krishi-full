@@ -4,8 +4,10 @@ import { CartController } from "./cart.controller";
 import { CartService } from "./cart.service";
 import { CartStrategy } from "./cart.strategy";
 
+import { ProductModule } from "../product/product.module";
+ 
 @Module({
-imports: [PrismaModule],
+imports: [PrismaModule, ProductModule],
 controllers: [CartController],
 providers: [CartService, CartStrategy],
 exports: [CartService],

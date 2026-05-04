@@ -16,7 +16,7 @@ import { useLocation, useNavigate } from "react-router";
 import { useMutation } from "@tanstack/react-query";
 import { signIn } from "@src/api/auth";
 import type { SignInProps } from "@src/schema/schema";
-import { toast } from "react-toastify";
+import { toaster } from "@src/components/ui/toaster";
 import { setAccessToken, setRefreshToken } from "@src/utils/local-storage";
 
 
@@ -47,7 +47,11 @@ export default function LoginForm({ onSuccess }: LoginFormProps) {
             const { access_token, refresh_token } = data?.data;
             setAccessToken(access_token);
             setRefreshToken(refresh_token)
-            toast.success("You've successfully Logged In!");
+            toaster.create({
+                title: "Login successful",
+                description: "You've successfully Logged In!",
+                type: "success",
+            });
             if (onSuccess) {
                 onSuccess();
             } else {
@@ -59,11 +63,13 @@ export default function LoginForm({ onSuccess }: LoginFormProps) {
         // }
 
         onError: (error: any) => {
-            const message =
-                error?.response?.data?.message ||
-                "Something went wrong";
-
-            toast.error(message);
+            const message = error?.response?.data?.message;
+            const errorMessage = Array.isArray(message) ? message[0] : (message || 'Login failed. Please try again.');
+            toaster.create({
+                title: "Login failed",
+                description: errorMessage,
+                type: "error",
+            });
         }
     });
     const onSubmit = (data: SignInProps) => {

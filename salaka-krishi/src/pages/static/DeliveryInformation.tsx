@@ -1,4 +1,9 @@
-import { Flex, Link, Text, Spinner, Center } from "@chakra-ui/react";
+import {
+ Flex,
+ Link,
+ Text,
+ Center
+} from "@chakra-ui/react";
 import FaqCard from "@src/components/cards/FaqCard";
 import BreadCrumb from "@src/components/common/BreadCrumb";
 import CustomContainer from "@src/components/common/CustomContainer";
@@ -7,6 +12,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getFaq } from "@src/api/faq";
 import type { DataWrapper } from "@src/schema/schema";
 import type { FaqResponse } from "@src/schema/faq";
+import StaticPageLoading from "../Loadings/StaticPageLoading";
 export default function DeliveryInformation() {
     const { data: faqResponse, isLoading, isError } = useQuery<DataWrapper<FaqResponse[]>>({
         queryKey: ["faqs"],
@@ -40,9 +46,7 @@ export default function DeliveryInformation() {
                     <BreadCrumb />
 
                     {isLoading ? (
-                        <Center py={10}>
-                            <Spinner color="primary.300" size="xl" />
-                        </Center>
+                        <StaticPageLoading />
                     ) : isError ? (
                         <Center py={10}>
                             <Text color="red.500">Error loading FAQs. Please try again later.</Text>

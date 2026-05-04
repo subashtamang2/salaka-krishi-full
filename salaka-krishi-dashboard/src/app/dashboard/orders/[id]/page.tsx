@@ -102,11 +102,11 @@ export default function OrderDetailPage() {
                         <Stack spacing={0.5}>
                             <InfoRow label="Order Date" value={formatDate(order.createdAt)} />
                             <Divider />
-                            <InfoRow label="Payment Method" value={order.paymentMethod} />
+                            <InfoRow label="Payment Method" value={order.paymentProvider} />
                             <Divider />
                             <Stack direction="row" justifyContent="space-between" alignItems="center" py={1}>
                                 <Typography variant="body2" color="text.secondary">Payment Status</Typography>
-                                <Chip label={order.paymentStatus} size="small" color={getPaymentColor(order.paymentStatus)} variant="combined" />
+                                <Chip label={order.payment?.status || "Pending"} size="small" color={getPaymentColor(order.payment?.status || "Pending")} variant="combined" />
                             </Stack>
                             <Divider />
                             <Stack direction="row" justifyContent="space-between" alignItems="center" py={1}>
@@ -135,6 +135,23 @@ export default function OrderDetailPage() {
                             </Stack>
                         </Stack>
                     </MainCard>
+ 
+                     {order.payment && (
+                         <Box mt={3}>
+                             <MainCard title="Transaction Details">
+                                 <Stack spacing={0.5}>
+                                     <InfoRow label="Transaction ID" value={order.payment.transactionId} />
+                                     <InfoRow 
+                                         label="Gateway Reference" 
+                                         value={order.paymentProvider === 'Esewa' ? order.payment.transactionId : (order.payment.pidx || "—")} 
+                                     />
+                                     <InfoRow label="Status" value={order.payment.status} />
+                                     <InfoRow label="Webhook Verified" value={order.payment.webhookVerified ? "Yes" : "No"} />
+                                     <InfoRow label="Date" value={formatDate(order.payment.createdAt)} />
+                                 </Stack>
+                             </MainCard>
+                         </Box>
+                     )}
 
                     {order.orderStatus === "Cancelled" && cancellations.length > 0 && (
                         <Box mt={3}>
