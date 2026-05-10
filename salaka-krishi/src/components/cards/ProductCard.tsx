@@ -9,8 +9,6 @@ import { addToWishlist } from "@src/api/wishlist";
 import type { ProductSchema } from "@src/schema/product";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-// import { FaRegHeart } from "react-icons/fa";
-// import { HiOutlineShoppingCart } from "react-icons/hi";
 import {
     PiShoppingCartLight,
     PiHeartStraightLight,
@@ -41,6 +39,7 @@ export default function ProductCard({ product }: ProductProps) {
 
     const isPreOrder = product.availability === "PreOrder";
     const isNew = isProductNew(product.createdAt, recentDaysForNewProduct);
+    const isOutOfStock = (product.stock ?? 0) <= 0;
 
 
     const productPriceAfterDiscount = product.discountPercentage
@@ -134,8 +133,7 @@ export default function ProductCard({ product }: ProductProps) {
                 align={"center"}
                 overflow={"hidden"}
                 justify={"center"}>
-                {/* badges */}
-                {!((product?.stock ?? 0) <= 0) && !isPreOrder && isNew &&
+                {!isOutOfStock && !isPreOrder && isNew &&
                     <Text
                         color="secondary.200"
                         bg="primary.100"
@@ -150,6 +148,21 @@ export default function ProductCard({ product }: ProductProps) {
                         New
                     </Text>
                 }
+                {isOutOfStock && (
+                    <Text
+                        color="white"
+                        bg="red.500"
+                        position="absolute"
+                        top={0}
+                        left={0}
+                        px={8}
+                        py={2}
+                        fontSize={"sm"}
+                        fontWeight={600}
+                        zIndex={2}>
+                        Out of Stock
+                    </Text>
+                )}
                 {!product.createdAt && hasDiscount && (
                     <Text
                         color="secondary.200"
@@ -221,17 +234,16 @@ export default function ProductCard({ product }: ProductProps) {
                                 <  PiHeartStraightLight />
                             </IconButton>
                             <IconButton
-                                onClick={handleAddToCart}
+                                onClick={isOutOfStock ? undefined : handleAddToCart}
                                 aria-label="Add to Cart"
                                 bg="transparent"
                                 color="muted.200"
                                 className="small-icon"
-                                disabled={cartStatus}
+                                disabled={cartStatus || isOutOfStock}
                                 rounded="md"
                                 _hover={{ bg: "transparent" }}
                                 _active={{ bg: "transparent" }}
-                                size={"2xl"}
-                            >
+                                size={"2xl"}>
                                 <  PiShoppingCartLight />
                             </IconButton>
                         </Flex>
@@ -247,7 +259,9 @@ export default function ProductCard({ product }: ProductProps) {
                     fontWeight={400}>
                     {product?.name || product?.title}
                 </Text>
-                <Flex gap={6} justifyContent={"space-between"}>
+                <Flex
+                    gap={6}
+                    justifyContent={"space-between"}>
 
                     <>
                         <Text

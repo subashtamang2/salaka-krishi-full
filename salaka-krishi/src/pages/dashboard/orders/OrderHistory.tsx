@@ -6,7 +6,7 @@ import NotFound from "@src/pages/NotFound";
 import type { OrderInterface } from "@src/schema/schema";
 import { getAccessToken } from "@src/utils/local-storage";
 import { useQuery } from "@tanstack/react-query";
-import { Helmet } from "react-helmet";
+import { Helmet } from "react-helmet-async";
 import {
     Box,
     Flex,
@@ -183,9 +183,9 @@ export default function OrderHistory() {
                                         </VStack>
                                         <HStack gap={2}>
                                             {['Pending', 'Processing'].includes(order.orderStatus) && (
-                                                <CancelOrderDialog 
-                                                    orderId={order.id} 
-                                                    orderNumber={order.orderNumber} 
+                                                <CancelOrderDialog
+                                                    orderId={order.id}
+                                                    orderNumber={order.orderNumber}
                                                 />
                                             )}
                                             <Button

@@ -3,17 +3,27 @@ import { Flex, Heading, Text, Button, Box } from "@chakra-ui/react";
 import { useNavigate, useSearchParams } from "react-router";
 import routes from "@src/router/routes";
 import CustomContainer from "@src/components/common/CustomContainer";
+import axios from "@src/utils/axios-interceptor";
 
 export default function EsewaFailure() {
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
     
     useEffect(() => {
-        // SAFE GUARD: We NEVER auto-cancel the order on page load anymore.
-        // The order remains in 'WAITING_ESEWA' state which is protected from background cancellation.
-        // This allows the user to click "Try Again" without losing their order.
-        console.log("[EsewaFailure] Safe guard active: Order NOT cancelled. Waiting for user action or background job.");
-    }, []);
+        // Explicitly mark order as failed when we hit the failure page
+        const orderId = localStorage.getItem("pendingEsewaOrderId") || searchParams.get("oid");
+        
+        if (orderId) {
+            console.log(`[EsewaFailure] Marking order ${orderId} as failed/cancelled.`);
+            axios.patch(`/orders/${orderId}/payment-failed`)
+                .then(() => {
+                    localStorage.removeItem("pendingEsewaOrderId");
+                })
+                .catch(err => {
+                    console.error("[EsewaFailure] Failed to mark order as failed:", err);
+                });
+        }
+    }, [searchParams]);
 
     return (
         <CustomContainer py={20}>

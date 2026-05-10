@@ -107,6 +107,7 @@ export default function Filter({ open, onToggle, showCloseButton = true }: Filte
                         onClick={onToggle}
                         color="text.400"
                         cursor="pointer"
+                        display={{ base: "block", lg: "none" }}
                     />
                 )}
             </Flex>

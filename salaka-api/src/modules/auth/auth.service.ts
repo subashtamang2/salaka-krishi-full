@@ -1,5 +1,6 @@
 import {
   ConflictException,
+  ForbiddenException,
   Injectable,
   InternalServerErrorException,
   NotAcceptableException,
@@ -13,6 +14,7 @@ import { google } from "googleapis";
 import { LoginAuthDto } from "./dto/auth-login.dto";
 import * as bcrypt from "bcrypt";
 import { CustomJwtService } from "./CustomJwt.service";
+import { ROLE } from "@prisma/client";
 
 @Injectable()
 export class AuthService {
@@ -51,36 +53,55 @@ export class AuthService {
     const { access_token, refresh_token } = tokens;
     this.setCredentials(access_token!, refresh_token!);
 
-    const user = await google
+    const googleUser = await google
       .oauth2({ version: "v2", auth: this.oauth2Client })
       .userinfo.get();
-    const payload: CreateAuthDto = {
-      email: user.data.email!,
-      firstName: user.data.given_name!,
-      lastName: user?.data?.family_name ?? "",
-      profileUrl: user?.data?.picture ?? "",
-      isGoogleLogin: true,
-    };
+    
+    const email = googleUser.data.email!.toLowerCase();
 
-    const existingUser = await this.repository.findGoogleLoginUser(
-      payload.email
-    );
+    // 1. Check if user exists by email (any role, any login type)
+    let user = await this.repository.findUserByEmail(email);
 
-    if (!existingUser) await this.registerUser(payload);
+    if (user && (user.role === ROLE.Admin || user.role === ROLE.SuperAdmin)) {
+      throw new ForbiddenException(
+        "This account is restricted to admin dashboard access only."
+      );
+    }
 
-    if (!existingUser)
+    if (!user) {
+      // 2. If not, register
+      const payload: CreateAuthDto = {
+        email: email,
+        firstName: googleUser.data.given_name!,
+        lastName: googleUser?.data?.family_name ?? "",
+        profileUrl: googleUser?.data?.picture ?? "",
+        isGoogleLogin: true,
+      };
+      // Register will create the user and return tokens, but we need the user object
+      await this.repository.registerUser(payload);
+      user = await this.repository.findUserByEmail(email);
+    } else {
+      // 3. If exists but isGoogleLogin is false, we can update it (optional but recommended)
+      if (!user.isGoogleLogin) {
+        // You might want to update the user record here to mark isGoogleLogin: true
+        // But for now, just allowing the login is enough to fix the crash.
+      }
+    }
+
+    if (!user)
       throw new InternalServerErrorException("Unable to login user");
 
     const { access_token: a_token, refresh_token: r_token } =
       await this.jwtService.generateAccessAndRefreshToken({
-        sub: existingUser.id,
-        username: existingUser.firstName,
-        role: existingUser.role,
+        sub: user.id,
+        username: user.firstName,
+        role: user.role,
       });
     return { access_token: a_token, refresh_token: r_token };
   }
   async registerUser(createUser: CreateAuthDto) {
-    const existingUser = await this.repository.findUserByEmail(createUser.email);
+    const email = createUser.email.toLowerCase();
+    const existingUser = await this.repository.findUserByEmail(email);
     if (existingUser)
       throw new ConflictException("User already exists");
 
@@ -100,8 +121,15 @@ export class AuthService {
   }
 
   async signInUser(loginUser: LoginAuthDto) {
-    const user = await this.repository.findUserByEmail(loginUser.email);
+    const email = loginUser.email.toLowerCase();
+    const user = await this.repository.findUserByEmail(email);
     if (!user) throw new NotFoundException("No account found. Please sign up first.");
+
+    if (user.role === ROLE.Admin || user.role === ROLE.SuperAdmin) {
+      throw new ForbiddenException(
+        "This account is restricted to admin dashboard access only."
+      );
+    }
 
     if (!user.password) {
       throw new UnauthorizedException("This account was created via social login. Please login with Google/Facebook.");

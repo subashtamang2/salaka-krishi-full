@@ -35,8 +35,14 @@ export class OrderService {
             throw new BadRequestException('Cart is empty');
         }
 
-        // 2. Calculate Subtotal
-        const subtotal = cart.products.reduce((acc, item) => acc + (item.product.price * item.quantity), 0);
+        // 2. Calculate Subtotal & Validate Stock
+        let subtotal = 0;
+        for (const item of cart.products) {
+            if (item.product.stock < item.quantity) {
+                throw new BadRequestException(`Insufficient stock for ${item.product.name}. Available: ${item.product.stock}, Requested: ${item.quantity}`);
+            }
+            subtotal += item.product.price * item.quantity;
+        }
 
         // 3. Calculate Discount
         let discount = 0;
@@ -92,6 +98,9 @@ export class OrderService {
         // 4. Create Order & OrderItems in Transaction
         return await this.prisma.$transaction(async (tx) => {
 
+            const deadline = new Date();
+            deadline.setMinutes(deadline.getMinutes() + 5);
+
             const order = await tx.order.create({
                 data: {
                     orderNumber,
@@ -105,6 +114,7 @@ export class OrderService {
                     total,
                     appliedCoupon: createOrderDto.couponCode,
                     paymentProvider: createOrderDto.paymentProvider || 'CashOnDelivery',
+                    paymentDeadline: deadline,
                     items: {
                         create: products.map((item) => ({
                             productId: item.productId,
@@ -124,8 +134,13 @@ export class OrderService {
                 include: { items: true, payment: true }
             });
 
-            // 4.2 Deduct Stock immediately to reserve it
+            // 4.2 Deduct Stock immediately to reserve it (Atomic Check)
             for (const item of products) {
+                const p = await tx.product.findUnique({ where: { id: item.productId } });
+                if (!p || p.stock < item.quantity) {
+                    throw new BadRequestException(`Insufficient stock for ${item.product?.name || 'product'}.`);
+                }
+
                 await tx.product.update({
                     where: { id: item.productId },
                     data: {
@@ -168,15 +183,30 @@ export class OrderService {
         if (!order) throw new NotFoundException('Order not found');
         if (order.payment?.status === 'Paid') return order; // Already finalized
 
+        // STOP payment if order is already cancelled
+        if (order.orderStatus === 'Cancelled') {
+            this.logger.warn(`[OrderService] Rejecting payment: Order ${order.orderNumber} is already CANCELLED.`);
+            throw new BadRequestException('Order was cancelled due to timeout. Please order again.');
+        }
+
+        // STRICT CHECK: If 5 mins passed, even if cron hasn't run yet, we reject it
+        const now = new Date();
+        if (order.paymentDeadline && now > order.paymentDeadline) {
+            this.logger.warn(`[OrderService] Rejecting payment: Deadline passed for Order ${order.orderNumber}.`);
+            
+            // Mark as cancelled immediately if not already
+            await this.markPaymentFailed(order.id).catch(() => {}); 
+            
+            throw new BadRequestException('Payment window (5 mins) expired. Order cancelled.');
+        }
+
         return await this.prisma.$transaction(async (tx) => {
             // 1. Update order and payment status
-            // Rules: If order was Cancelled or WAITING_ESEWA, we move it back to Pending (confirmed state)
-            const isReopening = ['Cancelled', 'WAITING_ESEWA'].includes(order.orderStatus);
-
             const updatedOrder = await tx.order.update({
                 where: { id: orderId },
                 data: {
-                    orderStatus: isReopening ? 'Pending' : order.orderStatus,
+                    orderStatus: 'Pending',
+                    paymentDeadline: null,
                     isRefundPending: false,
                     payment: {
                         update: {
@@ -190,20 +220,6 @@ export class OrderService {
                 },
                 include: { items: true, payment: true }
             });
-
-            // 1.5 If Reopening, we MUST re-deduct stock because it was restored during cancellation
-            if (isReopening) {
-                this.logger.log(`[OrderService] Re-opening cancelled order ${order.orderNumber} as payment was received.`);
-                for (const item of order.items) {
-                    await tx.product.update({
-                        where: { id: item.productId },
-                        data: {
-                            stock: { decrement: item.quantity },
-                            sold: { increment: item.quantity }
-                        }
-                    });
-                }
-            }
 
             // 2. Clear User Cart
             const cart = await tx.cart.findUnique({ where: { userId: order.userId } });
@@ -264,7 +280,7 @@ export class OrderService {
 
         const where: any = {
             ...(userId ? { userId } : {}),
-            ...(includeArchived ? {} : { isArchived: false }),
+            isArchived: includeArchived,
             ...(status ? { orderStatus: status } : {}),
             ...(paymentStatus ? { payment: { status: paymentStatus as any } } : {}),
             ...(paymentProvider ? { paymentProvider: paymentProvider as any } : {}),
@@ -404,6 +420,16 @@ export class OrderService {
         });
     }
 
+    async unarchiveOrder(id: string) {
+        const order = await this.prisma.order.findUnique({ where: { id } });
+        if (!order) throw new NotFoundException('Order not found');
+
+        return this.prisma.order.update({
+            where: { id },
+            data: { isArchived: false }
+        });
+    }
+
     async reopenOrder(userId: string, orderId: string, resetCodPayment = false) {
         const order = await this.prisma.order.findUnique({
             where: { id: orderId },
@@ -423,6 +449,11 @@ export class OrderService {
             // 1. If reopening from Cancelled, we MUST re-deduct stock (as it was restored during cancellation)
             if (order.orderStatus === 'Cancelled') {
                 for (const item of order.items) {
+                    const p = await tx.product.findUnique({ where: { id: item.productId } });
+                    if (!p || p.stock < item.quantity) {
+                        throw new BadRequestException(`Insufficient stock to reopen order for ${item.name || 'product'}.`);
+                    }
+
                     await tx.product.update({
                         where: { id: item.productId },
                         data: {
@@ -456,88 +487,89 @@ export class OrderService {
         });
     }
 
+    
     async markPaymentFailed(idOrNumber: string) {
         const cleanId = (idOrNumber || '').trim();
-        console.log(`[markPaymentFailed] RECV: "${cleanId}" (length: ${cleanId.length})`);
+        this.logger.log(`[markPaymentFailed] Attempting to mark order as failed: "${cleanId}"`);
 
         const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(cleanId);
-        console.log(`[markPaymentFailed] Is UUID: ${isUuid}`);
+        
+        // Handle eSewa format where it might append a timestamp: ORD-XXXXXX-123456789
+        let searchId = cleanId;
+        if (!isUuid && cleanId.includes('-')) {
+            const parts = cleanId.split('-');
+            if (parts.length > 2) {
+                // If it looks like ORD-XXXXXX-TIMESTAMP, strip the timestamp
+                searchId = parts.slice(0, 2).join('-');
+                this.logger.log(`[markPaymentFailed] Detected suffixed ID, normalized to: "${searchId}"`);
+            }
+        }
 
-        let order = await this.prisma.order.findFirst({
-            where: isUuid ? { id: cleanId } : { orderNumber: cleanId },
+        const order = await this.prisma.order.findFirst({
+            where: isUuid ? { id: cleanId } : { orderNumber: searchId },
             include: { items: true, payment: true }
         });
 
         if (!order) {
-            console.log(`[markPaymentFailed] Initial lookup failed. Trying broad search...`);
-            // Try searching by orderNumber even if it looked like a UUID
-            order = await this.prisma.order.findFirst({
-                where: {
-                    OR: [
-                        { id: cleanId },
-                        { orderNumber: cleanId }
-                    ]
-                },
-                include: { items: true, payment: true }
-            });
-        }
-
-        if (!order) {
-            // Final desperate attempt: check if it matches the suffix of any order number
-            console.log(`[markPaymentFailed] Broad search failed. Checking recent orders...`);
-            const recentOrders = await this.prisma.order.findMany({ take: 5, orderBy: { createdAt: 'desc' } });
-            console.log(`[markPaymentFailed] Recent order IDs in DB: ${recentOrders.map(o => o.id).join(', ')}`);
-        }
-
-        if (!order) {
-            console.error(`[markPaymentFailed] Order NOT FOUND in DB for input: "${cleanId}"`);
+            this.logger.error(`[markPaymentFailed] Order NOT FOUND for input: "${cleanId}"`);
             throw new NotFoundException('Order not found');
         }
 
-        console.log(`[markPaymentFailed] MATCH FOUND: ${order.orderNumber} | Current OrderStatus: ${order.orderStatus} | Payment Status: ${order.payment?.status}`);
+        this.logger.log(`[markPaymentFailed] Found Order: ${order.orderNumber} | Current Status: ${order.orderStatus} | Payment: ${order.payment?.status}`);
 
-        // Only update if it's pending online payment
-        if (order.payment?.status === 'Pending' && ['Esewa', 'Khalti'].includes(order.paymentProvider)) {
-            console.log(`[markPaymentFailed] Order is eligible for cancellation. Updating database...`);
-            return await this.prisma.$transaction(async (tx) => {
-                const updatedOrder = await tx.order.update({
-                    where: { id: order.id },
-                    data: {
-                        orderStatus: 'Cancelled',
-                        payment: {
-                            update: {
-                                status: 'Failed'
-                            }
-                        }
-                    }
-                });
-
-                // Restore Stock
-                for (const item of order.items) {
-                    await tx.product.update({
-                        where: { id: item.productId },
-                        data: {
-                            stock: { increment: item.quantity },
-                            sold: { decrement: item.quantity }
-                        }
-                    });
-                }
-
-                await tx.orderCancellation.create({
-                    data: {
-                        orderId: order.id,
-                        reason: 'Payment cancelled or failed during checkout',
-                        cancelledBy: 'system'
-                    }
-                });
-
-                console.log(`[markPaymentFailed] Successfully updated order ${order.orderNumber} to Cancelled/Failed.`);
-                return updatedOrder;
-            });
+        // If already cancelled/failed, we don't need to do anything (prevents double stock restoration)
+        if (order.orderStatus === 'Cancelled' || order.payment?.status === 'Failed') {
+            this.logger.log(`[markPaymentFailed] Order ${order.orderNumber} is already in a failed/cancelled state. Skipping.`);
+            return order;
         }
 
-        console.log(`[markPaymentFailed] Order was NOT updated. Either not Pending or not eSewa/Khalti.`);
-        return order;
+        // Only restore stock if it's an online payment that was still Pending
+        const isOnlinePayment = ['Esewa', 'Khalti'].includes(order.paymentProvider);
+        if (!isOnlinePayment) {
+            this.logger.log(`[markPaymentFailed] Order ${order.orderNumber} is not an online payment order. Skipping stock restoration.`);
+            return order;
+        }
+
+        this.logger.log(`[markPaymentFailed] Proceeding to cancel order and restore stock for ${order.items.length} items.`);
+
+        return await this.prisma.$transaction(async (tx) => {
+            // 1. Update order and payment status
+            const updatedOrder = await tx.order.update({
+                where: { id: order.id },
+                data: {
+                    orderStatus: 'Cancelled',
+                    payment: {
+                        update: {
+                            status: 'Failed'
+                        }
+                    }
+                }
+            });
+
+            // 2. Restore Stock and Decrement Sold Count
+            for (const item of order.items) {
+                this.logger.log(`[markPaymentFailed] Restoring stock for product ${item.productId}: +${item.quantity}`);
+                await tx.product.update({
+                    where: { id: item.productId },
+                    data: {
+                        stock: { increment: item.quantity },
+                        sold: { decrement: item.quantity }
+                    }
+                });
+            }
+
+            // 3. Create Cancellation Record
+            await tx.orderCancellation.create({
+                data: {
+                    orderId: order.id,
+                    reason: 'Payment cancelled or failed during checkout',
+                    cancelledBy: 'system'
+                }
+            });
+
+            this.logger.log(`[markPaymentFailed] Successfully reverted order ${order.orderNumber} and restored inventory.`);
+            return updatedOrder;
+        });
     }
 
     async cancelOrder(userId: string, orderId: string, reason: string, note?: string) {
@@ -557,8 +589,8 @@ export class OrderService {
             throw new BadRequestException('You do not have permission to cancel this order');
         }
 
-        // Rule: Pending, WAITING_ESEWA, or Processing can be cancelled
-        if (!['Pending', 'WAITING_ESEWA', 'Processing'].includes(order.orderStatus)) {
+        // Rule: Pending or Processing can be cancelled
+        if (!['Pending', 'Processing'].includes(order.orderStatus)) {
             throw new BadRequestException(`Cannot cancel order in ${order.orderStatus} state`);
         }
 
@@ -651,23 +683,22 @@ export class OrderService {
 
 
     /**
-     * Background Task: Automatically cancel PENDING online orders after 60 minutes
+     * Background Task: Automatically cancel PENDING online orders after 5 minutes
      * and restore their stock.
      */
 
-    @Cron('0 */15 * * * *')
+    @Cron('0 */5 * * * *')
     async handleExpiredOrders() {
-        if (process.env.DISABLE_EXPIRED_JOB === 'true') return;
+        if (process.env.DISABLE_EXPIRED_ORDERS === 'true') return;
 
 
-        const expiryTime = new Date();
-        expiryTime.setMinutes(expiryTime.getMinutes() - 15);
-        this.logger.log(`Checking for orders created before ${expiryTime.toISOString()} that are still strictly Pending.`);
+        const currentTime = new Date();
+        this.logger.log(`Checking for orders with paymentDeadline past ${currentTime.toISOString()} that are still Pending.`);
 
         const expiredOrders = await this.prisma.order.findMany({
             where: {
-                orderStatus: 'Pending', // Strictly ONLY Pending (Not WAITING_ESEWA/WAITING_KHALTI)
-                createdAt: { lt: expiryTime },
+                orderStatus: 'Pending',
+                paymentDeadline: { lt: currentTime },
                 payment: { status: 'Pending' }
             },
             include: { items: true }

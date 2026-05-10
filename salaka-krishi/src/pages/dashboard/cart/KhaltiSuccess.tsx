@@ -20,11 +20,11 @@ export default function KhaltiSuccess() {
             verifyPayment(pidx, purchase_order_id);
         } else {
             const statusParam = searchParams.get("status");
-            if (statusParam === "User canceled") {
+            if (statusParam && statusParam !== "Completed") {
                 toaster.create({
-                    title: "Payment Canceled",
-                    description: "You canceled the Khalti payment process.",
-                    type: "info",
+                    title: `Payment ${statusParam}`,
+                    description: `The Khalti payment process was ${statusParam.toLowerCase()}.`,
+                    type: statusParam === "User canceled" ? "info" : "error",
                 });
                 
                 const purchaseOrderId = searchParams.get("purchase_order_id");

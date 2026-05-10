@@ -67,8 +67,7 @@ export default function NewsletterContainer() {
                     md: "60%",
                     lg: "80%",
                     xl: "100%",
-                }}
-            >
+                }}>
                 <Heading as="h4" mb={2}>
                     Newsletter
                 </Heading>
@@ -95,8 +94,7 @@ export default function NewsletterContainer() {
                             sm: "100px"
                         }}
                         flex={1}
-                        py={2}
-                    />
+                        py={2}/>
                     <Button
                         onClick={handleClick}
                         position={{

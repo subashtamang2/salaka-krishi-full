@@ -41,5 +41,9 @@ export class CreateAuthDto {
     @ApiProperty({ example: "password123", required: false })
     password?: string;
 
+    @IsString()
+    @IsOptional()
+    role?: string;
+
 
 }

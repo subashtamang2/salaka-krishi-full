@@ -1,5 +1,5 @@
 import { useSiteInfo } from "@src/store/useSiteInfo";
-import { Helmet } from "react-helmet";
+import { Helmet } from "react-helmet-async";
 interface PropsInterface {
     title?: string | undefined;
     description?: string | undefined;

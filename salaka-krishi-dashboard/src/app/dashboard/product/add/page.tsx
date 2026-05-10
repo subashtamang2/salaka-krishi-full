@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import MainCard from "components/MainCard";
 import { useFormik } from "formik";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import * as yup from "yup";
 import { DateTimePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
@@ -28,8 +28,6 @@ import AutocompleteCard from "components/Autocomplete";
 import { uploadFiles } from "api/upload";
 import { createProduct } from "api/product";
 import { useRouter } from "next/navigation";
-import { userStore } from "store/userStore";
-
 
 
 const validationSchema = yup.object({
@@ -104,7 +102,6 @@ const validationSchema = yup.object({
 
 export default function Page() {
     const router = useRouter();
-    const user = userStore((state) => state.user);
 
 
     const { data: categoryList, isLoading: isCategoryLoading, error: categoryError } = useQuery<CategoryResponse[]>({
@@ -179,7 +176,6 @@ export default function Page() {
                 ...(discountStartDate ? { discountStartDate } : {}),
                 ...(discountEndDate ? { discountEndDate } : {}),
                 imageUrls: productImages,
-                addedBy: user?.id || "",
             };
             createProductMutation.mutate(payload, {
                 onSuccess: (data) => {
@@ -222,7 +218,6 @@ export default function Page() {
     return (
         <>
             <Grid container spacing={1}>
-                <ToastContainer position="top-right" autoClose={5000} hideProgressBar={false} closeOnClick draggable pauseOnHover />
                 <Grid item lg={10}>
                     <MainCard title="Add New Product" sx={{ mb: 3 }}>
                         <form onSubmit={formik.handleSubmit} id="add-form">

@@ -165,11 +165,15 @@ export const textStyles = {
         },
 
     },
+
+
     textSm: {
         value: {
             fontSize: "md",
             fontFamily: "poppins",
             fontWeight: "400",
+            wordBreak: "normal",
+            overflowWrap: "break-word",
 
             "& h2": {
                 color: "primary.300",
@@ -182,6 +186,9 @@ export const textStyles = {
                 fontSize: "md",
                 fontWeight: "400",
                 mb: 2,
+                wordBreak: "normal",
+                overflowWrap: "break-word",
+                hyphens: "none",
             },
             "& > div": {
                 mb: 9,
@@ -195,6 +202,8 @@ export const textStyles = {
             fontFamily: "primary",
             fontSize: "md",
             fontWeight: "400",
+            wordBreak: "normal",
+            overflowWrap: "break-word",
             "& h2": {
                 color: "primary.300",
                 fontSize: "2xl",
@@ -216,7 +225,12 @@ export const textStyles = {
                 fontWeight: "400",
                 textAlign: "start",
                 mb: 4,
+                wordBreak: "normal",
+                overflowWrap: "break-word",
+                hyphens: "none",
             },
+
+
         },
     },
 

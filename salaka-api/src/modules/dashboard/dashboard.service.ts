@@ -11,6 +11,7 @@ export class DashboardService {
       this.prisma.product.count(),
       this.prisma.order.count(),
       this.prisma.order.aggregate({
+        where: { orderStatus: { not: 'Cancelled' } },
         _sum: { total: true }
       })
     ]);
@@ -59,7 +60,10 @@ export class DashboardService {
         const nextDate = new Date(date);
         nextDate.setDate(date.getDate() + 1);
         const result = await this.prisma.order.aggregate({
-          where: { createdAt: { gte: date, lt: nextDate } },
+          where: { 
+            createdAt: { gte: date, lt: nextDate },
+            orderStatus: { not: 'Cancelled' }
+          },
           _sum: { total: true }
         });
         return result._sum.total || 0;
@@ -67,7 +71,8 @@ export class DashboardService {
       Promise.all([
         this.prisma.order.count({ where: { orderStatus: 'Pending' } }),
         this.prisma.order.count({ where: { orderStatus: 'Delivered' } }),
-        this.prisma.order.count({ where: { orderStatus: 'Cancelled' } })
+        this.prisma.order.count({ where: { orderStatus: 'Cancelled' } }),
+        this.prisma.order.count({ where: { orderStatus: 'Processing' } })
       ])
     ]);
 
@@ -80,7 +85,7 @@ export class DashboardService {
       },
       orderStatusPie: {
         series: statusCounts,
-        labels: ['Pending', 'Completed', 'Cancelled'],
+        labels: ['Pending', 'Delivered', 'Cancelled', 'Processing'],
       },
       userGrowth: {
         series: [{ name: 'New Users', data: userGrowthData }],

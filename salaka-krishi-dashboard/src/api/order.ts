@@ -8,6 +8,7 @@ export interface OrderFilters {
   payment_provider?: string;
   date_from?: string;
   date_to?: string;
+  includeArchived?: boolean;
   page?: number;
   limit?: number;
 }
@@ -57,6 +58,14 @@ export function archiveOrder(id: string) {
   return axios({
     url,
     method: urls.archiveOrder.method,
+  });
+}
+
+export function unarchiveOrder(id: string) {
+  const url = urls.archiveOrder.url.replace(":id", id).replace("archive", "unarchive");
+  return axios({
+    url,
+    method: "POST", // Manually setting POST as I haven't updated urls.ts yet
   });
 }
 

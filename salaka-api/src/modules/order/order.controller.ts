@@ -90,6 +90,13 @@ export class OrderController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @Post(':id/unarchive')
+  @ApiOperation({ summary: 'Unarchive an order' })
+  async unarchive(@Param('id') id: string) {
+    return this.orderService.unarchiveOrder(id);
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Post(':id/reopen')
   @ApiOperation({ summary: 'Reopen a cancelled or delivered order' })
   async reopen(@Req() req: any, @Param('id') id: string, @Body('resetCodPayment') resetCodPayment: boolean) {

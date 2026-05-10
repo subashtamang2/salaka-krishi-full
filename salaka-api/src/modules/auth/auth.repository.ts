@@ -17,12 +17,12 @@ export class AuthRepository {
 
   findGoogleLoginUser(email: string) {
     return this.prisma.user.findFirst({
-      where: { email, isGoogleLogin: true, role: "User" },
+      where: { email, isGoogleLogin: true },
     });
   }
   findFacebookLoginUser(email: string) {
     return this.prisma.user.findFirst({
-      where: { email, isFacebookLogin: true, role: "User" },
+      where: { email, isFacebookLogin: true },
     });
   }
   async registerUser({ password, ...rest }: CreateAuthDto) {
@@ -32,7 +32,7 @@ export class AuthRepository {
         password: password
           ? await bcrypt.hash(password, this.saltRounds)
           : undefined,
-        role: ROLE.User,
+        role: rest.role || ROLE.User,
         status: "Active" as any,
       } as any,
     });
@@ -41,7 +41,6 @@ export class AuthRepository {
     return this.prisma.user.findFirst({
       where: {
         email,
-        role: ROLE.User,
       },
     });
   }

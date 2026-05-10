@@ -45,12 +45,12 @@ export default function EsewaSuccess() {
             } else {
                 setStatus("error");
             }
-        } catch (error) {
+        } catch (error: any) {
             console.error("Verification failed", error);
             setStatus("error");
             toaster.create({
                 title: "Verification Failed",
-                description: "Failed to verify your payment. Please contact support.",
+                description: error?.response?.data?.message || "Failed to verify your payment. Please contact support.",
                 type: "error",
             });
         } finally {

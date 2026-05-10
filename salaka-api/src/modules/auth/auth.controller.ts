@@ -35,11 +35,18 @@ export class AuthController {
     @Res() res: Response
   ) {
     const code = req.query.code;
-    const result = await this.authService.getUser(code);
     const frontendUrl = this.configService.get<string>("client.clientUrl");
-    return res.redirect(
-      `${frontendUrl}/auth/success?access_token=${result.access_token}&refresh_token=${result.refresh_token}`
-    );
+    try {
+      const result = await this.authService.getUser(code);
+      return res.redirect(
+        `${frontendUrl}/auth/success?access_token=${result.access_token}&refresh_token=${result.refresh_token}`
+      );
+    } catch (error) {
+      const message = error.response?.message || error.message || "Login failed";
+      return res.redirect(
+        `${frontendUrl}/auth/login?error=${encodeURIComponent(message)}`
+      );
+    }
   }
 
   @Post("login")

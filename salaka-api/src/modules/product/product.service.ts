@@ -33,6 +33,10 @@ export class ProductService {
         if (checkSlug)
             throw new NotAcceptableException("Product with this slug already exists");
  
+        if (createProductDto.stock !== undefined && createProductDto.stock < 0) {
+            throw new NotAcceptableException("Stock cannot be negative");
+        }
+
         // Verify Category Existence
         await this.categoriesService.findOne(createProductDto.categoryId);
 
@@ -113,6 +117,10 @@ export class ProductService {
             if (!checkProduct) {
                 throw new NotFoundException("Product with this id does not exist");
             }
+        }
+
+        if (updateProductDto.stock !== undefined && updateProductDto.stock < 0) {
+            throw new NotAcceptableException("Stock cannot be negative");
         }
 
         const updatedProduct = await this.productRepository.updateProduct(

@@ -98,7 +98,14 @@ export class EsewaService {
 
       // Check status (only for eSewa v2)
       if (decodedData.status && decodedData.status !== 'COMPLETE') {
-        throw new BadRequestException(`Payment incomplete. Status: ${decodedData.status}`);
+        this.logger.warn(`[eSewa] Payment not complete. Status: ${decodedData.status} for UUID: ${transaction_uuid}`);
+        return {
+          success: false,
+          transaction_uuid,
+          amount: total_amount,
+          status: decodedData.status,
+          raw: decodedData
+        };
       }
 
       return {
@@ -106,10 +113,13 @@ export class EsewaService {
         transaction_uuid,
         amount: total_amount,
         transaction_id: decodedData.transaction_code,
+        status: decodedData.status,
         raw: decodedData
       };
     } catch (err) {
       this.logger.error(`[eSewa] Verification Error: ${err.message}`);
+      // Re-throw if it's a structural error (like JSON parse or signature)
+      // but let verifyAndFinalize handle the higher-level failure
       throw new BadRequestException(err.message || 'Payment verification failed');
     }
   }
