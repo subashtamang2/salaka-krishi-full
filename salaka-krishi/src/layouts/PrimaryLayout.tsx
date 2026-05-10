@@ -12,11 +12,15 @@ export default function PrimaryLayout() {
         <>
             <AuthModal />
             <Flex
-                flexDir={"column"} fontFamily={"primary"}>
+                flexDir={"column"} 
+                fontFamily={"primary"}
+                minH="100vh">
                 <Header />
                 <Flex
                     bg={"background.300/5"}
-                    flexDirection={"column"}>
+                    flexDirection={"column"}
+                    flex="1"
+                    minH="400px">
                     <Outlet />
                 </Flex>
                 <Footer />

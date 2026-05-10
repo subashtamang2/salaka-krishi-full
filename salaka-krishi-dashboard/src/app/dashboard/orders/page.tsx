@@ -35,7 +35,7 @@ import {
 } from "@mui/material";
 import { Refresh2, SearchNormal1 } from "@wandersonalwes/iconsax-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { getOrders, updateOrderStatus, cancelOrder, archiveOrder, reopenOrder, OrderFilters } from "api/order";
+import { getOrders, updateOrderStatus, cancelOrder, archiveOrder, unarchiveOrder, reopenOrder, OrderFilters } from "api/order";
 import MainCard from "components/MainCard";
 import Loading from "app/loading";
 import Error404 from "app/dashboard/error";
@@ -127,7 +127,7 @@ function CodDeliveryConfirmModal({ open, onYes, onNo, onCancel, loading }: CodCo
 }
 
 // --------------- Status Dropdown ---------------
-function StatusDropdown({ orderId, currentStatus, paymentStatus, paymentProvider }: any) {
+function StatusDropdown({ orderId, currentStatus, paymentStatus, paymentProvider, isArchived }: any) {
     const [status, setStatus] = useState(currentStatus || "Pending");
     const [pendingStatus, setPendingStatus] = useState<string | null>(null);
     const [codModalOpen, setCodModalOpen] = useState(false);
@@ -210,7 +210,7 @@ function StatusDropdown({ orderId, currentStatus, paymentStatus, paymentProvider
                         size="small"
                         value={status}
                         onChange={(e) => handleChange(e.target.value)}
-                        disabled={isDelivered || mutation.isPending}
+                        disabled={isDelivered || isArchived || mutation.isPending}
                         sx={{ minWidth: 140, fontSize: "0.85rem", "& .MuiSelect-select": { py: 0.5 } }}
                     >
                         {ORDER_STATUSES.map((s) => {
@@ -340,7 +340,8 @@ export default function OrdersPage() {
     const [paymentStatusFilter, setPaymentStatusFilter] = useState("All");
     const [paymentProviderFilter, setPaymentProviderFilter] = useState("All");
     const [page, setPage] = useState(1);
-    const limit = 15;
+    const [limit] = useState(15);
+    const [includeArchived, setIncludeArchived] = useState(false);
 
     // Debounce search input
     useEffect(() => {
@@ -356,6 +357,7 @@ export default function OrdersPage() {
         status: statusFilter !== "All" ? statusFilter : undefined,
         payment_status: paymentStatusFilter !== "All" ? paymentStatusFilter : undefined,
         payment_provider: paymentProviderFilter !== "All" ? paymentProviderFilter : undefined,
+        includeArchived: includeArchived || undefined,
         page,
         limit,
     };
@@ -373,11 +375,12 @@ export default function OrdersPage() {
         mutationFn: async ({ type, id, opts }: { type: string; id: string; opts?: any }) => {
             if (type === "cancel") return cancelOrder(id, opts?.reason || "Cancelled by Admin", opts?.note);
             if (type === "archive") return archiveOrder(id);
+            if (type === "unarchive") return unarchiveOrder(id);
             if (type === "reopen") return reopenOrder(id, opts?.resetCodPayment ?? false);
         },
         onSuccess: (_, variables) => {
             queryClient.invalidateQueries({ queryKey: ["orders"] });
-            const labels: any = { cancel: "cancelled", archive: "archived", reopen: "reopened" };
+            const labels: any = { cancel: "cancelled", archive: "archived", unarchive: "restored", reopen: "reopened" };
             toast.success(`Order ${labels[variables.type]} successfully`);
             setConfirmDialog({ ...confirmDialog, open: false });
         },
@@ -405,6 +408,7 @@ export default function OrdersPage() {
         switch (confirmDialog.type) {
             case "cancel": return { title: "Cancel Order", desc: "Are you sure? This will restore stock.", color: "error" as const, showCodReset: false };
             case "archive": return { title: "Archive Order", desc: "This hides the order from main list. Find it in archives.", color: "warning" as const, showCodReset: false };
+            case "unarchive": return { title: "Restore Order", desc: "This will move the order back to the main list.", color: "primary" as const, showCodReset: false };
             case "reopen": return {
                 title: "Reopen Order",
                 desc: "This will reset the order to 'Processing' state, allowing you to continue the workflow.",
@@ -482,6 +486,24 @@ export default function OrdersPage() {
                                 <MenuItem value="Khalti">Khalti</MenuItem>
                             </Select>
                         </FormControl>
+                        <FormControlLabel
+                            control={
+                                <Switch
+                                    checked={includeArchived}
+                                    onChange={(e) => {
+                                        setIncludeArchived(e.target.checked);
+                                        setPage(1);
+                                    }}
+                                    color="primary"
+                                />
+                            }
+                            label={
+                                <Typography variant="body2" fontWeight={600} color={includeArchived ? "warning.main" : "text.secondary"}>
+                                    View Archives
+                                </Typography>
+                            }
+                            sx={{ ml: 1 }}
+                        />
                     </Stack>
                 </Stack>
             </MainCard>
@@ -557,6 +579,21 @@ export default function OrdersPage() {
                                                 variant="light"
                                                 sx={{ borderRadius: "6px", fontWeight: 700, minWidth: 75 }}
                                             />
+                                            {order.paymentDeadline && (order.payment?.status === 'Pending' || order.payment?.status === 'Failed') && order.orderStatus === 'Pending' && (
+                                                <Typography 
+                                                    variant="caption" 
+                                                    color="error.main" 
+                                                    sx={{ 
+                                                        display: "block", 
+                                                        mt: 0.5, 
+                                                        fontSize: "0.65rem", 
+                                                        fontWeight: 600,
+                                                        lineHeight: 1
+                                                    }}
+                                                >
+                                                    Exp: {format(new Date(order.paymentDeadline), "hh:mm a")}
+                                                </Typography>
+                                            )}
                                         </TableCell>
                                         <TableCell align="center">
                                             <Stack direction="row" spacing={1} alignItems="center" justifyContent="center">
@@ -565,8 +602,9 @@ export default function OrdersPage() {
                                                     currentStatus={order.orderStatus}
                                                     paymentStatus={order.payment?.status}
                                                     paymentProvider={order.paymentProvider}
+                                                    isArchived={order.isArchived}
                                                 />
-                                                {(order.orderStatus === "Cancelled" || order.orderStatus === "Delivered") && order.payment?.status !== "Failed" && (
+                                                {(order.orderStatus === "Cancelled" || order.orderStatus === "Delivered") && order.payment?.status !== "Failed" && !order.isArchived && (
                                                     <Tooltip title="Reopen Order">
                                                         <IconButton
                                                             size="small"
@@ -611,25 +649,34 @@ export default function OrdersPage() {
                                                         </Button>
                                                     </Tooltip>
                                                 )}
-                                                <Tooltip title={canArchive ? "Archive" : "Only completed or cancelled orders can be archived"}>
-                                                    <span>
+                                                {order.isArchived ? (
+                                                    <Tooltip title="Restore from Archive">
                                                         <Button
-                                                            color="warning"
+                                                            color="primary"
                                                             size="small"
                                                             variant="text"
-                                                            sx={{
-                                                                px: 1,
-                                                                minWidth: "auto",
-                                                                fontSize: "0.75rem",
-                                                                fontWeight: 700
-                                                            }}
-                                                            onClick={() => handleAction("archive", order)}
-                                                            disabled={!canArchive}
+                                                            sx={{ px: 1, minWidth: "auto", fontSize: "0.75rem", fontWeight: 700 }}
+                                                            onClick={() => handleAction("unarchive", order)}
                                                         >
-                                                            Archive
+                                                            Restore
                                                         </Button>
-                                                    </span>
-                                                </Tooltip>
+                                                    </Tooltip>
+                                                ) : (
+                                                    <Tooltip title={canArchive ? "Archive" : "Only completed or cancelled orders can be archived"}>
+                                                        <span>
+                                                            <Button
+                                                                color="warning"
+                                                                size="small"
+                                                                variant="text"
+                                                                sx={{ px: 1, minWidth: "auto", fontSize: "0.75rem", fontWeight: 700 }}
+                                                                onClick={() => handleAction("archive", order)}
+                                                                disabled={!canArchive}
+                                                            >
+                                                                Archive
+                                                            </Button>
+                                                        </span>
+                                                    </Tooltip>
+                                                )}
                                             </Stack>
                                         </TableCell>
                                     </TableRow>

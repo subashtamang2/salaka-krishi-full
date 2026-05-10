@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 import MainCard from "components/MainCard";
 import { useFormik } from "formik";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import { DataWrapper, } from "schema/schema";
 import * as yup from "yup";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -95,7 +95,6 @@ export default function Socialmedia() {
     return (
         <>
             <Grid container spacing={1}>
-                <ToastContainer position="top-right" autoClose={5000} hideProgressBar={false} closeOnClick draggable pauseOnHover />
                 <Grid item lg={12}>
                     <MainCard title="Socialmedia" sx={{ mb: 3 }}>
                         <form onSubmit={formik.handleSubmit} id="add-site-info-form">

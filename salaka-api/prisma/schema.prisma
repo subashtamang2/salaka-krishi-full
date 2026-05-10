@@ -511,6 +511,7 @@ model Order {
     payment         Payment?
 
     appliedCoupon   String?     // Store coupon code to apply usage after payment success
+    paymentDeadline DateTime?   // Order must be paid before this time
 
     isRefundPending   Boolean?    @default(false)
     isArchived        Boolean     @default(false)
@@ -587,7 +588,6 @@ enum PAYMENT_PROVIDER {
 
 enum ORDER_STATUS {
     Pending
-    WAITING_ESEWA
     Processing
     Shipped
     Delivered

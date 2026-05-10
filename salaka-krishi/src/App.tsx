@@ -1,4 +1,5 @@
 import { ChakraProvider } from "@chakra-ui/react";
+import { HelmetProvider } from "react-helmet-async";
 import Router from "./router";
 import CustomTheme from "./theme/CustomTheme";
 import "./theme/global.css";
@@ -14,7 +15,7 @@ const queryClient = new QueryClient();
 
 export default function App() {
     return (
-        <>
+        <HelmetProvider>
             <ChakraProvider value={CustomTheme}>
                 <QueryClientProvider client={queryClient}>
                     <Toaster />
@@ -25,6 +26,6 @@ export default function App() {
                     </GlobalDataProvider>
                 </QueryClientProvider>
             </ChakraProvider>
-        </>
+        </HelmetProvider>
     )
 }

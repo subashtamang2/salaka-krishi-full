@@ -113,14 +113,26 @@ export default function ProductsTab() {
                     {isLoading ? (
                         <ProductRow />
                     ) : isError ? (
-                        <Flex flexDir="column" align="center" gap={4} py={10}>
+                        <Flex
+                            flexDir="column"
+                            align="center"
+                            gap={4}
+                            py={10}>
                             <NotFoundSm />
 
                         </Flex>
                     ) : Array.isArray(products) && products.length > 0 ? (
                         <Grid
-                            columnGap={{ base: "10", md: "6", lg: "8" }}
-                            rowGap={{ base: "10", md: "12", lg: "12" }}
+                            columnGap={{
+                                base: "10",
+                                md: "6",
+                                lg: "8"
+                            }}
+                            rowGap={{
+                                base: "10",
+                                md: "12",
+                                lg: "12"
+                            }}
                             templateColumns={{
                                 base: "repeat(1, 1fr)",
                                 md: "repeat(3, 1fr)",
@@ -134,8 +146,14 @@ export default function ProductsTab() {
                             ))}
                         </Grid>
                     ) : (
-                        <Flex justifyContent="center" py={10}>
-                            <Heading size="md" color="gray.500">No products found in this category.</Heading>
+                        <Flex
+                            justifyContent="center"
+                            py={10}>
+                            <Heading
+                                size="md"
+                                color="gray.500">
+                                No products found in this category.
+                            </Heading>
                         </Flex>
                     )}
                 </Tabs.Content>

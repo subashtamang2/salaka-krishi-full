@@ -45,6 +45,7 @@ export default function ProductDetails() {
     });
 
     const product = response?.data;
+    const isOutOfStock = (product?.stock ?? 0) <= 0;
     const { formatPrice } = usePrice();
 
     const [wishlistStatus, setWishlistStatus] = useState<boolean>(false);
@@ -171,27 +172,44 @@ export default function ProductDetails() {
                         <Flex
                             flexDir={"column"}
                             gap={4}>
-                            <Flex
-                                width={{
-                                    base: "100%",
-                                    md: "350px"
-                                }}
-                                height={{
-                                    base: "270px"
-                                }}
-                                aspectRatio={1}
-                                borderRadius={"14px"}
-                                borderWidth={1}
-                                overflow={"hidden"}
-                                borderColor={"background.300"}>
-                                <Image
-                                    src={getImageSrc(product?.imageUrls?.[0])}
-                                    alt={product.name || ""}
-                                    h={"100%"}
-                                    w={"100%"}
-                                    objectFit={"cover"}
-                                    objectPosition={"center"} />
-                            </Flex>
+                                <Flex
+                                    width={{
+                                        base: "100%",
+                                        md: "350px"
+                                    }}
+                                    height={{
+                                        base: "270px"
+                                    }}
+                                    aspectRatio={1}
+                                    borderRadius={"14px"}
+                                    borderWidth={1}
+                                    overflow={"hidden"}
+                                    position="relative"
+                                    borderColor={"background.300"}>
+                                    {isOutOfStock && (
+                                        <Text
+                                            color="white"
+                                            bg="red.500"
+                                            position="absolute"
+                                            top={0}
+                                            left={0}
+                                            px={8}
+                                            py={2}
+                                            fontSize={"sm"}
+                                            fontWeight={600}
+                                            zIndex={2}
+                                            borderBottomRightRadius="14px">
+                                            Out of Stock
+                                        </Text>
+                                    )}
+                                    <Image
+                                        src={getImageSrc(product?.imageUrls?.[0])}
+                                        alt={product.name || ""}
+                                        h={"100%"}
+                                        w={"100%"}
+                                        objectFit={"cover"}
+                                        objectPosition={"center"} />
+                                </Flex>
                             <Text
                                 color={"background.300"}
                                 fontWeight={600}
@@ -345,12 +363,13 @@ export default function ProductDetails() {
                                     base: "100%",
                                     sm: "auto"
                                 }}
-                                disabled={addToCartMutation.isPending || cartStatus}
+                                disabled={addToCartMutation.isPending || cartStatus || isOutOfStock}
                                 onClick={handleAddToCart}
                                 _hover={{
-                                    bg: "primary.300"
-                                }}>
-                                {cartStatus ? "In Cart" : "Add to Cart"}
+                                    bg: isOutOfStock ? "gray.400" : "primary.300"
+                                }}
+                                bg={isOutOfStock ? "gray.400" : undefined}>
+                                {isOutOfStock ? "Out of Stock" : (cartStatus ? "In Cart" : "Add to Cart")}
                             </Button>
                             <Button
                                 variant="outline"

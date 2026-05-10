@@ -4,7 +4,6 @@ import {
     Flex,
     Grid,
     GridItem,
-    Text,
     useDisclosure
 } from "@chakra-ui/react";
 import ProductCard from "@src/components/cards/ProductCard";
@@ -49,14 +48,11 @@ export default function ProductCollection() {
         }
     });
 
-    const [totalProducts, setTotalProducts] = useState(0);
-
     useEffect(() => {
         const timer = setTimeout(async () => {
             const result = await mutateAsync({ ...filters, limit: 50 }); // Fetch more products
             const responseData = result?.data;
             setProducts(Array.isArray(responseData) ? responseData : (responseData as any)?.products || []);
-            setTotalProducts((responseData as any)?.totalCount || 0);
         }, 300);
 
         return () => clearTimeout(timer);
@@ -131,12 +127,7 @@ export default function ProductCollection() {
                         borderWidth={1}
                         borderColor="green.100">
 
-                            <Flex
-                                color={"text.400"}
-                                alignItems="center"
-                                gap={2}>
-                                <Text>Showing {products.length} of {totalProducts} products</Text>
-                            </Flex>
+
                         {
                             !isSuccess && <ProductRow />
                         }

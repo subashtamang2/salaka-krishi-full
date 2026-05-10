@@ -35,11 +35,6 @@ export class PaymentService {
 
     // LOCK order status before redirecting to payment gateway
     if (method === 'esewa') {
-      await this.prisma.order.update({
-        where: { id: orderId },
-        data: { orderStatus: 'WAITING_ESEWA' }
-      });
-      
       return this.esewaService.createPaymentPayload({
         amount: order.total,
         orderNumber: order.orderNumber,
@@ -92,7 +87,16 @@ export class PaymentService {
     }
 
     if (!verificationResult.success) {
-      throw new BadRequestException(`${provider} verification failed`);
+      this.logger.warn(`[PaymentService] ${provider} verification explicitly failed. Status: ${verificationResult.status}. Marking order as failed.`);
+      
+      if (orderNumber) {
+          const order = await this.prisma.order.findUnique({ where: { orderNumber } });
+          if (order) {
+              await this.orderService.markPaymentFailed(order.id);
+          }
+      }
+      
+      throw new BadRequestException(`${provider} verification failed. Status: ${verificationResult.status}`);
     }
 
     // Find the order

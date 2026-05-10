@@ -4,6 +4,7 @@ import {
     Link,
     Text
 } from "@chakra-ui/react";
+import { useEffect } from "react";
 import { LoginAPI } from "@src/api/auth";
 import Auth from "@src/components/cards/Auth";
 
@@ -13,13 +14,29 @@ import { useMutation } from "@tanstack/react-query";
 import {
     FaGoogle
 } from "react-icons/fa";
-import { useNavigate } from "react-router";
+import { useNavigate, useSearchParams } from "react-router";
 import LoginForm from "./LoginForm";
+import { toaster } from "@src/components/ui/toaster";
 
 
 export type AuthMethod = "google";
 export default function Login() {
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
+
+    useEffect(() => {
+        const error = searchParams.get("error");
+        if (error) {
+            toaster.create({
+                title: "Access Denied",
+                description: error,
+                type: "error",
+            });
+            // Clear the error from URL
+            navigate(routes.auth.base, { replace: true });
+        }
+    }, [searchParams, navigate]);
+
     const { mutate } = useMutation({
         mutationFn: async (method: AuthMethod) => {
             const res = await LoginAPI(method);

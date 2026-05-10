@@ -2,9 +2,9 @@ import { getOrderDetails } from "@src/api/order";
 import CustomContainer from "@src/components/common/CustomContainer";
 import NotFound from "@src/pages/NotFound";
 import type { OrderInterface } from "@src/schema/schema";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useParams, useNavigate } from "react-router";
-import { Helmet } from "react-helmet";
+import { Helmet } from "react-helmet-async";
 import {
     Box,
     Flex,
@@ -21,10 +21,8 @@ import {
 } from "@chakra-ui/react";
 import { usePrice } from "@src/hooks/usePrice";
 import { getImageSrc } from "@src/utils/image";
-import { LuPackage, LuCheck, LuTruck, LuArrowLeft, LuClock, LuDownload, LuRefreshCw } from "react-icons/lu";
-import { addTocart } from "@src/api/cart";
+import { LuPackage, LuCheck, LuTruck, LuArrowLeft, LuClock, LuDownload } from "react-icons/lu";
 import { toaster } from "@src/components/ui/toaster";
-import routes from "@src/router/routes";
 import { generateInvoicePDF } from "@src/utils/invoiceGenerator";
 import CancelOrderDialog from "./CancelOrderDialog";
 
@@ -32,7 +30,6 @@ export default function OrderDetail() {
     const { id } = useParams();
     const navigate = useNavigate();
     const { formatPrice } = usePrice();
-    const queryClient = useQueryClient();
 
     const { data: order, isLoading, isError } = useQuery<OrderInterface>({
         queryKey: ['order-detail', id],
@@ -43,29 +40,6 @@ export default function OrderDetail() {
         }
     });
 
-    const reorderMutation = useMutation({
-        mutationFn: async (items: any[]) => {
-            for (const item of items) {
-                await addTocart(item.productId, item.quantity);
-            }
-        },
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["cart"] });
-            toaster.create({
-                title: "Added to Cart",
-                description: "All items from this order have been added to your cart.",
-                type: "success",
-            });
-            navigate(routes.cart.base);
-        },
-        onError: () => {
-            toaster.create({
-                title: "Error",
-                description: "Failed to reorder items. Please try again.",
-                type: "error",
-            });
-        }
-    });
 
     const handleDownload = async () => {
         if (order) {
@@ -107,9 +81,6 @@ export default function OrderDetail() {
                             width="200px" />
                     </VStack>
                     <HStack>
-                        <Skeleton
-                            height="40px"
-                            width="120px" />
                         <Skeleton
                             height="40px"
                             width="120px" />
@@ -224,8 +195,8 @@ export default function OrderDetail() {
                         gap={4}
                         className="no-print">
                         {['Pending', 'Processing'].includes(order.orderStatus) && (
-                            <CancelOrderDialog 
-                                orderId={order.id} 
+                            <CancelOrderDialog
+                                orderId={order.id}
                                 orderNumber={order.orderNumber}
                                 trigger={
                                     <Button colorPalette="red" variant="outline">
@@ -244,18 +215,7 @@ export default function OrderDetail() {
                             <LuDownload />
                             Download Invoice
                         </Button>
-                        <Button
-                            variant="outline"
-                            borderColor="primary.100"
-                            _hover={{
-                                borderColor: "transparent"
-                            }}
-                            loading={reorderMutation.isPending}
-                            onClick={() => reorderMutation.mutate(order.items)}
-                        >
-                            <LuRefreshCw />
-                            Reorder All
-                        </Button>
+
                     </HStack>
                 </Flex>
 

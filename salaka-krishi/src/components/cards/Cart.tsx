@@ -45,7 +45,8 @@ export default function Cart({ product }: CartProps) {
                 toaster.create({
                     title: "Removed from cart",
                     description: `${currentProduct.name} has been removed from your cart.`,
-                    duration: 5000,
+                    type: "error",
+                    duration: 3000,
                 });
             },
             onError: () => {

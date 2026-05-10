@@ -83,7 +83,10 @@ export default function FooterTop() {
                                     fontSize="md"
                                     color="text.400"
                                     _focus={{ outline: "none" }}
-                                    _hover={{ color: "primary.400", textDecoration: "none" }}
+                                    _hover={{
+                                        color: "primary.400",
+                                        textDecoration: "none"
+                                    }}
                                 >
                                     {item.label}
                                 </Link>
@@ -93,36 +96,32 @@ export default function FooterTop() {
 
 
                     <GridItem>
-                        <Flex flexDir="column" gap={8}>
+                        <Flex
+                            flexDir="column">
                             <NewsletterContainer />
-
-                            <Flex flexDir="column" gap={4}>
-    
-                                <Flex gap={4} flexWrap="wrap">
-                                    {paymentMethods.map((method) => (
-                                        <Flex
-                                            key={method.id}
-                                            alignItems="center"
-                                            justifyContent="center"
-                                            bg="white"
-                                            p={1}
-                                            borderRadius="md"
-                                            boxShadow="sm"
-                                            w="60px"
-                                            h="35px"
-                                        >
-                                            <Image
-                                                src={method.icon}
-                                                objectFit="contain"
-                                                h="full"
-                                                w="full"
-                                                alt={method.id}
-                                            />
-                                        </Flex>
-                                    ))}
-                                </Flex>
+                            <Flex
+                                gap={2}
+                                flexWrap="wrap">
+                                {paymentMethods.map((method) => (
+                                    <Flex
+                                        key={method.id}
+                                        alignItems="center"
+                                        justifyContent="center"
+                                        w={"82px"}
+                                        h={"42px"}>
+                                        <Image
+                                            src={method.icon}
+                                            objectFit="contain"
+                                            objectPosition={"center"}
+                                            h="full"
+                                            w="full"
+                                            alt={method.id}
+                                        />
+                                    </Flex>
+                                ))}
                             </Flex>
                         </Flex>
+
                     </GridItem>
                 </Grid>
             </CustomContainer>

@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import MainCard from "components/MainCard";
 import { useFormik } from "formik";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import { DataWrapper } from "schema/schema";
 import * as yup from "yup";
 import UploadSingleFile from "components/dropzone/SingleFile";
@@ -117,7 +117,6 @@ export default function SiteInfo() {
     return (
         <>
             <Grid container spacing={1}>
-                <ToastContainer position="top-right" autoClose={5000} hideProgressBar={false} closeOnClick draggable pauseOnHover />
                 <Grid item lg={12}>
                     <MainCard title="Site Info" sx={{ mb: 3 }}>
                         <form onSubmit={formik.handleSubmit} id="add-site-info-form">

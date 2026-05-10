@@ -22,9 +22,10 @@ interface Props {
     orders?: Order[];
 }
 
-function getStatusColor(status: string): 'warning' | 'success' | 'error' | 'default' {
+function getStatusColor(status: string): 'warning' | 'success' | 'error' | 'default' | 'primary' {
     switch (status) {
         case 'Pending': return 'warning';
+        case 'Processing': return 'primary';
         case 'Delivered': return 'success';
         case 'Cancelled': return 'error';
         default: return 'default';

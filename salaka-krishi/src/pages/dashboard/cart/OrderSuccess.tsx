@@ -8,7 +8,7 @@ import {
 import { useNavigate } from "react-router";
 import routes from "@src/router/routes";
 import { useEffect } from "react";
-import { Helmet } from "react-helmet";
+import { Helmet } from "react-helmet-async";
 
 export default function OrderSuccess() {
     const navigate = useNavigate();

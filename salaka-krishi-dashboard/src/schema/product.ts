@@ -29,7 +29,6 @@ export interface CreateProductSchema {
   tags: string[];
   imageUrls: string[];
   categoryId: string;
-  addedBy: string;
 }
 interface Category {
   id: string;
@@ -41,11 +40,12 @@ export interface ProductSchema
   extends Omit<CreateProductSchema, "categoryId"> {
   id: string;
   category: Category;
+  addedBy: string;
   createdAt: string;
   updatedAt: string;
 }
 
 export interface UpdateProductSchema
-  extends Omit<CreateProductSchema, "slug" | "imageUrls" | "addedBy" | "rating" | "sold"> {
+  extends Omit<CreateProductSchema, "slug" | "imageUrls" | "rating" | "sold"> {
   imageUrls?: string[];
 }
