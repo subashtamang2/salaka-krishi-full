@@ -1,4 +1,5 @@
 import {
+    Button,
     Flex,
     Grid,
     GridItem,
@@ -8,7 +9,6 @@ import {
 
 import CustomContainer from "@src/components/common/CustomContainer";
 import CouponBox from "./components/CouponBox";
-import ShippingDetails from "./ShippingDetails";
 import { useQuery } from "@tanstack/react-query";
 import { getAccessToken } from "@src/utils/local-storage";
 import type { CartInterface } from "@src/schema/schema";
@@ -19,8 +19,11 @@ import OrderCart from "./OrderCart";
 import { useState } from "react";
 import EmptyCart from "./components/EmptyCart";
 import { getCart, getCheckoutSummary } from "@src/api/cart";
+import routes from "@src/router/routes";
+import { useNavigate } from "react-router";
 
 export default function CartView() {
+    const navigate = useNavigate();
     const [appliedCoupon, setAppliedCoupon] = useState<any>(null);
     const currencyTypes = import.meta.env.VITE_CURRENCY_TYPE;
     const accessToken = getAccessToken();
@@ -164,10 +167,43 @@ export default function CartView() {
                             </Flex>
                         </GridItem>
                         <GridItem>
-                            <ShippingDetails
+                            {/* <ShippingDetails
                                 appliedCoupon={appliedCoupon}
                                 isCartEmpty={products.length === 0}
-                            />
+                            /> */}
+
+
+                            <Flex
+                                flex="1"
+                                direction="column"
+                                position="sticky"
+                                top="80px"
+                                height="fit-content"
+                                p={4}
+                                border="1px solid"
+                                borderColor="gray.200"
+                                borderRadius="md"
+                                justifyContent="center"
+                                alignItems="center"
+                                textAlign="center"
+                            >
+                                <Text fontSize="md" fontWeight="600" color="primary.300">
+                                    For Order & Delivery
+                                </Text>
+
+                                <Text fontSize="sm" mt={2} color="gray.600">
+                                    Click below for full details
+                                </Text>
+
+                                <Button
+                                    _hover={{ bg: "primary.300" }}
+                                    mt={4}
+                                    size="sm"
+                                    onClick={() => navigate(routes.contact)}
+                                >
+                                    Click Here
+                                </Button>
+                            </Flex>
                         </GridItem>
                     </Grid >
                 )}

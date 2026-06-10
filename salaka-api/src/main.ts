@@ -28,10 +28,10 @@ async function bootstrap() {
             "http://localhost:3000",
             "http://localhost:3001",
             "http://localhost:8000",
-            "http://192.168.1.67:5173",
-            "http://192.168.1.67:3000",
-            "http://192.168.1.67:3001",
-            "http://192.168.1.67:8000",
+            "http://192.168.1.74:5173",
+            "http://192.168.1.74:3000",
+            "http://192.168.1.74:3001",
+            "http://192.168.1.74:8000",
         ],
         methods: "GET,HEAD,PATCH,PUT,POST,DELETE,OPTIONS",
         allowedHeaders: ["content-type", "authorization"],
@@ -67,13 +67,12 @@ async function bootstrap() {
     app.setGlobalPrefix("api");
 
     // swagger configuration
-    const documentFactory = SwaggerModule.createDocument(app, config, options);
-    SwaggerModule.setup("api/docs", app, documentFactory);
+    // const documentFactory = SwaggerModule.createDocument(app, config, options);
+    // SwaggerModule.setup("api/docs", app, documentFactory);
 
     const port = configService.get<number>("APP_PORT")!;
     await app.listen(port, "0.0.0.0", () => {
-        console.log(`Server is running on http://localhost:${port}`);
-        console.log(`you can access APi doc at http://localhost:${port}/api/docs`);
+
     });
 }
 bootstrap();

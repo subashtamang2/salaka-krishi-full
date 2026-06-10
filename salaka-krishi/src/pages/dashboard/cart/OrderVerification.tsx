@@ -8,7 +8,7 @@ import {
 } from "@chakra-ui/react";
 
 import CustomContainer from "@src/components/common/CustomContainer";
-import ShippingDetails from "./ShippingDetails";
+// import ShippingDetails from "./ShippingDetails";
 import TokenVerificationInput from "./components/TokenVerification";
 import { useQuery } from "@tanstack/react-query";
 import { getAccessToken } from "@src/utils/local-storage";
@@ -198,12 +198,12 @@ export default function OrderVerification() {
                         </Flex>
                     </GridItem>
                     <GridItem>
-                        <ShippingDetails
+                        {/* <ShippingDetails
                             isReadOnly={true}
                             initialData={state.shippingDetails}
                             appliedCoupon={appliedCoupon}
                             isCartEmpty={products.length === 0}
-                        />
+                        /> */}
                     </GridItem>
                 </Grid >
             </CustomContainer >

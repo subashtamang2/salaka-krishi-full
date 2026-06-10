@@ -40,9 +40,9 @@ export default defineConfig(({ mode }) => {
             },
             chunkSizeWarningLimit: 1000,
         },
-        // esbuild: {
-        //     // This will drop all console.log and debugger statements
-        //     drop: ['console'],
-        // },
+        esbuild: {
+            // This will drop all console.log and debugger statements
+            drop: ['console'],
+        },
     };
 });

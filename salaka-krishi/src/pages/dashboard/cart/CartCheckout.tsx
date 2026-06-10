@@ -8,7 +8,7 @@ import {
 
 import CustomContainer from "@src/components/common/CustomContainer";
 import CouponBox from "./components/CouponBox";
-import ShippingDetails from "./ShippingDetails";
+// import ShippingDetails from "./ShippingDetails";
 import { useQuery } from "@tanstack/react-query";
 import { getCart } from "@src/api/cart";
 import { getAccessToken } from "@src/utils/local-storage";
@@ -155,9 +155,9 @@ export default function CartCheckout() {
                             </Flex>
                         </GridItem>
                         <GridItem>
-                            <ShippingDetails
+                            {/* <ShippingDetails
                                 appliedCoupon={appliedCoupon}
-                            />
+                            /> */}
                         </GridItem>
                     </Grid >
                 )}
