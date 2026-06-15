@@ -17,11 +17,11 @@ export default () => ({
   },
   jwt: {
     access_token_secret: process.env.JWT_SECRET as string,
-    access_token_expiration: process.env.ACCESS_TOKEN_EXPIRY as string,
+    access_token_expiration: (process.env.ACCESS_TOKEN_EXPIRY as string) || "8h",
     refresh_token_secret:
       (process.env.REFRESH_TOKEN_SECRET as string) ||
       (process.env.JWT_SECRET as string),
-    refresh_token_expiration: process.env.REFRESH_TOKEN_EXPIRY as string,
+    refresh_token_expiration: (process.env.REFRESH_TOKEN_EXPIRY as string) || "7d",
   },
 
   google: {

@@ -28,4 +28,4 @@ COPY --from=build /app/prisma.config.ts ./
 # Given Prisma client needs to be consistent, keeping build node_modules is safer.
 
 EXPOSE 8000
-CMD ["sh", "-c", "npx prisma migrate deploy && node dist/main.js"]
+CMD ["sh", "-c", "npx prisma migrate deploy && npx prisma db seed && node dist/main.js"]

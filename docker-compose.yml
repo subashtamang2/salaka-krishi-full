@@ -24,6 +24,8 @@ services:
       - DATABASE_URL=postgresql://admin:admin@db:5432/salaka_api
       - APP_PORT=8000
       - JWT_SECRET=SalakaApiSecretKey!@$%&ksdhjflkashdf
+      - ACCESS_TOKEN_EXPIRY=8h
+      - REFRESH_TOKEN_EXPIRY=7d
     ports:
       - "8001:8000"
     depends_on:
@@ -49,10 +51,11 @@ services:
     build:
       context: ./salaka-krishi-dashboard
       dockerfile: Dockerfile
+      args:
+        - NEXT_PUBLIC_BACKEND_URL=http://localhost:8001
+        - NEXT_PUBLIC_IMAGE_BASE_URL=http://localhost:8001/uploads
     container_name: salaka-dashboard
     restart: always
-    environment:
-      - NEXT_PUBLIC_API_URL=http://localhost:8001/api
     ports:
       - "3001:3000"
     depends_on:
