@@ -15,6 +15,7 @@ import { Rating } from "react-simple-star-rating";
 import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { addOverallReview } from "@src/api/overallReviews";
+import { toaster } from "@src/components/ui/toaster";
 
 interface ReviewFormProps {
     fullName: string;
@@ -50,9 +51,16 @@ export default function ReviewFormModal({ isOpen, onClose }: ReviewFormModalProp
                 review: data.review,
                 rating: data.rating,
             });
+
+            toaster.create({
+                title: "Success",
+                description: "Review submitted successfully",
+                type: "success",
+            });
             queryClient.invalidateQueries({ queryKey: ["overall-reviews"] });
             reset();
             onClose();
+
         } catch (err) {
             console.error("Failed to submit review:", err);
         } finally {

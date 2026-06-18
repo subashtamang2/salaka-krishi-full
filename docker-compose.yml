@@ -12,6 +12,11 @@ services:
       - "5434:5432"
     volumes:
       - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d salaka_api"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   # Backend API
   backend:
@@ -29,7 +34,8 @@ services:
     ports:
       - "8001:8000"
     depends_on:
-      - db
+      db:
+        condition: service_healthy
 
   # Frontend (Customer)
   frontend:

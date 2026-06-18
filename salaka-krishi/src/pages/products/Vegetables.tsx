@@ -33,7 +33,10 @@ import { toaster } from "@src/components/ui/toaster";
 import ProductRow from "../Loadings/ProductRow";
 import ReviewLoading from "../Loadings/ReviewLoading";
 
+
 export default function Vegetables() {
+    console.log("Vegetables page rendered");
+
     const navigateToProductDetails = useNavigateToProductDetails();
     const baseImageUrl = import.meta.env.VITE_IMAGE_BASE_URL;
 
@@ -106,6 +109,7 @@ export default function Vegetables() {
                 title: "Already Reviewed",
                 description: "You have already submitted an overall review.",
                 type: "info",
+
             });
             return;
         }
@@ -220,7 +224,9 @@ export default function Vegetables() {
                             _hover={{ bg: "transparent" }}
                         >
                             {hasAlreadyReviewed ? "Already Reviewed" : "Add yours reviews"}
-                        </Button>
+                        </Button> 
+
+
                     </Flex>
                 </Flex>
             </CustomContainer>

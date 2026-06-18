@@ -19,6 +19,7 @@ import NotFoundSm from "@src/pages/NotFoundSm";
 import OrderCart from "./OrderCart";
 import { useState } from "react";
 import EmptyCart from "./components/EmptyCart";
+import ShippingDetails from "./ShippingDetails";
 
 export default function CartCheckout() {
     const [appliedCoupon, setAppliedCoupon] = useState<any>(null);
@@ -155,9 +156,9 @@ export default function CartCheckout() {
                             </Flex>
                         </GridItem>
                         <GridItem>
-                            {/* <ShippingDetails
+                            <ShippingDetails
                                 appliedCoupon={appliedCoupon}
-                            /> */}
+                            />
                         </GridItem>
                     </Grid >
                 )}
