@@ -94,7 +94,7 @@ export default function Page() {
             <ToastContainer position="top-right" autoClose={5000} hideProgressBar={false} closeOnClick draggable pauseOnHover />
 
             <Grid container spacing={3}>
-                {/* Page Header */}
+
                 <Grid item xs={12}>
                     <Stack direction="row" alignItems="center" justifyContent="space-between" flexWrap="wrap" gap={2}>
                         <Stack direction="row" alignItems="center" spacing={1.5}>
@@ -132,12 +132,12 @@ export default function Page() {
                     </Stack>
                 </Grid>
 
-                {/* Form */}
+
                 <Grid item xs={12} lg={8}>
                     <MainCard title="FAQ Details">
                         <form onSubmit={formik.handleSubmit} id="add-faq-form">
                             <Grid container spacing={3}>
-                                {/* Question */}
+
                                 <Grid item xs={12}>
                                     <Stack spacing={1}>
                                         <InputLabel htmlFor="question" required>
@@ -157,7 +157,7 @@ export default function Page() {
                                     </Stack>
                                 </Grid>
 
-                                {/* Slug (auto-generated) */}
+
                                 <Grid item xs={12}>
                                     <Stack spacing={1}>
                                         <InputLabel htmlFor="slug">
@@ -188,7 +188,7 @@ export default function Page() {
                                     </Stack>
                                 </Grid>
 
-                                {/* Category */}
+
                                 <Grid item xs={12} sm={6}>
                                     <Stack spacing={1}>
                                         <InputLabel htmlFor="category" required>
@@ -229,7 +229,6 @@ export default function Page() {
                                     </Stack>
                                 </Grid>
 
-                                {/* Category preview chip */}
                                 {formik.values.category && (
                                     <Grid item xs={12} sm={6}>
                                         <Stack spacing={1}>
@@ -257,7 +256,7 @@ export default function Page() {
                                     </Grid>
                                 )}
 
-                                {/* Answer */}
+
                                 <Grid item xs={12}>
                                     <Stack spacing={1}>
                                         <InputLabel htmlFor="answer" required>
@@ -282,34 +281,36 @@ export default function Page() {
                                     </Stack>
                                 </Grid>
 
-                                {/* Actions */}
                                 <Grid item xs={12}>
-                                    <Stack direction="row" spacing={2} justifyContent="flex-end">
+                                    <Stack
+                                        direction="row"
+                                        justifyContent={"space-between"}
+                                        gap={2}
+                                    >
                                         <Button
                                             variant="outlined"
-                                            color="secondary"
+                                            type="reset"
                                             onClick={() => formik.resetForm()}
-                                            disabled={!formik.dirty}
-                                            sx={{ textTransform: "none", borderRadius: 2 }}
                                         >
                                             Reset
                                         </Button>
+
                                         <Button
                                             variant="contained"
                                             type="submit"
                                             disabled={formik.isSubmitting || !formik.dirty}
-                                            sx={{ textTransform: "none", borderRadius: 2, px: 3 }}
                                         >
-                                            {formik.isSubmitting ? "Adding…" : "Add FAQ"}
+                                            Add  Faq
                                         </Button>
                                     </Stack>
                                 </Grid>
+
                             </Grid>
                         </form>
                     </MainCard>
                 </Grid>
 
-               
+
             </Grid>
         </>
     );

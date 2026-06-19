@@ -221,7 +221,8 @@ export default function Page() {
                                         />
                                     </Stack>
                                 </Grid>
-                                {/* TAG */}
+
+
                                 <Grid item xs={12} md={6}>
                                     <Stack spacing={1}>
                                         <InputLabel>Tag</InputLabel>
@@ -240,7 +241,6 @@ export default function Page() {
                                     </Stack>
                                 </Grid>
 
-                                {/* ✅ UPDATED AUTOCOMPLETE */}
                                 <Grid item xs={12} md={6}>
                                     <Stack spacing={1}>
                                         <InputLabel>Product</InputLabel>
@@ -260,7 +260,7 @@ export default function Page() {
 
 
 
-                                {/* START DATE */}
+
                                 <Grid item xs={12} md={6}>
                                     <Stack spacing={1}>
                                         <InputLabel>Start Date</InputLabel>
@@ -285,7 +285,7 @@ export default function Page() {
                                     </Stack>
                                 </Grid>
 
-                                {/* END DATE */}
+
                                 <Grid item xs={12} md={6}>
                                     <Stack spacing={1}>
                                         <InputLabel>End Date</InputLabel>
@@ -311,7 +311,7 @@ export default function Page() {
                                     </Stack>
                                 </Grid>
 
-                                {/* DESCRIPTION */}
+
                                 <Grid item xs={12}>
                                     <Stack spacing={1}>
                                         <InputLabel>Description</InputLabel>
@@ -330,7 +330,7 @@ export default function Page() {
 
 
 
-                                {/* IMAGE */}
+
                                 <Grid item xs={12}>
                                     <UploadSingleFile
                                         setFieldValue={formik.setFieldValue}
@@ -338,13 +338,31 @@ export default function Page() {
                                     />
                                 </Grid>
 
-
-                                {/* ACTION */}
                                 <Grid item xs={12}>
-                                    <Button type="submit" variant="contained">
-                                        Add Banner
-                                    </Button>
+                                    <Stack
+                                        direction="row"
+                                        justifyContent={"space-between"}
+                                        gap={2}
+                                    >
+                                        <Button
+                                            variant="outlined"
+                                            type="reset"
+                                            onClick={() => formik.resetForm()}
+                                        >
+                                            Reset
+                                        </Button>
+
+                                        <Button
+                                            variant="contained"
+                                            type="submit"
+                                            disabled={formik.isSubmitting || !formik.dirty}
+                                        >
+                                            Add  Banner
+                                        </Button>
+                                    </Stack>
                                 </Grid>
+
+
 
                             </Grid>
                         </form>

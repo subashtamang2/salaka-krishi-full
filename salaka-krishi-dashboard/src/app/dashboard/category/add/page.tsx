@@ -5,6 +5,7 @@ import {
     FormHelperText,
     Grid,
     InputLabel,
+    MenuItem,
     Stack,
     TextField,
 } from "@mui/material";
@@ -117,7 +118,7 @@ export default function Page() {
                         <form onSubmit={formik.handleSubmit}>
                             <Grid container spacing={3.5}>
 
-                                {/* NAME */}
+
                                 <Grid item xs={12}>
                                     <Stack sx={{ gap: 1 }}>
                                         <InputLabel>Name</InputLabel>
@@ -133,7 +134,7 @@ export default function Page() {
                                     </Stack>
                                 </Grid>
 
-                                {/* SLUG */}
+
                                 <Grid item xs={12}>
                                     <Stack sx={{ gap: 1 }}>
                                         <InputLabel>Slug</InputLabel>
@@ -149,7 +150,7 @@ export default function Page() {
                                     </Stack>
                                 </Grid>
 
-                                {/* IMAGE */}
+
                                 <Grid item xs={12}>
                                     <Stack sx={{ gap: 1 }}>
                                         <InputLabel>Upload Image</InputLabel>
@@ -161,7 +162,7 @@ export default function Page() {
                                     </Stack>
                                 </Grid>
 
-                                {/* STATUS */}
+
                                 <Grid item xs={12}>
                                     <Stack sx={{ gap: 1 }}>
                                         <InputLabel>Status</InputLabel>
@@ -173,9 +174,9 @@ export default function Page() {
                                             fullWidth
                                         >
                                             {Object.values(CategoryStatus).map((value) => (
-                                                <option key={value} value={value}>
+                                                <MenuItem key={value} value={value}>
                                                     {value}
-                                                </option>
+                                                </MenuItem>
                                             ))}
                                         </TextField>
                                     </Stack>
@@ -187,11 +188,11 @@ export default function Page() {
                                     )}
                                 </Grid>
 
-                                {/* BUTTONS */}
+
                                 <Grid item xs={12}>
                                     <Stack
                                         direction="row"
-                                        justifyContent="flex-end"
+                                       justifyContent={"space-between"}
                                         gap={2}
                                     >
                                         <Button
@@ -199,7 +200,7 @@ export default function Page() {
                                             type="reset"
                                             onClick={() => formik.resetForm()}
                                         >
-                                            Undo Changes
+                                           Reset
                                         </Button>
 
                                         <Button

@@ -63,16 +63,30 @@ export default function page() {
                                 </Stack>
                             </Grid>
 
-                            <Grid item xs={12}>
-                                <Stack direction="row" sx={{ gap: 2, alignItems: "center", justifyContent: "flex-end" }}>
-                                    <Button variant="outlined" color="secondary" type="reset" onClick={() => formik.resetForm()}>
-                                        Undo Changes
-                                    </Button>
-                                    <Button variant="contained" type="submit" disabled={formik.isSubmitting || !formik.dirty}>
-                                        Update Privacy Policy
-                                    </Button>
-                                </Stack>
-                            </Grid>
+                             <Grid item xs={12}>
+                                                                <Stack
+                                                                    direction="row"
+                                                                    justifyContent={"space-between"}
+                                                                    gap={2}
+                                                                >
+                                                                    <Button
+                                                                        variant="outlined"
+                                                                        type="reset"
+                                                                        onClick={() => formik.resetForm()}
+                                                                    >
+                                                                        Reset
+                                                                    </Button>
+
+                                                                    <Button
+                                                                        variant="contained"
+                                                                        type="submit"
+                                                                        disabled={formik.isSubmitting || !formik.dirty}
+                                                                    >
+                                                                        Add  Privacy Policy
+                                                                    </Button>
+                                                                </Stack>
+                                                            </Grid>
+
                         </Grid>
                     </form>
                 </Grid>

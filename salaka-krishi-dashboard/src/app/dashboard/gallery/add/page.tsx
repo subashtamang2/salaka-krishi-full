@@ -100,7 +100,7 @@ export default function AddGalleryPage() {
                         <form onSubmit={formik.handleSubmit}>
                             <Grid container spacing={3.5}>
 
-                                {/* TITLE */}
+                              
                                 <Grid item xs={12}>
                                     <Stack sx={{ gap: 1 }}>
                                         <InputLabel>Title (Optional)</InputLabel>
@@ -116,7 +116,7 @@ export default function AddGalleryPage() {
                                     </Stack>
                                 </Grid>
 
-                                {/* ALT TEXT */}
+
                                 <Grid item xs={12}>
                                     <Stack sx={{ gap: 1 }}>
                                         <InputLabel>Alt Text (Optional, for SEO)</InputLabel>
@@ -132,7 +132,7 @@ export default function AddGalleryPage() {
                                     </Stack>
                                 </Grid>
 
-                                {/* IMAGE */}
+
                                 <Grid item xs={12}>
                                     <Stack sx={{ gap: 1 }}>
                                         <InputLabel>Upload Image</InputLabel>
@@ -144,7 +144,6 @@ export default function AddGalleryPage() {
                                     </Stack>
                                 </Grid>
 
-                                {/* IS PUBLISHED */}
                                 <Grid item xs={12}>
                                     <FormControlLabel
                                         control={
@@ -158,11 +157,11 @@ export default function AddGalleryPage() {
                                     />
                                 </Grid>
 
-                                {/* BUTTONS */}
+
                                 <Grid item xs={12}>
                                     <Stack
                                         direction="row"
-                                        justifyContent="flex-end"
+                                        justifyContent={"space-between"}
                                         gap={2}
                                     >
                                         <Button
@@ -170,7 +169,7 @@ export default function AddGalleryPage() {
                                             type="reset"
                                             onClick={() => formik.resetForm()}
                                         >
-                                            Undo Changes
+                                            Reset
                                         </Button>
 
                                         <Button
@@ -178,10 +177,11 @@ export default function AddGalleryPage() {
                                             type="submit"
                                             disabled={formik.isSubmitting || !formik.dirty}
                                         >
-                                            Add to Gallery
+                                            Add  Gallery
                                         </Button>
                                     </Stack>
                                 </Grid>
+
 
                             </Grid>
                         </form>
