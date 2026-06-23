@@ -67,9 +67,9 @@ export default function ProductListCategory() {
     const bestSelling = bestSellingData?.data || [];
     const onSale = onSaleData?.data || [];
 
-    // Combined loading state to show/hide all skeletons at once
+
     const isCombinedLoading = isTopRatedLoading || isBestSellingLoading || isOnSaleLoading;
-    
+
     const anyError = isTopRatedError || isBestSellingError || isOnSaleError;
     const allEmpty = !isCombinedLoading && topRated.length === 0 && bestSelling.length === 0 && onSale.length === 0;
 

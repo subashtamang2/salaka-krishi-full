@@ -29,6 +29,13 @@ export class AuthService {
       clientSecret: this.configService.get<string>("google.client_secret"),
       redirectUri: this.configService.get<string>("google.login_callback_url"),
     });
+
+// this.oauth2Client = new google.auth.OAuth2(
+//   this.configService.get<string>("GOOGLE_CLIENT_ID"),
+//   this.configService.get<string>("GOOGLE_CLIENT_SECRET"),
+//   this.configService.get<string>("GOOGLE_LOGIN_CALLBACK_URL")
+// );
+
   }
   setCredentials(access_token: string, refresh_token: string) {
     this.oauth2Client.setCredentials({
@@ -36,6 +43,7 @@ export class AuthService {
       refresh_token: refresh_token,
     });
   }
+
   async googleAuthUrl() {
     const authUrl = await this.oauth2Client.generateAuthUrl({
       access_type: "offline",
@@ -44,6 +52,17 @@ export class AuthService {
     });
     return authUrl;
   }
+// async googleAuthUrl() {
+//   const authUrl = this.oauth2Client.generateAuthUrl({
+//     access_type: "offline",
+//     scope: ["email", "profile"],
+//     prompt: "consent",
+//   });
+
+//   return authUrl;
+// }
+
+
   async getTokens(code: string) {
     const token = await this.oauth2Client.getToken(code);
     return token;
@@ -56,7 +75,7 @@ export class AuthService {
     const googleUser = await google
       .oauth2({ version: "v2", auth: this.oauth2Client })
       .userinfo.get();
-    
+
     const email = googleUser.data.email!.toLowerCase();
 
     // 1. Check if user exists by email (any role, any login type)
@@ -155,7 +174,7 @@ export class AuthService {
     try {
       const secret = this.configService.get<string>("jwt.refresh_token_secret");
       const payload = await this.jwtService.verifyToken(refreshToken, secret!);
-      
+
       const user = await this.repository.findUserById(payload.sub);
       if (!user) throw new UnauthorizedException("User not found");
 

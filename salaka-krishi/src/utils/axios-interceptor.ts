@@ -1,26 +1,29 @@
 import urls from "@src/api/urls";
 import type { AxiosError, InternalAxiosRequestConfig } from "axios";
 import {
-  clearTokens,
-  getAccessToken,
-  getRefreshToken,
-  setAccessToken,
-  setRefreshToken,
+    clearTokens,
+    getAccessToken,
+    getRefreshToken,
+    setAccessToken,
+    setRefreshToken,
 } from "./local-storage";
 import axios from "axios";
 import { refreshTokenAPI } from "@src/api/auth";
 
 const requestConfig = (request: InternalAxiosRequestConfig) => {
-  request.baseURL = `${import.meta.env.VITE_BACKEND_ENDPOINT}/api`;
-  request.headers["accept"] = "application/json";
-  request.headers["content-type"] = "application/json";
+    request.baseURL = `${import.meta.env.VITE_BACKEND_ENDPOINT}/api`;
+    request.headers["accept"] = "application/json";
+    // Don't set content-type for FormData — let axios/browser auto-set multipart/form-data with boundary
+    if (!(request.data instanceof FormData)) {
+        request.headers["content-type"] = "application/json";
+    }
 
-  const accessToken = getAccessToken();
-  if (accessToken) {
-    request.headers["authorization"] = `Bearer ${accessToken}`;
-  }
+    const accessToken = getAccessToken();
+    if (accessToken) {
+        request.headers["authorization"] = `Bearer ${accessToken}`;
+    }
 
-  return request;
+    return request;
 };
 
 let isRefreshing = false;
@@ -97,12 +100,12 @@ const responseErrorConfig = (error: AxiosError) => {
 };
 
 axios.interceptors.request.use(
-  (request) => requestConfig(request),
-  (error) => Promise.reject(error)
+    (request) => requestConfig(request),
+    (error) => Promise.reject(error)
 );
 
 axios.interceptors.response.use(
-  (response) => response,
-  (error: AxiosError) => responseErrorConfig(error)
+    (response) => response,
+    (error: AxiosError) => responseErrorConfig(error)
 );
 export default axios;

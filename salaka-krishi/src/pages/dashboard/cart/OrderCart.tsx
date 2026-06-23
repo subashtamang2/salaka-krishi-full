@@ -93,8 +93,6 @@ export default function OrderCart({ product }: CartProps) {
 
     return (
         <Flex
-
-
             gap={{
                 base: 3,
                 lg: 4
@@ -105,6 +103,7 @@ export default function OrderCart({ product }: CartProps) {
                     base: "column",
                     md: "row",
                 }}
+
 
                 gap={{
                     base: 1,
@@ -309,6 +308,7 @@ export default function OrderCart({ product }: CartProps) {
                                     >{formatPrice(displayPrice)}</Text>
                                 </Flex>
                                 <Flex
+                                   
                                     gap={3}>
                                     <Button
                                         textDecoration={"underline"}

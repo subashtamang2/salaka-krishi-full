@@ -60,6 +60,10 @@ export class PaymentService {
         return { message: 'Cash on Delivery selected' };
     }
 
+    if (method === 'onlinepayment') {
+        return { message: 'Online Payment (manual screenshot verification) selected' };
+    }
+
     throw new BadRequestException(`Unsupported payment method: ${order.paymentProvider}`);
   }
 

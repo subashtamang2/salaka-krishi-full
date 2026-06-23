@@ -579,6 +579,7 @@ export default function OrdersPage() {
                                                 variant="light"
                                                 sx={{ borderRadius: "6px", fontWeight: 700, minWidth: 75 }}
                                             />
+                                            {/* Commented out for now — re-enable when needed
                                             {order.paymentDeadline && (order.payment?.status === 'Pending' || order.payment?.status === 'Failed') && order.orderStatus === 'Pending' && (
                                                 <Typography 
                                                     variant="caption" 
@@ -594,6 +595,7 @@ export default function OrdersPage() {
                                                     Exp: {format(new Date(order.paymentDeadline), "hh:mm a")}
                                                 </Typography>
                                             )}
+                                            */}
                                         </TableCell>
                                         <TableCell align="center">
                                             <Stack direction="row" spacing={1} alignItems="center" justifyContent="center">

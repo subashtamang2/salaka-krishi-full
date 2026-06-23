@@ -8,6 +8,8 @@ import FeaturesSection from "@src/components/FeaturesSection";
 import MainBanner from "@src/components/MainBanner";
 import OfferCarousel from "@src/components/OfferCarousel";
 import ProductListCategory from "@src/components/ProductListCategory";
+import VideoBannerSecondary from "@src/components/VideoBannerSecondary";
+import Homevideo from "@src/assets/video/homevideo.mp4";
 
 export default function Home() {
     return (
@@ -16,7 +18,16 @@ export default function Home() {
                 flexDir={"column"}>
                 <MainBanner />
                 <FeaturesSection />
+                <Flex
+                    flexDir={"column"}
+                    py={10}
+                >
+                    <VideoBannerSecondary
+                        backgroundVideo={Homevideo}
+                        videoPoster="" />
+                </Flex>
                 <CategorySection />
+
                 <Flex
                     display={{
                         base: "none",

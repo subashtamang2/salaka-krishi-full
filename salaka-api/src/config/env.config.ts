@@ -28,7 +28,7 @@ export default () => ({
     google_redirect_url: process.env.GOOGLE_REDIRECT_URL as string,
     client_id: process.env.GOOGLE_CLIENT_ID as string,
     client_secret: process.env.GOOGLE_CLIENT_SECRET as string,
-    login_callback_url: process.env.GOOGLE_LOGIN_CALLBACK_URL as string,
+    login_callback_url: (process.env.GOOGLE_LOGIN_CALLBACK_URL || process.env.GOOGLE_CALLBACK_URL) as string,
     register_callback_url: process.env.GOOGLE_REGISTER_CALLBACK_URL as string,
   },
   facebook: {

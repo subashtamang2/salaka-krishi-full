@@ -15,6 +15,8 @@ import { useSiteInfo } from "@src/store/useSiteInfo";
 import NewsletterContainer from "./NewsletterContainer";
 import { getImageSrc } from "@src/utils/image";
 import logoFallback from "@assets/logo/logo.svg";
+const showPaymentMethods =
+    import.meta.env.VITE_ENABLE_PAYMENT === "true";
 
 export default function FooterTop() {
     const siteInfo = useSiteInfo((state) => state.siteInfo);
@@ -22,12 +24,7 @@ export default function FooterTop() {
     return (
         <Box as="footer" bg="primary.100/10" py={16}>
             <CustomContainer>
-                {/*
-                  Main Responsive Grid:
-                  - base (Mobile): 1 column (stacks everything vertically)
-                  - sm (Tablet): 2 columns (clean side-by-side layout)
-                  - lg (Desktop): 4 columns with custom fractional widths
-                */}
+
                 <Grid
                     templateColumns={{
                         base: "1fr",
@@ -99,6 +96,7 @@ export default function FooterTop() {
                         <Flex
                             flexDir="column">
                             <NewsletterContainer />
+                            {showPaymentMethods && (
                             <Flex
                                 gap={2}
                                 flexWrap="wrap">
@@ -119,7 +117,9 @@ export default function FooterTop() {
                                         />
                                     </Flex>
                                 ))}
+
                             </Flex>
+                            )}
                         </Flex>
 
                     </GridItem>

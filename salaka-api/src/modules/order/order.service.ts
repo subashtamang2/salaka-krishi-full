@@ -98,8 +98,9 @@ export class OrderService {
         // 4. Create Order & OrderItems in Transaction
         return await this.prisma.$transaction(async (tx) => {
 
-            const deadline = new Date();
-            deadline.setMinutes(deadline.getMinutes() + 5);
+            // Disabled: auto-cancel deadline (re-enable when needed)
+            // const deadline = new Date();
+            // deadline.setMinutes(deadline.getMinutes() + 5);
 
             const order = await tx.order.create({
                 data: {
@@ -114,7 +115,7 @@ export class OrderService {
                     total,
                     appliedCoupon: createOrderDto.couponCode,
                     paymentProvider: createOrderDto.paymentProvider || 'CashOnDelivery',
-                    paymentDeadline: deadline,
+                    // paymentDeadline: deadline,
                     items: {
                         create: products.map((item) => ({
                             productId: item.productId,
@@ -189,16 +190,13 @@ export class OrderService {
             throw new BadRequestException('Order was cancelled due to timeout. Please order again.');
         }
 
-        // STRICT CHECK: If 5 mins passed, even if cron hasn't run yet, we reject it
-        const now = new Date();
-        if (order.paymentDeadline && now > order.paymentDeadline) {
-            this.logger.warn(`[OrderService] Rejecting payment: Deadline passed for Order ${order.orderNumber}.`);
-            
-            // Mark as cancelled immediately if not already
-            await this.markPaymentFailed(order.id).catch(() => {}); 
-            
-            throw new BadRequestException('Payment window (5 mins) expired. Order cancelled.');
-        }
+        // Disabled: strict 5-min expiry check (re-enable when needed)
+        // const now = new Date();
+        // if (order.paymentDeadline && now > order.paymentDeadline) {
+        //     this.logger.warn(`[OrderService] Rejecting payment: Deadline passed for Order ${order.orderNumber}.`);
+        //     await this.markPaymentFailed(order.id).catch(() => {}); 
+        //     throw new BadRequestException('Payment window (5 mins) expired. Order cancelled.');
+        // }
 
         return await this.prisma.$transaction(async (tx) => {
             // 1. Update order and payment status
@@ -687,9 +685,12 @@ export class OrderService {
      * and restore their stock.
      */
 
-    @Cron('0 */5 * * * *')
+    // Disabled: auto-cancel cron job (re-enable when needed)
+    // @Cron('0 */5 * * * *')
     async handleExpiredOrders() {
-        if (process.env.DISABLE_EXPIRED_ORDERS === 'true') return;
+        // Feature disabled for now — return early
+        return;
+        // if (process.env.DISABLE_EXPIRED_ORDERS === 'true') return;
 
 
         const currentTime = new Date();

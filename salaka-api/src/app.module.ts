@@ -30,6 +30,7 @@ import { HeroBannerModule } from "./modules/hero-banner/hero-banner.module";
 import { DashboardModule } from "./modules/dashboard/dashboard.module";
 import { OrderModule } from "./modules/order/order.module";
 import { SiteInfoModule } from "./modules/site-info/site-info.module";
+import { PaymentProofModule } from "./modules/payment-proof/payment-proof.module";
 
 @Module({
     imports: [
@@ -77,6 +78,7 @@ import { SiteInfoModule } from "./modules/site-info/site-info.module";
         HeroBannerModule,
         DashboardModule,
         OrderModule,
+        PaymentProofModule,
         SiteInfoModule,
     ],
     controllers: [],

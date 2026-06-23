@@ -31,10 +31,10 @@ export class CheckoutService {
     // 2. Handle Cash on Delivery (Immediate Finalization)
     if (normalizedMethod === 'cashondelivery') {
       await this.orderService.finalizeOrder(order.id);
-      return { 
-        order, 
+      return {
+        order,
         paymentProvider: 'CashOnDelivery',
-        message: 'Order placed successfully (Cash on Delivery)' 
+        message: 'Order placed successfully (Cash on Delivery)'
       };
     }
 

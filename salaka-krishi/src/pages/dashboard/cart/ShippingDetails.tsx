@@ -1,4 +1,5 @@
 import {
+    Box,
     Button,
     createListCollection,
     Field,
@@ -13,21 +14,24 @@ import {
     Switch,
     Text,
     Tooltip,
+    VStack,
 } from "@chakra-ui/react";
-import { paymentMethods } from "@src/data/PaymentMethod";
 import routes from "@src/router/routes";
-import {  useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { createOrder } from "@src/api/order";
+import { createOrder, uploadScreenshot, submitPaymentProof } from "@src/api/order";
 import { toaster } from "@src/components/ui/toaster";
+import qrImage from "@src/assets/images/qr-image/qr.png";
 
 interface ContactFormProps {
     fullName: string;
     address: string;
     phone: string;
     payment: string;
+    screenshotUrl?: string;
+    screenshotName?: string;
 }
 
 interface ShippingDetailsProps {
@@ -46,21 +50,24 @@ export default function ShippingDetails({
     const router = useNavigate();
     const queryClient = useQueryClient();
 
-    // No longer aggressively cancelling orders on mount.
-    // The system now allows orders to stay Pending until the background job cleans them up (after 30-60 mins).
-
 
     const paymentMethod = createListCollection({
         items: [
-            { label: "Khalti", value: "Khalti" },
-            { label: "eSewa", value: "Esewa" },
             { label: "Cash on Delivery", value: "CashOnDelivery" },
+            { label: "Online Payment", value: "OnlinePayment" },
         ],
     });
 
     const [payment, setPayment] = useState<string[]>(
         initialData?.payment ? [initialData.payment] : []
     );
+    const [screenshotUrl, setScreenshotUrl] = useState<string>(
+        initialData?.screenshotUrl || ""
+    );
+    const [screenshotName, setScreenshotName] = useState<string>(
+        initialData?.screenshotName || ""
+    );
+    const [isUploading, setIsUploading] = useState(false);
     const [paymentError, setPaymentError] = useState<string>("");
     const {
         handleSubmit,
@@ -69,6 +76,8 @@ export default function ShippingDetails({
     } = useForm<ContactFormProps>({
         defaultValues: initialData
     });
+
+    const isOnlinePayment = payment[0] === "OnlinePayment";
 
     const orderMutation = useMutation({
         mutationFn: (data: ContactFormProps) =>
@@ -129,6 +138,31 @@ export default function ShippingDetails({
             } else if (normalizedMethod === 'cashondelivery') {
                 console.log("Finalizing as Cash on Delivery.");
                 router(routes.cart.orderSuccess);
+            } else if (normalizedMethod === 'onlinepayment') {
+                console.log("Processing Online Payment proof submission...");
+                if (screenshotUrl) {
+                    submitPaymentProof(order?.id || rootData?.orderId || rootData?.id, screenshotUrl, screenshotName)
+                        .then(() => {
+                            toaster.create({
+                                title: "Payment Proof Submitted",
+                                description: "Your payment proof has been submitted for verification.",
+                                type: "success",
+                            });
+                        })
+                        .catch((err) => {
+                            console.error("Failed to submit payment proof:", err);
+                            toaster.create({
+                                title: "Submission Failed",
+                                description: "Failed to submit payment proof. You can upload it from your order history.",
+                                type: "error",
+                            });
+                        })
+                        .finally(() => {
+                            router(routes.cart.orderSuccess);
+                        });
+                } else {
+                    router(routes.cart.orderSuccess);
+                }
             } else {
                 console.warn("Unrecognized payment method or missing data. Falling back to order history.", { normalizedMethod, hasPaymentData: !!paymentData });
                 router(routes.orderHistory);
@@ -146,20 +180,22 @@ export default function ShippingDetails({
 
     const onSubmit = (data: ContactFormProps) => {
         if (!payment[0]) {
-            setPaymentError("Please select a payment method before continuing.");
+            setPaymentError("Please select a payment method ");
             return;
         }
-        if (isReadOnly) {
-            console.log("Placing order with data:", { ...data, payment: payment[0] });
-            orderMutation.mutate(data);
-        } else {
-            console.log("Navigating to verification with data:", { ...data, payment: payment[0] });
-            router(routes.cart.orderVerification, {
-                state: {
-                    shippingDetails: { ...data, payment: payment[0] },
-                    appliedCoupon
-                }
-            });
+        if (payment[0] === "OnlinePayment" && !screenshotUrl) {
+            setPaymentError("Please upload a payment screenshot.");
+            return;
+        }
+        // Always place order directly — no verification step
+        orderMutation.mutate(data);
+    };
+
+    const onInvalid = () => {
+        if (!payment[0]) {
+            setPaymentError("Please select a payment method before continuing.");
+        } else if (payment[0] === "OnlinePayment" && !screenshotUrl) {
+            setPaymentError("Please upload a payment screenshot.");
         }
     };
     return (
@@ -187,7 +223,7 @@ export default function ShippingDetails({
                     as="h5">Shipping Information</Heading>
 
 
-                <form onSubmit={handleSubmit(onSubmit)}>
+                <form onSubmit={handleSubmit(onSubmit, onInvalid)}>
                     <Grid
                         gap={{ base: 2, sm: 2, md: 2, lg: 4 }}
                         mb={6}
@@ -259,7 +295,7 @@ export default function ShippingDetails({
                             </Field.ErrorText>
                         </Field.Root>
 
-                        <Field.Root invalid={!!paymentError}>
+                        <Field.Root invalid={paymentError === "Please select a payment method before continuing."}>
                             <Select.Root
                                 collection={paymentMethod}
                                 value={payment}
@@ -267,6 +303,11 @@ export default function ShippingDetails({
                                 onValueChange={(e) => {
                                     setPayment(e.value);
                                     setPaymentError("");
+                                    // Reset screenshot when switching away from OnlinePayment
+                                    if (e.value[0] !== "OnlinePayment") {
+                                        setScreenshotUrl("");
+                                        setScreenshotName("");
+                                    }
                                 }}>
                                 <Select.HiddenSelect />
                                 <Select.Label
@@ -303,9 +344,10 @@ export default function ShippingDetails({
 
                                             borderWidth={1}
                                             borderColor={"primary.100"}  >
-                                            {paymentMethod.items.map((payment) => (
-                                                <Select.Item item={payment}
+                                            {paymentMethod.items.map((item) => (
+                                                <Select.Item item={item}
                                                     color={"primary.300"}
+                                                    cursor={"pointer"}
                                                     border="2px solid transparent"
                                                     _hover={{
                                                         borderStyle: "solid",
@@ -317,12 +359,12 @@ export default function ShippingDetails({
                                                     px={4}
                                                     py={4}
 
-                                                    key={payment.value}>
+                                                    key={item.value}>
                                                     <Flex
                                                         color={"primary.300"}
                                                         width={"full"}
                                                         justifyContent={"enter"}>
-                                                        {payment.label}
+                                                        {item.label}
                                                     </Flex>
 
                                                     <Select.ItemIndicator />
@@ -333,10 +375,108 @@ export default function ShippingDetails({
                                 </Portal>
                             </Select.Root>
                             <Field.ErrorText>
-                                {paymentError}
+                                {paymentError === "Please select a payment method before continuing." && paymentError}
                             </Field.ErrorText>
                         </Field.Root>
 
+                        {/* QR Code display */}
+                        {isOnlinePayment && (
+                            <Box
+                                mt={2}
+                                p={4}
+                                borderWidth={1}
+                                borderStyle="dashed"
+                                borderColor="primary.300"
+                                borderRadius="lg"
+                                bg="primary.300/5"
+                            >
+                                <VStack align="stretch" gap={3}>
+                                    <Text
+                                        color="primary.300"
+                                        fontWeight={600}
+                                        fontSize="sm"
+                                        textAlign="center"
+                                    >
+                                        Scan the QR code to make payment
+                                    </Text>
+                                    <Flex justifyContent="center">
+                                        <Box
+                                            border="2px solid"
+                                            borderColor="primary.100"
+                                            p={2}
+                                            borderRadius="lg"
+                                            bg="white"
+                                            display="inline-block"
+                                        >
+                                            <Image
+                                                src={qrImage}
+                                                alt="Payment QR Code"
+                                                boxSize="180px"
+                                                objectFit="contain"
+                                            />
+                                        </Box>
+                                    </Flex>
+                                </VStack>
+                            </Box>
+                        )}
+
+                        {/* Separate Screenshot upload field */}
+                        {isOnlinePayment && (
+                            <Field.Root invalid={paymentError === "Please upload a payment screenshot."}>
+                                <Field.Label>
+                                    Upload Payment Screenshot <Text as="span" color="muted.500">*</Text>
+                                </Field.Label>
+                                <Input
+                                    type="file"
+                                    accept="image/*"
+                                    variant="subtle"
+                                    p={1.5}
+                                    disabled={isReadOnly}
+                                    onChange={async (e) => {
+                                        const file = e.target.files?.[0];
+                                        if (file) {
+                                            setIsUploading(true);
+                                            try {
+                                                const res = await uploadScreenshot(file);
+                                                const uploadedData = res.data?.data || res.data;
+                                                const filename = uploadedData?.filename || uploadedData?.name;
+                                                setScreenshotUrl(`/uploads/${filename}`);
+                                                setScreenshotName(file.name);
+                                                setPaymentError("");
+                                                toaster.create({
+                                                    title: "Upload Success",
+                                                    description: "Screenshot uploaded successfully.",
+                                                    type: "success",
+                                                });
+                                            } catch (err) {
+                                                console.error("Screenshot upload failed:", err);
+                                                toaster.create({
+                                                    title: "Upload Failed",
+                                                    description: "Failed to upload screenshot. Please try again.",
+                                                    type: "error",
+                                                });
+                                            } finally {
+                                                setIsUploading(false);
+                                            }
+                                        }
+                                    }}
+                                />
+                                {isUploading && (
+                                    <Flex align="center" gap={2} mt={1}>
+                                        <Spinner size="sm" />
+                                        <Text fontSize="xs" color="primary.300">Uploading...</Text>
+                                    </Flex>
+                                )}
+                                {screenshotUrl && (
+                                    <Text color="green.600" fontSize="xs" mt={1} fontWeight="semibold">
+                                        Uploaded: {screenshotName || "screenshot.png"}
+                                    </Text>
+                                )}
+                                <Field.ErrorText>
+                                    {paymentError === "Please upload a payment screenshot." && paymentError}
+                                </Field.ErrorText>
+                            </Field.Root>
+                        )}
 
                     </Grid>
                     {isReadOnly && (
@@ -379,7 +519,7 @@ export default function ShippingDetails({
                                     cursor={isCartEmpty ? "not-allowed" : "pointer"}
                                     width={{ base: "full", sm: "auto" }}
                                 >
-                                    {orderMutation.isPending ? <Spinner size="sm" /> : (isReadOnly ? "Pay to Order" : "Continue")}
+                                    {orderMutation.isPending ? <Spinner size="sm" /> : "Place Order"}
                                 </Button>
                             </Tooltip.Trigger>
                             <Portal>
@@ -398,35 +538,7 @@ export default function ShippingDetails({
                         </Tooltip.Root>
                     </Flex>
                 </form>
-                {!isReadOnly && (
-                    <>
-                        <Text
-                            color={"primary.300"}
-                            fontSize={"lg"}
-                            fontWeight={400}>
-                            Quick Payments
-                        </Text>
-                        <Flex
-                            gap={2}>
-                            {
-                                paymentMethods.map((method) =>
-                                    <Flex key={method.id}
-                                        alignItems={"center"}
-                                        w={"82px"}
-                                        h={"42px"}
-                                        justifyContent={"center"}>
-                                        <Image
-                                            src={method.icon}
-                                            objectFit={"contain"}
-                                            objectPosition={"center"}
-                                            h={"full"}
-                                            w={"full"} />
-                                    </Flex>
-                                )
-                            }
-                        </Flex>
-                    </>
-                )}
+
             </Flex>
         </>
     );

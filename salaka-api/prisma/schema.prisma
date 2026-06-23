@@ -5,7 +5,7 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client-js"
+  provider     = "prisma-client-js"
   moduleFormat = "cjs"
 }
 
@@ -14,115 +14,111 @@ datasource db {
 }
 
 model User {
-    id              String  @id @default(uuid())
-    email           String  @unique
-    firstName       String
-    lastName       String?
-    password        String?
-    profileUrl      String?
-    isGoogleLogin   Boolean @default(false)
-    isFacebookLogin Boolean @default(false)
-    role            ROLE    @default(User)
-    status    USER_STATUS @default(Active)
-    createdAt DateTime    @default(now())
-    updatedAt DateTime    @updatedAt
+  id              String      @id @default(uuid())
+  email           String      @unique
+  firstName       String
+  lastName        String?
+  password        String?
+  profileUrl      String?
+  isGoogleLogin   Boolean     @default(false)
+  isFacebookLogin Boolean     @default(false)
+  role            ROLE        @default(User)
+  status          USER_STATUS @default(Active)
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
 
-    //admin relation
-    blogs          Blog[]
-    categories     Category[]
-    products       Product[]
-    coupons        CouponCode[] @relation("CouponCreatedBy")
-    updatedCoupons CouponCode[] @relation("CouponUpdatedBy")
+  //admin relation
+  blogs          Blog[]
+  categories     Category[]
+  products       Product[]
+  coupons        CouponCode[] @relation("CouponCreatedBy")
+  updatedCoupons CouponCode[] @relation("CouponUpdatedBy")
 
-   siteInfoCreated    SiteInfo[]      @relation("SiteInfoCreatedBy")
-    updatedSiteInfo    SiteInfo[]      @relation("SiteInfoUpdatedBy")
+  siteInfoCreated SiteInfo[] @relation("SiteInfoCreatedBy")
+  updatedSiteInfo SiteInfo[] @relation("SiteInfoUpdatedBy")
 
-   // banner relation (for Black Friday / promotional banners)
-    banners        Banner[]
+  // banner relation (for Black Friday / promotional banners)
+  banners Banner[]
 
-    // one to one relations
-    ShippingDetails ShippingDetails?
-    Wishlists       Wishlist?
-    Cart            Cart?
-    faqs            FAQ[]
-    clientReviews   ClientReview[]
-    overallReviews      OverallReview[]
-    //                one to many relations
-    comments        Comment[]
-    Reviews         Reviews[]
+  // one to one relations
+  ShippingDetails ShippingDetails?
+  Wishlists       Wishlist?
+  Cart            Cart?
+  faqs            FAQ[]
+  clientReviews   ClientReview[]
+  overallReviews  OverallReview[]
+  //                one to many relations
+  comments        Comment[]
+  Reviews         Reviews[]
 
-    // many to many relations
-    couponCodes        UseCouponCode[]
-    staticPagesCreated StaticPage[]    @relation("StaticPageCreatedBy")
-    staticPagesUpdated StaticPage[]    @relation("StaticPageUpdatedBy")
+  // many to many relations
+  couponCodes        UseCouponCode[]
+  staticPagesCreated StaticPage[]    @relation("StaticPageCreatedBy")
+  staticPagesUpdated StaticPage[]    @relation("StaticPageUpdatedBy")
 
-    // Order relations
-    orders             Order[]
+  // Order relations
+  orders Order[]
+
+  verifiedPayments Payment[] @relation("PaymentVerifiedBy")
 }
-
-
-
 
 model SiteInfo {
-    id  String @id @default(uuid())
-    key String @unique @default("SITE_INFO")
+  id  String @id @default(uuid())
+  key String @unique @default("SITE_INFO")
 
-    name             String
-    logoUrl          String
-    keywords         String[]
-    description      String
-    email            String
-    phone            String
-    address          String?
-    socialMediaLinks Json?
+  name             String
+  logoUrl          String
+  keywords         String[]
+  description      String
+  email            String
+  phone            String
+  address          String?
+  socialMediaLinks Json?
 
-    createdBy String
-    user      User   @relation("SiteInfoCreatedBy", fields: [createdBy], references: [id])
+  createdBy String
+  user      User   @relation("SiteInfoCreatedBy", fields: [createdBy], references: [id])
 
-    updatedById String?
-    updatedBy   User?   @relation("SiteInfoUpdatedBy", fields: [updatedById], references: [id])
+  updatedById String?
+  updatedBy   User?   @relation("SiteInfoUpdatedBy", fields: [updatedById], references: [id])
 
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
-
-
 enum USER_STATUS {
-    Active
-    Inactive
-    Suspended
-    Revoke
-    Unverified
+  Active
+  Inactive
+  Suspended
+  Revoke
+  Unverified
 }
 
 enum FAQ_CATEGORY {
-    Shipping
-    Order
-    Returns
-    Products
+  Shipping
+  Order
+  Returns
+  Products
 }
 
-
-
 model Banner {
-  id          String   @id @default(uuid())
+  id          String      @id @default(uuid())
   title       String?
   subtitle    String?
   description String?
-  slug String @unique
+  slug        String      @unique
   tag         BANNER_TAG?
   imageUrl    String?
-  product     Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+  product     Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
   productId   String
   startDate   DateTime?
   endDate     DateTime?
-  isActive    Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  isActive    Boolean     @default(true)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
   addedBy     String
-  user        User @relation(fields: [addedBy], references: [id], onDelete: Cascade)
+  user        User        @relation(fields: [addedBy], references: [id], onDelete: Cascade)
 }
+
 enum BANNER_TAG {
   BlackFriday
   BestSelling
@@ -130,479 +126,500 @@ enum BANNER_TAG {
   NewArrival
 }
 
-
-
 model FAQ {
-    id          String       @id @default(uuid())
-    question    String
-    slug        String       @unique
-    answer      String
-    category    FAQ_CATEGORY @default(Shipping)
-    createdAt   DateTime     @default(now())
-    updatedAt   DateTime     @updatedAt
-    createdById String
-    createdBy   User         @relation(fields: [createdById], references: [id], onDelete: Cascade)
-
+  id          String       @id @default(uuid())
+  question    String
+  slug        String       @unique
+  answer      String
+  category    FAQ_CATEGORY @default(Shipping)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  createdById String
+  createdBy   User         @relation(fields: [createdById], references: [id], onDelete: Cascade)
 }
 
-
-
-
-
 model ClientReview {
-    id           String   @id @default(uuid())
-    name         String
-    review       String
-    position     String?
-    imageUrl     String?
-    createdAt    DateTime @default(now())
-    updatedAt    DateTime @updatedAt
-    createdById String
-    createdBy   User     @relation(fields: [createdById], references: [id], onDelete: Cascade)
+  id          String   @id @default(uuid())
+  name        String
+  review      String
+  position    String?
+  imageUrl    String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  createdById String
+  createdBy   User     @relation(fields: [createdById], references: [id], onDelete: Cascade)
 }
 
 model OverallReview {
-    id           String   @id @default(uuid())
-    name         String
-    email        String
-    rating       Float    @default(0)
-    review       String
-    imageUrl     String?
-    createdAt    DateTime @default(now())
-    updatedAt    DateTime @updatedAt
-    createdById String
-    createdBy   User     @relation(fields: [createdById], references: [id], onDelete: Cascade)
+  id          String   @id @default(uuid())
+  name        String
+  email       String
+  rating      Float    @default(0)
+  review      String
+  imageUrl    String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  createdById String
+  createdBy   User     @relation(fields: [createdById], references: [id], onDelete: Cascade)
 }
 
-
-
-
-
-
-
-
 model ShippingDetails {
-    id      String @id @default(uuid())
-    userId  String @unique
-    user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-    address String
-    phone   String
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+  id        String   @id @default(uuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  address   String
+  phone     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-    @@map("shipping_details")
+  @@map("shipping_details")
 }
 
 model Wishlist {
-    id     String @id @default(uuid())
-    userId String @unique
-    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id     String @id @default(uuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-    products WishlistProducts[]
+  products WishlistProducts[]
 
-    createdAt DateTime @default(now())
+  createdAt DateTime @default(now())
 }
 
 model WishlistProducts {
-    id String @id @default(uuid())
+  id String @id @default(uuid())
 
-    productId String
-    product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 
-    wishlistId String
-    wishlist   Wishlist @relation(fields: [wishlistId], references: [id], onDelete: Cascade)
+  wishlistId String
+  wishlist   Wishlist @relation(fields: [wishlistId], references: [id], onDelete: Cascade)
 
-    createdAt DateTime @default(now())
+  createdAt DateTime @default(now())
 
-    @@unique([wishlistId, productId]) // Ensure a product can be in a wishlist only once
+  @@unique([wishlistId, productId]) // Ensure a product can be in a wishlist only once
 }
 
 model Cart {
-    id     String @id @default(uuid())
-    userId String @unique
-    User   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id     String @id @default(uuid())
+  userId String @unique
+  User   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-    createdAt DateTime      @default(now())
-    products  CartProduct[]
+  createdAt DateTime      @default(now())
+  products  CartProduct[]
 }
 
 model CartProduct {
-    id        String   @id @default(uuid())
-    cartId    String
-    productId String
-    quantity  Int      @default(1)
-    createdAt DateTime @default(now())
+  id        String   @id @default(uuid())
+  cartId    String
+  productId String
+  quantity  Int      @default(1)
+  createdAt DateTime @default(now())
 
-    cart    Cart    @relation(fields: [cartId], references: [id], onDelete: Cascade)
-    product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  cart    Cart    @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 
-    @@unique([cartId, productId]) // Ensure a product can be in a cart only once
+  @@unique([cartId, productId]) // Ensure a product can be in a cart only once
 }
 
 model Product {
-    id                 String         @id @default(uuid())
-    name               String
-    slug               String         @unique
-    description        String
-    price              Float
-    imageUrls          String[]
-    rating             Float?         @default(0)
-    availability       AVAILABILITY   @default(InStock)
-    //                 flags
+  id           String       @id @default(uuid())
+  name         String
+  slug         String       @unique
+  description  String
+  price        Float
+  imageUrls    String[]
+  rating       Float?       @default(0)
+  availability AVAILABILITY @default(InStock)
+  //                 flags
 
-    isFeatured         Boolean?       @default(false)
-    isBlackFriday      Boolean?       @default(false)
-    // stock and sale tracking
-    stock              Int            @default(0)
-    sold               Int            @default(0)
-    status             PRODUCT_STATUS @default(Active)
-    // Discount related fields
-    discountPercentage Int?           @default(0)
-    discountStartDate  DateTime?
-    discountEndDate    DateTime?
-    // Tags and keywords
-    tags               String[]
+  isFeatured         Boolean?       @default(false)
+  isBlackFriday      Boolean?       @default(false)
+  // stock and sale tracking
+  stock              Int            @default(0)
+  sold               Int            @default(0)
+  status             PRODUCT_STATUS @default(Active)
+  // Discount related fields
+  discountPercentage Int?           @default(0)
+  discountStartDate  DateTime?
+  discountEndDate    DateTime?
+  // Tags and keywords
+  tags               String[]
 
-    estimatedDeliveryMinDays Int @default(2)
-    estimatedDeliveryMaxDays Int @default(3)
+  estimatedDeliveryMinDays Int @default(2)
+  estimatedDeliveryMaxDays Int @default(3)
 
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-    wishlist WishlistProducts[]
-    cart     CartProduct[]
-    reviews  Reviews[]
+  wishlist WishlistProducts[]
+  cart     CartProduct[]
+  reviews  Reviews[]
 
-    // one to one relations
-    categoryId String
-    addedBy    String
-    category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
-    user       User     @relation(fields: [addedBy], references: [id], onDelete: Cascade)
-    banners Banner[]
-    orderItems OrderItem[]
+  // one to one relations
+  categoryId String
+  addedBy    String
+  category   Category    @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  user       User        @relation(fields: [addedBy], references: [id], onDelete: Cascade)
+  banners    Banner[]
+  orderItems OrderItem[]
 }
 
 model Reviews {
-    id        String   @id @default(uuid())
-    rating    Float    @default(0)
-    comment   String?
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+  id        String   @id @default(uuid())
+  rating    Float    @default(0)
+  comment   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-    userId String
-    User   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+  User   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-    productId String
-    Product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId String
+  Product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 
-    @@unique([userId, productId]) // Ensure a user can review a product only once
+  @@unique([userId, productId]) // Ensure a user can review a product only once
 }
 
 model HeroBanner {
-  id          String   @id @default(uuid())
-  tagLine     String?
-  title       String
-  imageUrl    String
-  order       Int      @default(0)
-  isActive    Boolean  @default(true)
+  id       String  @id @default(uuid())
+  tagLine  String?
+  title    String
+  imageUrl String
+  order    Int     @default(0)
+  isActive Boolean @default(true)
 
   // category relation
-  categoryId  String
-  category    Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  categoryId String
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
 
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
-
-
 
 enum AVAILABILITY {
-    OutOfStock
-    InStock
-    PreOrder
+  OutOfStock
+  InStock
+  PreOrder
 }
+
 enum PRODUCT_STATUS {
-    Active
-    Inactive
+  Active
+  Inactive
 }
 
 model Category {
-    id        String          @id @default(uuid())
-    name      String
-    slug      String          @unique
-    imageUrl  String?
-    status    CATEGORY_STATUS @default(Active)
-    createdAt DateTime        @default(now())
-    updatedAt DateTime        @updatedAt
+  id        String          @id @default(uuid())
+  name      String
+  slug      String          @unique
+  imageUrl  String?
+  status    CATEGORY_STATUS @default(Active)
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
 
-    products Product[]
-    heroBanners HeroBanner[]
-    userId String
-    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-    blogs    Blog[]
+  products    Product[]
+  heroBanners HeroBanner[]
+  userId      String
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  blogs       Blog[]
 }
 
 enum CATEGORY_STATUS {
-    Active
-    Inactive
+  Active
+  Inactive
 }
 
 model CouponCode {
-    id                String      @id @default(uuid())
-    code              String      @unique
-    discount          Float
-    type              COUPON_TYPE @default(Percentage)
-    startDate         DateTime
-    expiryDate        DateTime?
-    minPurchaseAmount Float?      @default(0)
-    maxDiscountAmount Float?      @default(0)
-    usageCount        Int         @default(0)
-    maxUsageLimit     Int?        @default(5)
+  id                String      @id @default(uuid())
+  code              String      @unique
+  discount          Float
+  type              COUPON_TYPE @default(Percentage)
+  startDate         DateTime
+  expiryDate        DateTime?
+  minPurchaseAmount Float?      @default(0)
+  maxDiscountAmount Float?      @default(0)
+  usageCount        Int         @default(0)
+  maxUsageLimit     Int?        @default(5)
 
-    userId    String
-    createdBy User   @relation("CouponCreatedBy", fields: [userId], references: [id])
+  userId    String
+  createdBy User   @relation("CouponCreatedBy", fields: [userId], references: [id])
 
-    updatedById String?
-    updatedBy   User?   @relation("CouponUpdatedBy", fields: [updatedById], references: [id])
+  updatedById String?
+  updatedBy   User?   @relation("CouponUpdatedBy", fields: [updatedById], references: [id])
 
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-    Users UseCouponCode[]
+  Users UseCouponCode[]
 }
 
 enum COUPON_TYPE {
-    Percentage
-    FixedAmount
+  Percentage
+  FixedAmount
 }
 
 model UseCouponCode {
-    id           String   @id @default(uuid())
-    userId       String
-    couponCodeId String
-    createdAt    DateTime @default(now())
+  id           String   @id @default(uuid())
+  userId       String
+  couponCodeId String
+  createdAt    DateTime @default(now())
 
-    User       User       @relation(fields: [userId], references: [id])
-    couponCode CouponCode @relation(fields: [couponCodeId], references: [id])
+  User       User       @relation(fields: [userId], references: [id])
+  couponCode CouponCode @relation(fields: [couponCodeId], references: [id])
 
-    @@unique([userId, couponCodeId]) // Ensure a user can use a coupon code only once
+  @@unique([userId, couponCodeId]) // Ensure a user can use a coupon code only once
 }
 
 model Blog {
-    id          String   @id @default(uuid())
-    title       String
-    slug        String   @unique
-    shortDesc   String?
-    content     String
-    imageUrl    String?
-    createdAt   DateTime @default(now())
-    updatedAt   DateTime @updatedAt
-    isPublished Boolean  @default(false)
-    comment  Comment[]
-    authorId String?
-    author   User?     @relation(fields: [authorId], references: [id])
+  id          String    @id @default(uuid())
+  title       String
+  slug        String    @unique
+  shortDesc   String?
+  content     String
+  imageUrl    String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  isPublished Boolean   @default(false)
+  comment     Comment[]
+  authorId    String?
+  author      User?     @relation(fields: [authorId], references: [id])
 
-    keywords String[]
+  keywords String[]
 
-    categoryId String?
-    category   Category? @relation(fields: [categoryId], references: [id])
+  categoryId String?
+  category   Category? @relation(fields: [categoryId], references: [id])
 }
 
 model Comment {
-    id        String   @id @default(uuid())
-    name      String?
-    email     String?
-    comment   String
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+  id        String   @id @default(uuid())
+  name      String?
+  email     String?
+  comment   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-    userId String?
-    user   User?   @relation(fields: [userId], references: [id])
+  userId String?
+  user   User?   @relation(fields: [userId], references: [id])
 
-    blogId String
-    blog   Blog   @relation(fields: [blogId], references: [id], onDelete: Cascade)
+  blogId String
+  blog   Blog   @relation(fields: [blogId], references: [id], onDelete: Cascade)
 }
+
 enum ROLE {
-    User
-    Admin
-    SuperAdmin
+  User
+  Admin
+  SuperAdmin
 }
+
 model Contact {
-    id        String   @id @default(uuid())
-    name      String
-    email     String
-    address   String?
-    phone     String?
-    subject   String
-    message   String
-    status    STATUS?  @default(Pending)
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+  id        String   @id @default(uuid())
+  name      String
+  email     String
+  address   String?
+  phone     String?
+  subject   String
+  message   String
+  status    STATUS?  @default(Pending)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 enum STATUS {
-    Pending
-    InProgress
-    Completed
-    Cancelled
-    Resolved
+  Pending
+  InProgress
+  Completed
+  Cancelled
+  Resolved
 }
+
 model Newsletter {
-    id        String           @id @default(uuid())
-    email     String           @unique
-    status    NewsletterStatus @default(Subscribed)
-    createdAt DateTime         @default(now())
-    updatedAt DateTime         @updatedAt
+  id        String           @id @default(uuid())
+  email     String           @unique
+  status    NewsletterStatus @default(Subscribed)
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
 }
 
 enum NewsletterStatus {
-    Subscribed
-    Unsubscribed
+  Subscribed
+  Unsubscribed
 }
+
 model StaticPage {
-    id          String          @id @default(uuid())
-    key         STATIC_PAGE_KEY @unique @default(TermsAndConditions)
-    content     String
-    createdAt   DateTime        @default(now())
-    updatedAt   DateTime        @updatedAt
-    createdBy   String
-    user        User            @relation("StaticPageCreatedBy", fields: [createdBy], references: [id])
-    updatedById String?
-    updatedBy   User?           @relation("StaticPageUpdatedBy", fields: [updatedById], references: [id])
+  id          String          @id @default(uuid())
+  key         STATIC_PAGE_KEY @unique @default(TermsAndConditions)
+  content     String
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+  createdBy   String
+  user        User            @relation("StaticPageCreatedBy", fields: [createdBy], references: [id])
+  updatedById String?
+  updatedBy   User?           @relation("StaticPageUpdatedBy", fields: [updatedById], references: [id])
 }
 
 enum STATIC_PAGE_KEY {
-    TermsAndConditions
-    PrivacyPolicy
+  TermsAndConditions
+  PrivacyPolicy
 }
+
 model Gallery {
   id          String   @id @default(uuid())
   imageUrl    String
-  title       String?        // optional
-  altText     String?        // optional, SEO
+  title       String? // optional
+  altText     String? // optional, SEO
   isPublished Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
 
 model Order {
-    id              String      @id @default(uuid())
-    orderNumber     String      @unique // e.g., ORD-2026-001
+  id          String @id @default(uuid())
+  orderNumber String @unique // e.g., ORD-2026-001
 
-    // Customer Info
-    userId          String
-    user            User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  // Customer Info
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-    // Shipping Info
-    fullName        String
-    address         String
-    phoneNumber     String
+  // Shipping Info
+  fullName    String
+  address     String
+  phoneNumber String
 
-    // Financials
-    subTotal        Float
-    discount        Float       @default(0)
-    deliveryCharge  Float       @default(0)
-    total           Float
+  // Financials
+  subTotal       Float
+  discount       Float @default(0)
+  deliveryCharge Float @default(0)
+  total          Float
 
-    // Payment & Status
-    paymentProvider PAYMENT_PROVIDER @default(CashOnDelivery)
-    orderStatus     ORDER_STATUS   @default(Pending)
+  // Payment & Status
+  paymentProvider PAYMENT_PROVIDER @default(CashOnDelivery)
+  orderStatus     ORDER_STATUS     @default(Pending)
 
-    payment         Payment?
+  payment Payment?
 
-    appliedCoupon   String?     // Store coupon code to apply usage after payment success
-    paymentDeadline DateTime?   // Order must be paid before this time
+  appliedCoupon   String? // Store coupon code to apply usage after payment success
+  paymentDeadline DateTime? // Order must be paid before this time
 
-    isRefundPending   Boolean?    @default(false)
-    isArchived        Boolean     @default(false)
-    cashCollected     Boolean     @default(false)
+  isRefundPending Boolean? @default(false)
+  isArchived      Boolean  @default(false)
+  cashCollected   Boolean  @default(false)
 
-    // Items
-    items           OrderItem[]
-    cancellations   OrderCancellation[]
+  // Items
+  items         OrderItem[]
+  cancellations OrderCancellation[]
+  paymentProofs PaymentProof[]
 
-    createdAt       DateTime    @default(now())
-    updatedAt       DateTime    @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-    @@index([orderStatus])
-    @@index([paymentProvider])
-    @@index([createdAt])
-    @@index([userId, createdAt])
+  @@index([orderStatus])
+  @@index([paymentProvider])
+  @@index([createdAt])
+  @@index([userId, createdAt])
 }
 
 model OrderItem {
-    id          String   @id @default(uuid())
-    orderId     String
-    order       Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  id      String @id @default(uuid())
+  orderId String
+  order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
 
-    productId   String
-    product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 
-    name        String   // Snapshot of name at time of order
-    price       Float    // Snapshot of price at time of order
-    quantity    Int
+  name     String // Snapshot of name at time of order
+  price    Float // Snapshot of price at time of order
+  quantity Int
 
-    createdAt   DateTime @default(now())
-    updatedAt   DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 enum PAYMENT_STATUS {
-    Pending
-    Paid
-    Failed
-    Refunded
+  Pending
+  Paid
+  Failed
+  Refunded
 }
 
-
-
-
 model Payment {
-  id            String   @id @default(uuid())
+  id String @id @default(uuid())
 
-  orderId       String   @unique
-  order         Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  orderId String @unique
+  order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
 
   provider      PAYMENT_PROVIDER
-  transactionId String?  @unique
-  pidx          String?  @unique // Khalti specific
+  transactionId String?          @unique
+  pidx          String?          @unique // Khalti specific
 
-  amount        Float
-  status        PAYMENT_STATUS @default(Pending)
+  amount Float
+  status PAYMENT_STATUS @default(Pending)
 
-  rawResponse   Json?   // store full gateway response
+  rawResponse Json? // store full gateway response
 
   webhookVerified Boolean @default(false)
 
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  // ADMIN CONTROL
+  verifiedById  String? // admin user id
+  verifiedBy    User?          @relation("PaymentVerifiedBy", fields: [verifiedById], references: [id]) //Relation to User model (fetch full admin details)
+  verifiedAt    DateTime? // Timestamp when admin verified the payment
+  adminNote     String? //  Admin remark (reason for approve/reject)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  paymentProofs PaymentProof[]
 }
 
+model PaymentProof {
+  id String @id @default(uuid())
+
+  orderId String
+  order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  paymentId String?
+  payment   Payment? @relation(fields: [paymentId], references: [id])
+
+  screenshotUrl  String
+  screenshotName String?
+  uploadedAt     DateTime @default(now())
+
+  status ProofStatus @default(Pending)
+
+  verifiedById String?
+  verifiedAt   DateTime?
+  adminNote    String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum ProofStatus {
+  Pending
+  Approved
+  Rejected
+}
 
 enum PAYMENT_PROVIDER {
   CashOnDelivery
-  Khalti
-  Esewa
+  OnlinePayment // QR payment with screenshot upload
+  Khalti // Future API integration
+  Esewa // Future API integration
 }
 
-
-
 enum ORDER_STATUS {
-    Pending
-    Processing
-    Shipped
-    Delivered
-    Cancelled
-    Returned
+  Pending
+  Processing
+  Shipped
+  Delivered
+  Cancelled
+  Returned
 }
 
 model OrderCancellation {
-    id          String   @id @default(uuid())
-    orderId     String
-    order       Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  id      String @id @default(uuid())
+  orderId String
+  order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
 
-    reason      String
-    cancelledBy String   // "user", "admin", "system"
-    note        String?
+  reason      String
+  cancelledBy String // "user", "admin", "system"
+  note        String?
 
-    createdAt   DateTime @default(now())
+  createdAt DateTime @default(now())
 }

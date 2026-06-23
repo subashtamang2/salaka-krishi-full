@@ -9,7 +9,7 @@ export default function Footer() {
     return (
         <Stack direction="row" sx={{ justifyContent: 'space-between', alignItems: 'center', p: '24px 16px 0px', mt: 'auto' }}>
             <Typography variant="caption">
-                &copy; Salaka Krishi crafted with ♥ by{' '}
+                &copy; Salaka Krishi crafted with  by{' '}
                 <Links component={Link} href="https://www.yaksfilms.com.np/" target="_blank" underline="none">
                     {' '}
                     Yaks Films Production

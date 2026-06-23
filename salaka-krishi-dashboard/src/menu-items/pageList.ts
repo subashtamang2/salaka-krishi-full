@@ -18,6 +18,7 @@ import {
     SecuritySafe,
     DocumentText,
     CloseCircle,
+    Document,
 } from "@wandersonalwes/iconsax-react";
 import { NavItemType } from "types/menu";
 
@@ -35,6 +36,7 @@ const icons = {
     reviews: MessageText,
     orders: ReceiptItem,
     orderCancellations: CloseCircle,
+    paymentProofs: Document,
     shipping: Truck,
     newsletter: DirectInbox,
     contact: Call,
@@ -63,6 +65,13 @@ const PageList: NavItemType = {
             type: "item",
             url: "/dashboard/order-cancellations",
             icon: icons.orderCancellations,
+        },
+        {
+            id: "payment-proofs",
+            title: "Payment Proofs",
+            type: "item",
+            url: "/dashboard/payment-proofs",
+            icon: icons.paymentProofs,
         },
         {
             id: "Products",
