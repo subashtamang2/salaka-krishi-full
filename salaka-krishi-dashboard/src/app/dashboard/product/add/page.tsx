@@ -40,7 +40,8 @@ const validationSchema = yup.object({
         .required("Description is required"),
     price: yup.number()
         .typeError("Price must be a number")
-        .positive("price must be positive")
+        // .positive("price must be positive")
+        .min(0, "Price cannot be negative")
         .required("Price is required"),
     files: yup.array()
         .min(1, "At least one image is required"),
