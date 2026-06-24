@@ -65,18 +65,19 @@ export default function CancelOrderDialog({ orderId, orderNumber, trigger }: Can
     };
 
     return (
-        <DialogRoot 
-            open={open} 
+        <DialogRoot
+            open={open}
             onOpenChange={(e) => setOpen(e.open)}
             placement="center"
             motionPreset="slide-in-bottom"
         >
             <DialogTrigger asChild>
                 {trigger || (
-                    <Button 
-                        size="sm" 
-                        variant="outline" 
-                        colorPalette="red"
+                    <Button
+                        size="sm"
+                        variant="outline"
+                        borderColor="primary.100"
+                        color="primary.300"
                         _hover={{ bg: "red.500", color: "white" }}
                     >
                         Cancel Order
@@ -111,15 +112,15 @@ export default function CancelOrderDialog({ orderId, orderNumber, trigger }: Can
                                 ))}
                             </Flex>
                         </Box>
-                        
+
                         <Text fontSize="sm" color="gray.500" bg="gray.50" p={3} borderRadius="md" borderLeft="4px solid" borderLeftColor="red.300">
                             <strong>Note:</strong> Once cancelled, this action cannot be undone. If you've already paid, our team will process your refund manually.
                         </Text>
                     </VStack>
                 </DialogBody>
                 <DialogFooter bg="gray.50" borderBottomRadius="xl" gap={3}>
-                    <Button 
-                        variant="ghost" 
+                    <Button
+                        variant="ghost"
                         onClick={() => setOpen(false)}
                         disabled={mutation.isPending}
                     >

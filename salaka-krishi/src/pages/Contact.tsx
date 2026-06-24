@@ -130,7 +130,7 @@ export default function Contact() {
                         height="100%"
                         loading="lazy"
                         style={{ border: 0 }}
-                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3530.968580943321!2d85.41840127546887!3d27.74911507615862!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39eb1b9f4d8e07b1%3A0x3c50e55eb6a8a4d5!2sSalaka%20krishi%20limited%20Kathmandu!5e0!3m2!1sen!2snp!4v1766317630366!5m2!1sen!2snp"
+                        src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d2172.378762978125!2d85.4203445!3d27.7488386!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39eb1b9f4d8e07b1%3A0x3c50e55eb6a8a4d5!2sSalaka%20krishi%20limited%20Kathmandu!5e1!3m2!1sen!2snp!4v1782299749467!5m2!1sen!2snp"
                         allowFullScreen
                     />
                 </Flex>

@@ -10,7 +10,7 @@ export const TWITTER_LINK = "https://www.twitter.com/";
 export const YOUTUBE_LINK = "https://www.youtube.com/";
 export const PINTEREST_LINK="https://www.pinterest.com";
 
-export const EMAIL = "info@salakakrishi.com.np";
+export const EMAIL = "md@salakafarm.com";
 export const PHONE = "+977 9851013269";
 
 export const DEFAULT_LIMIT = 10;

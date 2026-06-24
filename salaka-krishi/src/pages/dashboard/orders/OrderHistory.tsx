@@ -181,7 +181,12 @@ export default function OrderHistory() {
                                                 )}
                                             </Text>
                                         </VStack>
-                                        <HStack gap={2}>
+
+                                        <Flex gap={2}
+                                            flexDir={{
+                                                base: "column",
+                                                sm: "row"
+                                            }}>
                                             {['Pending', 'Processing'].includes(order.orderStatus) && (
                                                 <CancelOrderDialog
                                                     orderId={order.id}
@@ -191,14 +196,14 @@ export default function OrderHistory() {
                                             <Button
                                                 size="sm"
                                                 variant="outline"
-                                                borderColor="primary.300"
+                                                borderColor="primary.100"
                                                 color="primary.300"
                                                 _hover={{ bg: "primary.300", color: "white" }}
                                                 onClick={() => navigate(`${routes.orderHistory}/${order.id}`)}
                                             >
-                                                Details
+                                               Order Details
                                             </Button>
-                                        </HStack>
+                                        </Flex>
                                     </HStack>
                                 </Flex>
                                 <Separator

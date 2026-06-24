@@ -73,6 +73,7 @@ export default function Login() {
             }}
             py={20}>
             <Flex
+
                 mb={8}
                 flexDir={"column"}>
                 <Heading as={"h2"}
@@ -123,12 +124,14 @@ export default function Login() {
                 </Flex>
             </Flex>
 
-            <Flex
-                textAlign={"center"}
-                color={"text.700"}
-                fontWeight={"500"}
-                fontSize={"lg"}>Or create an {" "}<Link
-                    fontWeight={700}
+            <Text
+
+                color={"text.900"}
+                fontWeight={"700"}
+                fontSize={"lg"}>
+                Or create an {" "}
+                <Link
+                    fontWeight={800}
                     fontFamily={"poppins"}
                     _hover={{
                         textDecoration: "none",
@@ -137,8 +140,12 @@ export default function Login() {
                         outline: "none",
                     }}
                     color={"text.800"}
-                    onClick={() => navigate(`${routes.auth.base}/${routes.auth.register}`)}>account</Link>
-            </Flex>
+                    onClick={() => navigate(`${routes.auth.base}/${routes.auth.register}`)
+                    }
+                >
+                    account
+                </Link>
+            </Text>
         </CustomContainer>
 
     )

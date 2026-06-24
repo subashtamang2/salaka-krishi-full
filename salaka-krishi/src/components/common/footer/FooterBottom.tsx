@@ -11,7 +11,8 @@ export default function FooterBottom() {
 
     return (
         <>
-            <Flex gap={2}
+            <Flex
+                gap={2}
                 flexDir={{
                     base: "column",
                     md: "row"
@@ -25,12 +26,17 @@ export default function FooterBottom() {
                 fontWeight={500}>
                 Copyright © {currentYear} {siteInfo?.name || "Salaka"} || All Rights Reserved
                 <Flex
+                    gap={1}
                     color={"secondary.200/90"}
                     fontSize={"sm"}
                     fontWeight={500}>
                     Design & Developed By{" "}
                     <Link
-                        color={"secondary.200"} href={DEVELOPER_WEB_URL}>{DEVELOPED_BY}</Link></Flex>
+                        color={"secondary.200"}
+                        href={DEVELOPER_WEB_URL}>
+                        {DEVELOPED_BY}
+                    </Link>
+                </Flex>
             </Flex>
         </>
     )
