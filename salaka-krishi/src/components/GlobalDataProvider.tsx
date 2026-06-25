@@ -11,7 +11,6 @@ export default function GlobalDataProvider({
 }: {
     children: React.ReactNode;
 }) {
-    console.log("GlobalDataProvider rendered");
     const setSiteInfo = useSiteInfo((state) => state.setSiteInfo);
 
     const { data } = useQuery<DataWrapper<SiteInfo>>({
@@ -30,10 +29,6 @@ export default function GlobalDataProvider({
 
     useEffect(() => {
         if (siteInfoData) {
-            console.log(
-                "DEBUG: Global Sync - Fetched Site Info:",
-                siteInfoData
-            );
             setSiteInfo(siteInfoData);
         }
     }, [siteInfoData, setSiteInfo]);

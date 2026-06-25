@@ -223,7 +223,7 @@ export const textStyles = {
                     base: "md",
                 },
                 fontWeight: "400",
-                textAlign: "start",
+               textAlign: "justify",
                 mb: 4,
                 wordBreak: "normal",
                 overflowWrap: "break-word",

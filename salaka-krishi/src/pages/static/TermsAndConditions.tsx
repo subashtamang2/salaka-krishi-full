@@ -17,6 +17,8 @@ export default function TermsAndConditions() {
     });
 
     const content = termsData?.data?.content || "";
+   
+    console.log("TERMS CONTENT:", content);
 
     return (
         <>

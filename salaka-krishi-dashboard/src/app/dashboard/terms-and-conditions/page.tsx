@@ -32,6 +32,7 @@ export default function page() {
             content: content || ''
         },
         onSubmit: (values, { setSubmitting, resetForm }) => {
+            console.log("EDITOR CONTENT:", values.content);
             setSubmitting(true);
             mutation.mutate(values.content, {
                 onSuccess: (data) => {
