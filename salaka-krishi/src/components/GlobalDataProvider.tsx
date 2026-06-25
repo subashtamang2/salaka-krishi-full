@@ -39,6 +39,7 @@ export default function GlobalDataProvider({
                 <Helmet>
                     <title>{siteInfoData.name}</title>
 
+
                     <meta
                         name="description"
                         content={siteInfoData.description || ""}

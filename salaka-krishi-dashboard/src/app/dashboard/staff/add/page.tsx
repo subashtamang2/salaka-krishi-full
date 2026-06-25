@@ -17,7 +17,7 @@ import MainCard from "components/MainCard";
 import { useFormik } from "formik";
 import { SyntheticEvent, useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
-import {UserInterface, UserInterfaceForm, UserRole } from "schema/schema";
+import { UserInterface, UserInterfaceForm, UserRole } from "schema/schema";
 import * as yup from "yup";
 import UploadSingleFile from "components/dropzone/SingleFile";
 import { userStore } from "store/userStore";
@@ -106,9 +106,20 @@ export default function page() {
                         formik.setFieldValue("file", null);
                         setSubmitting(false);
                     },
-                    onError: (error) => {
-                        toast.error("Error adding user!");
+                    onError: (error: any) => {
                         console.error("Error adding user:", error);
+
+                        const message =
+                            error?.response?.data?.message ||
+                            error?.message ||
+                            "Error adding user!";
+
+                        toast.error(
+                            Array.isArray(message)
+                                ? message.join(", ")
+                                : message
+                        );
+
                         setSubmitting(false);
                     },
                 });
@@ -198,7 +209,7 @@ export default function page() {
 
                                 <Grid item xs={12}>
                                     <Stack sx={{ gap: 1 }}>
-                                        <InputLabel>Your Role</InputLabel>
+                                        <InputLabel>Role</InputLabel>
                                         <Autocomplete<UserRole>
                                             onBlur={formik.handleBlur}
                                             id="role"
