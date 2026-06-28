@@ -4,6 +4,15 @@ const urls = {
         url: "admin/login",
         method: "post",
     },
+
+    forgotPassword: {
+        url: "admin/forgot-password",
+        method: "post",
+    },
+    resetPassword: {
+        url: "admin/reset-password",
+        method: "post",
+    },
     currentStaff: {
         url: "user/current",
         method: "get",

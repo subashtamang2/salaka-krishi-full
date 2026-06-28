@@ -17,33 +17,27 @@ async function main() {
     const adminList = [
         {
             firstName: "Super Admin",
-            email: "superadmin@gmail.com",
-            password: await bcrypt.hash("password@superadmin", saltRounds),
-            role: ROLE.SuperAdmin,
-        },
-        {
-            firstName: "Super Admin",
             email: "example@gmail.com",
-            password: await bcrypt.hash("Password@123", saltRounds),
+            password: await bcrypt.hash("Password@456", saltRounds),
             role: ROLE.SuperAdmin,
         },
         {
             firstName: "Admin",
             email: "admin@gmail.com",
-            password: await bcrypt.hash("password@admin", saltRounds),
+            password: await bcrypt.hash("admin@password", saltRounds),
             role: ROLE.Admin,
         },
         {
             firstName: "user",
             email: "user@gmail.com",
-            password: await bcrypt.hash("password@user", saltRounds),
+            password: await bcrypt.hash("user@123password", saltRounds),
             role: ROLE.User,
         },
         {
             firstName: "subash",
             lastName: "tamang",
             email: "lamasubaah2@gmail.com",
-            password: await bcrypt.hash("lamasubaah2", saltRounds),
+            password: await bcrypt.hash("subashtamang2", saltRounds),
             role: ROLE.Admin,
         },
     ];

@@ -10,8 +10,10 @@ import ProductCard from "@src/components/cards/ProductCard";
 import { ButtonGroup } from "@src/components/common/CustomArrow";
 import CustomContainer from "@src/components/common/CustomContainer";
 import SectionHeading from "@src/components/common/SectionHeading";
-import { useEffect, useState } from "react";
-import Carousel from "react-multi-carousel";
+import { useEffect, useRef, useState } from "react";
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 import Filter from "./Filter";
 import { useSearchParams } from "react-router";
 import type { FilterParamsInterface } from "@src/schema/schema";
@@ -27,10 +29,15 @@ export default function ProductCollection() {
     const [products, setProducts] = useState<ProductSchema[]>([]);
 
     const [filters, setFilters] = useState<FilterParamsInterface>({});
+    const [currentSlide, setCurrentSlide] = useState(0);
     const [searchParams] = useSearchParams();
-
+    const sliderRef = useRef<Slider | null>(null);
     useEffect(() => {
-        const filterObj: (keyof FilterParamsInterface)[] = ["categories", "availability", "search"]
+        const filterObj: (keyof FilterParamsInterface)[] = [
+            "categories",
+            "availability",
+            "search"
+        ]
         const parsedFilters: FilterParamsInterface = {};
 
 
@@ -58,13 +65,36 @@ export default function ProductCollection() {
         return () => clearTimeout(timer);
     }, [filters, mutateAsync]);
 
-
-    const responsive = {
-        superLargeDesktop: { breakpoint: { max: 4000, min: 1279 }, items: 4 },
-        desktop: { breakpoint: { max: 1279, min: 1023 }, items: 3 },
-        laptop: { breakpoint: { max: 1023, min: 767 }, items: 2 },
-        tablet: { breakpoint: { max: 767, min: 464 }, items: 2 },
-        mobile: { breakpoint: { max: 464, min: 0 }, items: 1 }
+    const sliderSettings = {
+        dots: false,
+        infinite: true,
+        speed: 600,
+        slidesToShow: 4,
+        slidesToScroll: 1,
+        arrows: false,
+        beforeChange: (_: number, next: number) => {
+            setCurrentSlide(next);
+        },
+        responsive: [
+            {
+                breakpoint: 1280,
+                settings: { slidesToShow: 3, },
+            },
+            {
+                breakpoint: 1024,
+                settings: { slidesToShow: 2, },
+            },
+            {
+                breakpoint: 768,
+                settings: { slidesToShow: 2, },
+            },
+            {
+                breakpoint: 480,
+                settings: {
+                    slidesToShow: 1,
+                },
+            },
+        ],
     };
 
     if (isError) return <NotFound title={"No Products Found"} />
@@ -159,26 +189,24 @@ export default function ProductCollection() {
                     <Box
                         w="full"
                         position="relative">
-                        <Carousel
-                            swipeable={true}
-                            draggable={true}
-                            infinite={true}
-                            autoPlay={false}
-                            centerMode={false}
-                            autoPlaySpeed={5000}
-                            customTransition="all 1.2s ease"
-                            arrows={false}
-                            renderButtonGroupOutside={true}
-                            customButtonGroup={<ButtonGroup />}
-                            responsive={responsive}>
-                            {
-                                products.map(item => (
-                                    <Box key={item.id} px={2}>
-                                        <ProductCard product={item} />
-                                    </Box>
-                                ))
-                            }
-                        </Carousel>
+                        <ButtonGroup next={() => sliderRef.current?.slickNext()}
+                            previous={() => sliderRef.current?.slickPrev()}
+                            carouselState={{
+                                currentSlide,
+                                totalItems: products.length,
+                                slidesToShow: 4,
+                                deviceType: "",
+                            }} />
+                        <Slider
+                            ref={sliderRef} {...sliderSettings}
+                        >
+                            {products.map((item) => (
+                                <Box
+                                    key={item.id}
+                                    px={2} >
+                                    <ProductCard product={item} />
+                                </Box>))}
+                        </Slider>
                     </Box>
                 </Flex>
             </CustomContainer >

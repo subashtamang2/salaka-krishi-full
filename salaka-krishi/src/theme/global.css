@@ -1,7 +1,7 @@
+/*  home paga  banner */
 html {
     scrollbar-gutter: stable;
 }
-
 .custom-dot-list li button {
     width: 12px;
     height: 12px;
@@ -13,13 +13,25 @@ html {
     padding: 0;
     margin: 0 4px;
 }
+.custom-dot-list li button:before {
+    display: none !important;
+}
+.custom-dot-list {
+    bottom: 20px !important;
+}
 
-.custom-dot-list li.react-multi-carousel-dot--active button {
+.custom-dot-list li.slick-active button {
     background-color: green;
     opacity: 1;
 }
 
 
+
+
+
+
+
+/*offer carousel banner */
 
 .offer-carousel-dots li button {
     width: 12px;
@@ -32,16 +44,28 @@ html {
     padding: 0;
     margin: 0 4px;
 }
-
-.offer-carousel-dots li.react-multi-carousel-dot--active button {
+.offer-carousel-dots {
+    position: absolute !important;
+    bottom: 15px !important;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex !important;
+    justify-content: center;
+    gap: 8px;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+.offer-carousel-dots li button:before {
+    display: none !important;
+}
+.offer-carousel-dots li.slick-active button {
     background-color: green;
     opacity: 1;
 }
-
-
 .offer-carousel-item {
     padding: 0 18px;
 }
+
 
 
 
@@ -59,6 +83,9 @@ video {
     gap: 14px;
     padding-bottom: 10px;
 }
+
+
+
 
 .large-icon {
     padding: 0;

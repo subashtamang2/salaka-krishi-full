@@ -4,8 +4,6 @@ import {
     Button,
     Image,
 } from "@chakra-ui/react";
-import Carousel from "react-multi-carousel";
-import "react-multi-carousel/lib/styles.css";
 import CustomContainer from "./common/CustomContainer";
 import { useQuery } from "@tanstack/react-query";
 import { getActiveHeroBanners } from "@src/api/heroBanner";
@@ -17,11 +15,20 @@ import { getImageSrc } from "@src/utils/image";
 import HeroBannerLoading from "@src/pages/Loadings/HeroBannerLoading";
 import NotFoundSm from "@src/pages/NotFoundSm";
 
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
-const responsive = {
-    desktop: { breakpoint: { max: 3000, min: 1024 }, items: 1, },
-    tablet: { breakpoint: { max: 1024, min: 768 }, items: 1, },
-    mobile: { breakpoint: { max: 768, min: 0 }, items: 1, },
+const settings = {
+    dots: true,
+    infinite: true,
+    autoplay: true,
+    autoplaySpeed: 5000,
+    arrows: false,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    pauseOnHover: false,
+    dotsClass: "slick-dots custom-dot-list",
 };
 
 export default function MainBanner() {
@@ -118,20 +125,14 @@ export default function MainBanner() {
             flexDir={"column"}
             position="relative"
             width="full"
-            overflow="hidden">
-            <Carousel
-                responsive={responsive}
-                autoPlay
-                autoPlaySpeed={5000}
-                infinite
-                arrows={false}
-                showDots
-                containerClass="carousel-container"
-                dotListClass="custom-dot-list"
-                itemClass="carousel-item">
+            overflow="hidden"
+            className="carousel-container"
+>
+            <Slider {...settings}>
                 {banners.map((item) => (
                     <Flex
                         key={item.id}
+                        className="carousel-item"
                         w="100%"
                         h={{
                             base: "60vh",
@@ -205,7 +206,7 @@ export default function MainBanner() {
                         </Flex>
                     </Flex>
                 ))}
-            </Carousel>
+            </Slider>
         </Flex>
     );
 }

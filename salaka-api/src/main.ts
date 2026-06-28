@@ -21,6 +21,10 @@ async function bootstrap() {
     });
     const configService = app.get(ConfigService);
 
+    console.log("MAIL HOST:", process.env.MAIL_HOST);
+    console.log("MAIL PORT:", process.env.MAIL_PORT);
+    console.log("MAIL USER:", process.env.MAIL_USER);
+
     app.enableCors({
         origin: [
             "http://localhost:5174",

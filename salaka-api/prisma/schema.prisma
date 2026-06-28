@@ -60,7 +60,21 @@ model User {
   orders Order[]
 
   verifiedPayments Payment[] @relation("PaymentVerifiedBy")
+  passwordResetTokens   PasswordResetToken[]
 }
+
+
+model PasswordResetToken {
+  id        String    @id @default(uuid())
+  token     String    @unique
+  isUsed    Boolean   @default(false)
+  expiresAt DateTime
+  createdAt DateTime  @default(now())
+
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
 
 model SiteInfo {
   id  String @id @default(uuid())

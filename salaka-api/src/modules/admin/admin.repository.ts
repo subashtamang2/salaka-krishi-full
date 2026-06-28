@@ -2,6 +2,8 @@ import { Injectable } from "@nestjs/common";
 import { ROLE, USER_STATUS } from "@prisma/client";
 import { PrismaService } from "../../prisma/prisma.service";
 import { CreateAdminDto } from "./dto/create-admin.dto";
+import { randomUUID } from "crypto";
+import * as bcrypt from "bcrypt";
 
 @Injectable()
 export class AdminRepository {
@@ -128,5 +130,46 @@ export class AdminRepository {
             where: { id: id },
         });
     }
+
+
+    // this si for admin password reset
+
+    async createPasswordResetToken(userId: string) {
+        return this.prisma.passwordResetToken.create({
+            data: {
+                token: randomUUID(),
+                userId,
+                expiresAt: new Date(Date.now() + 30 * 60 * 1000),
+            },
+        });
+    }
+
+    async findPasswordResetToken(token: string) {
+        return this.prisma.passwordResetToken.findUnique({
+            where: { token },
+        });
+    }
+
+    async markPasswordResetTokenUsed(id: string) {
+        return this.prisma.passwordResetToken.update({
+            where: { id },
+            data: { isUsed: true },
+        });
+    }
+
+
+    async updateAdminPassword(userId: string, password: string) {
+        return this.prisma.user.update({
+            where: { id: userId },
+            data: {
+                password: await bcrypt.hash(password, 10),
+            },
+        });
+    }
+
+
+
+
+
 
 }

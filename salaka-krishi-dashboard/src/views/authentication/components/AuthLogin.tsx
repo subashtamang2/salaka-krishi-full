@@ -148,6 +148,18 @@ export default function AuthLogin() {
                                     </Button>
                                 </AnimateButton>
                             </Grid>
+                            <Grid size={12}>
+                                <Stack direction="row" justifyContent="flex-end">
+                                    <Button
+                                        variant="text"
+                                        color="primary"
+                                        onClick={() => router.push('/admin/forgot-password')}
+                                    >
+                                        Forgot Password?
+                                    </Button>
+                                </Stack>
+                            </Grid>
+
                         </Grid>
                     </form>
                 )}

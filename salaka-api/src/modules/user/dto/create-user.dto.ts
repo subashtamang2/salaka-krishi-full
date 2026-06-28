@@ -1,8 +1,9 @@
 import { Type } from "class-transformer";
 import { IsOptional, IsNumber, IsString, IsEnum } from "class-validator";
 import { ROLE, USER_STATUS } from "@prisma/client";
+import { ApiProperty } from "@nestjs/swagger";
 
-export class CreateUserDto{}
+export class CreateUserDto { }
 
 export class FilterUsersDto {
     @IsOptional()
@@ -35,3 +36,5 @@ export class FilterUsersDto {
     @IsString()
     sortOrder?: 'asc' | 'desc';
 }
+
+
